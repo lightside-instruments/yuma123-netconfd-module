@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo -n '<cameras xmlns="urn:lsi:params:xml:ns:yang:lsi-camera"><camera><name>video0</name>'
+echo -n '<image>'
+ffmpeg -f video4linux2 -i /dev/video0 -ss 1 -vframes 1 1.jpg
+base64 --wrap=0 1.jpg
+echo -n '</image></camera></cameras>'
+

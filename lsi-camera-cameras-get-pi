@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+
+import os
+from picamera import PiCamera
+from time import sleep
+
+
+os.system("""rm -f 1.jpg""")
+
+camera = PiCamera()
+camera.start_preview()
+#sleep(1)
+camera.capture('1.jpg')
+camera.stop_preview()
+
+
+os.system("""echo -n '<cameras xmlns="urn:lsi:params:xml:ns:yang:lsi-camera"><camera><name>video0</name>'""")
+os.system("""echo -n '<image>'""")
+os.system("""base64 --wrap=0 1.jpg""")
+os.system("""echo -n '</image></camera></cameras>'""")
+

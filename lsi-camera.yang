@@ -1,0 +1,28 @@
+module lsi-camera {
+  yang-version 1.1;
+  namespace "urn:lsi:params:xml:ns:yang:lsi-camera";
+  prefix camera;
+
+  organization  "Lightside Instruments AS";
+
+  description
+    "Camera configuration and image data.";
+
+  revision 2022-03-07 {
+    description
+      "Initial version.";
+  }
+
+  container cameras {
+    config false;
+    list camera {
+      key "name";
+      leaf name {
+        type string;
+      }
+      leaf image {
+        type binary;
+      }
+    }
+  }
+}
