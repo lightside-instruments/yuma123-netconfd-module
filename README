@@ -1,7 +1,7 @@
 # Overview
 Simple template module for netconfd.
 
-Replace contact information with yours, lsi -> your organisation, foo -> your module base name
+Replace contact information with yours, lsi -> your organization, foo -> your module base name
 
 
 # Dependencies
@@ -14,7 +14,7 @@ Installed netconfd and yangcli
  make
  make install
 
-#Testing installation
+# Testing installation
 
  netconfd --module=lsi-foo  --no-startup --superuser=$USER
 
