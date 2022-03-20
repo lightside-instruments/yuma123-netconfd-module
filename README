@@ -1,0 +1,31 @@
+# Overview
+Simple template module for netconfd.
+
+Replace contact information with yours, lsi -> your organisation, foo -> your module base name
+
+
+# Dependencies
+Installed netconfd and yangcli
+ apt-get install netconfd yangcli
+
+# Installation
+ autoreconf -i -f
+ ./configure CFLAGS="-g -O0"  CXXFLAGS="-g -O0" --prefix=/usr
+ make
+ make install
+
+#Testing installation
+
+ netconfd --module=lsi-foo  --no-startup --superuser=$USER
+
+Other terminal:
+ yangcli --server=localhost --user=$USER
+
+
+yangcli vladimir@localhost> xget /
+...
+    foo {
+      date 'Sun Mar 20 11:28:34 CET 2022'
+    }
+  }
+}

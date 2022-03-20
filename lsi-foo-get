@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo -n '<foo xmlns="urn:lsi:params:xml:ns:yang:foo"><date>'`date`'</date></foo>'

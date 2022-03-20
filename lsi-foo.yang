@@ -1,0 +1,22 @@
+module lsi-foo {
+  yang-version 1.1;
+  namespace "urn:lsi:params:xml:ns:yang:foo";
+  prefix foo;
+
+  organization  "Lightside Instruments AS";
+
+  description
+    "foo management module.";
+
+  revision 2022-03-20 {
+    description
+      "Initial version.";
+  }
+
+  container foo {
+    config false;
+    leaf date {
+      type string;
+    }
+  }
+}
