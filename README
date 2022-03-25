@@ -1,7 +1,7 @@
 # Overview
-Simple template module for netconfd.
+Simple template module for netconfd - with config true instrumentation.
 
-Replace contact information with yours, lsi -> your organization, foo -> your module base name
+Replace contact information with yours, lsi -> your organization, bar -> your module base name
 
 
 # Dependencies
@@ -16,16 +16,21 @@ Installed netconfd and yangcli
 
 # Testing installation
 
- netconfd --module=lsi-foo  --no-startup --superuser=$USER
+ netconfd --module=lsi-bar  --no-startup --superuser=$USER
 
 Other terminal:
  yangcli --server=localhost --user=$USER
 
 
-yangcli vladimir@localhost> xget /
-...
-    foo {
-      date 'Sun Mar 20 11:28:34 CET 2022'
-    }
-  }
-}
+yangcli vladimir@localhost> create /bar/enabled
+
+Filling optional leaf /bar/enabled:
+Enter boolean value for leaf <enabled>
+yangcli vladimir@localhost:create> true
+
+RPC OK Reply 2 for session 1:
+
+yangcli vladimir@localhost> commit
+
+
+This will create a file in the directory you started netconfd containing "1".

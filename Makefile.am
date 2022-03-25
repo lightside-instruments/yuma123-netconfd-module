@@ -1,12 +1,12 @@
-netconfmodule_LTLIBRARIES = liblsi-foo.la
+netconfmodule_LTLIBRARIES = liblsi-bar.la
 
-liblsi_foo_la_SOURCES = \
-lsi-foo.c
+liblsi_bar_la_SOURCES = \
+lsi-bar.c
 
 # Depends on installed libyuma-dev
-liblsi_foo_la_CPPFLAGS = -I${includedir}/yuma/agt -I${includedir}/yuma/ncx -I${includedir}/yuma/platform $(XML_CPPFLAGS)
-liblsi_foo_la_LDFLAGS = -module -lyumaagt -lyumancx
+liblsi_bar_la_CPPFLAGS = -I${includedir}/yuma/agt -I${includedir}/yuma/ncx -I${includedir}/yuma/platform $(XML_CPPFLAGS)
+liblsi_bar_la_LDFLAGS = -module -lyumaagt -lyumancx
 
-yang_DATA = lsi-foo.yang
+yang_DATA = lsi-bar.yang
 
-bin_SCRIPTS = lsi-foo-get
+bin_SCRIPTS = lsi-bar-set
