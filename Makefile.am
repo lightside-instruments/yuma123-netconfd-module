@@ -9,4 +9,5 @@ liblsi_ivi_dc_power_la_LDFLAGS = -module -lyumaagt -lyumancx
 
 yang_DATA = lsi-ivi-dc-power.yang
 
-bin_SCRIPTS = lsi-ivi-dc-power-set lsi-ivi-dc-power-gpib-e364xa-set
+bin_SCRIPTS = lsi-ivi-dc-power-set lsi-ivi-dc-power-gpib-e364xa-set lsi-ivi-dc-power-get lsi-ivi-dc-power-gpib-e364xa-get
+

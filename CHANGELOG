@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-dc-power (1.2) stable; urgency=medium
+
+  * Added /output-state container to model and moved measurement data. Implemented. 
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 10 May 2022 16:54:57 +0200
+
 yuma123-netconfd-module-lsi-ivi-dc-power (1.1) stable; urgency=medium
 
   * Minimalistic IVI DC Power class like model for YANG

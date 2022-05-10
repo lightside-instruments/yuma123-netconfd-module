@@ -1,0 +1,44 @@
+#!/usr/bin/python
+import sys
+import gpib
+import time
+
+# Usage: ./lsi-ivi-dc-power-gpib-e364xa-get
+
+# Example: ./lsi-ivi-dc-power-gpib-e364xa-set
+
+def cmd(con, cmd):
+	result = ""
+	gpib.write(con,cmd)
+
+	while(1):
+		c = gpib.read(con,1)
+		if(c == b'\n'):
+			break
+		result +=c.decode("utf-8")
+
+	return result
+
+
+con=gpib.dev(0,2)
+
+
+
+gpib.write(con,'INSTRUMENT:SELECT out1\n')
+reply = cmd(con,"Measure:Current?\n")
+current1=float(reply)
+
+reply = cmd(con,"Measure:Voltage?\n")
+voltage1=float(reply)
+
+gpib.write(con,'INSTRUMENT:SELECT out2\n')
+reply = cmd(con,"Measure:Current?\n")
+current2=float(reply)
+
+reply = cmd(con,"Measure:Voltage?\n")
+voltage2=float(reply)
+
+print("""<outputs-state xmlns="urn:lsi:params:xml:ns:yang:ivi-dc-power">""")
+print("""<output><name>out1</name><measurement><voltage>%.9f</voltage><current>%.9f</current></measurement></output>"""%(voltage1, current1))
+print("""<output><name>out2</name><measurement><voltage>%.9f</voltage><current>%.9f</current></measurement></output>"""%(voltage2, current2))
+print("""</outputs-state>""")

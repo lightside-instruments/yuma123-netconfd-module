@@ -26,8 +26,59 @@
 #include "rpc.h"
 #include "val.h"
 #include "val123.h"
+#include "val_set_cplxval_obj.h"
+
+
+#define BUFSIZE 1000000
 
 #define DC_POWER_MOD "lsi-ivi-dc-power"
+
+static obj_template_t* outputs_state_obj;
+
+
+static status_t
+    get_outputs_state(ses_cb_t *scb,
+                         getcb_mode_t cbmode,
+                         val_value_t *vir_val,
+                         val_value_t *dst_val)
+{
+    status_t res;
+    char* ptr;
+    res = NO_ERR;
+
+    /* /outputs-state */
+
+    char *cmd = "lsi-ivi-dc-power-get";
+
+    char buf[BUFSIZE]="";
+    FILE *fp;
+
+    if ((fp = popen(cmd, "r")) == NULL) {
+        printf("Error opening pipe!\n");
+        assert(0);
+    }
+    do {
+        ptr = fgets(buf+strlen(buf), BUFSIZE, fp);
+    } while(ptr);
+
+    printf("lsi-ivi-dc-power-get: %s", buf);
+
+    assert(strlen(buf));
+
+    if(pclose(fp))  {
+        printf("Command not found or exited with error status\n");
+        assert(0);
+    }
+
+    res = val_set_cplxval_obj(dst_val,
+                              vir_val->obj,
+                              buf);
+    /* disable cache */
+    vir_val->cachetime = 0;
+
+    return res;
+}
+
 
 static int update_config(val_value_t* config_cur_val, val_value_t* config_new_val)
 {
@@ -175,6 +226,13 @@ status_t
                                      y_commit_complete);
     assert(res == NO_ERR);
 
+    outputs_state_obj = ncx_find_object(
+        mod,
+        "outputs-state");
+    if (outputs_state_obj == NULL) {
+        return SET_ERROR(ERR_NCX_DEF_NOT_FOUND);
+    }
+
     return res;
 }
 
@@ -182,10 +240,23 @@ status_t y_lsi_ivi_dc_power_init2(void)
 {
     status_t res=NO_ERR;
     cfg_template_t* runningcfg;
+    val_value_t* outputs_state_val;
+
+    res = NO_ERR;
 
     runningcfg = cfg_get_config_id(NCX_CFGID_RUNNING);
     assert(runningcfg && runningcfg->root);
 
+    outputs_state_val = val_new_value();
+    assert(outputs_state_val != NULL);
+
+    val_init_virtual(outputs_state_val,
+                     get_outputs_state,
+                     outputs_state_obj);
+
+    val_add_child(outputs_state_val, runningcfg->root);
+
+    /* emulate initial startup configuration commit */
     y_commit_complete();
 
     return res;

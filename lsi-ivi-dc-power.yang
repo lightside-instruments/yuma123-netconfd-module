@@ -9,9 +9,9 @@ module lsi-ivi-dc-power {
     "DC power supplies management module designed
      after the IVI DC Power Supplies Class.";
 
-  revision 2022-04-21 {
+  revision 2022-05-10 {
     description
-      "Initial version.";
+      "Created /outputs-state with separate list for measurements container.";
   }
 
   feature measurement;
@@ -25,6 +25,7 @@ module lsi-ivi-dc-power {
         type string;
       }
       leaf voltage-level {
+        mandatory true;
         description
           "Specifies the voltage level the DC power supply attempts to generate.";
         units "Volt";
@@ -33,6 +34,7 @@ module lsi-ivi-dc-power {
         }
       }
       leaf current-limit {
+        mandatory true;
         description
           "Specifies the output current limit. The value of the Current Limit Behavior
            attribute determines the behavior of the power supply when the output current
@@ -42,7 +44,15 @@ module lsi-ivi-dc-power {
           fraction-digits 9;
         }
       }
+    }
+  }
 
+  container outputs-state {
+    list output {
+      key "name";
+      leaf name {
+        type string;
+      }
       container measurement {
         if-feature "measurement";
         config false;
