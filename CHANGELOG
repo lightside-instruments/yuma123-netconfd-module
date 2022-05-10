@@ -1,5 +1,5 @@
-yuma123-netconfd-module-lsi-ivi-switch (1.0) stable; urgency=medium
+yuma123-netconfd-module-lsi-ivi-dc-power (1.1) stable; urgency=medium
 
-  * Minimalistic IVI Switch class like model for YANG
+  * Minimalistic IVI DC Power class like model for YANG
 
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 08 Apr 2022 13:05:11 +0200
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 10 May 2022 02:24:19 +0200
