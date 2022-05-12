@@ -9,9 +9,9 @@ module lsi-ivi-dc-power {
     "DC power supplies management module designed
      after the IVI DC Power Supplies Class.";
 
-  revision 2022-05-10 {
+  revision 2022-05-11 {
     description
-      "Created /outputs-state with separate list for measurements container.";
+      "Fixed config false statement. Now moved to /output-state";
   }
 
   feature measurement;
@@ -48,6 +48,7 @@ module lsi-ivi-dc-power {
   }
 
   container outputs-state {
+    config false;
     list output {
       key "name";
       leaf name {
@@ -55,7 +56,6 @@ module lsi-ivi-dc-power {
       }
       container measurement {
         if-feature "measurement";
-        config false;
         leaf voltage {
           units "Volt";
           type decimal64 {
