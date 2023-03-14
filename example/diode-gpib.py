@@ -1,19 +1,14 @@
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 import gpib
 import time
 
 def cmd(con, cmd):
-	result = ""
-	gpib.write(con,cmd)
+        result = ""
+        gpib.write(con,cmd)
 
-	while(1):
-		c = gpib.read(con,1)
-		if(c == b'\n'):
-			break
-		result +=c.decode("utf-8")
+        c = gpib.read(con,2048)
+        result=c.decode("utf-8")
 
-	return result
+        return result
 
 
 con=gpib.dev(0,2)

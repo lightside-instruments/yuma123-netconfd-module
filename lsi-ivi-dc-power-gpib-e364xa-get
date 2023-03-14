@@ -1,39 +1,46 @@
-~#!/usr/bin/python
+#!/usr/bin/python
 import sys
 import gpib
 import time
 
-# Usage: ./lsi-ivi-dc-power-gpib-e364xa-set [on|off] <voltage-level> <current-limit> ... [on|off] <voltage-level> <current-limit>
+# Usage: ./lsi-ivi-dc-power-gpib-e364xa-get
 
-# Example: ./lsi-ivi-dc-power-gpib-e364xa-set on 12 0.5 on 13 0.5
+# Example: ./lsi-ivi-dc-power-gpib-e364xa-get
+#<outputs-state xmlns="urn:lsi:params:xml:ns:yang:ivi-dc-power">
+#<output><name>out1</name><measurement><voltage>0.004252079</voltage><current>-0.000072001</current></measurement></output>
+#<output><name>out2</name><measurement><voltage>0.002100524</voltage><current>-0.000328174</current></measurement></output>
+#</outputs-state>
+
 
 def cmd(con, cmd):
-	result = ""
-	gpib.write(con,cmd)
+        result = ""
+        gpib.write(con,cmd)
 
-	while(1):
-		c = gpib.read(con,1)
-		if(c == b'\n'):
-			break
-		result +=c.decode("utf-8")
+        c = gpib.read(con,2048)
+        result=c.decode("utf-8")
 
-	return result
+        return result
 
 
 con=gpib.dev(0,2)
 
 
 
-gpib.write(con,'INSTRUMENT:SELECT OUT1\n')
-gpib.write(con,'VOLTAGE %.09f\n'% (float(sys.argv[3])))
-gpib.write(con,'CURRENT %.09f\n'%(float(sys.argv[2])))
-#gpib.write(con,'OUTPUT %s\n'%(sys.argv[1]))
-gpib.write(con,'INSTRUMENT:SELECT OUT2\n')
-gpib.write(con,'VOLTAGE %.8f\n'% (float(sys.argv[6])))
-gpib.write(con,'CURRENT %.8f\n'%(float(sys.argv[5])))
-#gpib.write(con,'OUTPUT %s\n'%(sys.argv[4]))
+gpib.write(con,'INSTRUMENT:SELECT out1\n')
+reply = cmd(con,"Measure:Current?\n")
+current1=float(reply)
 
-#E3647A has a single output command. Not 2 separate based on select for each output as one would expect
-gpib.write(con,'OUTPUT ON\n')
+reply = cmd(con,"Measure:Voltage?\n")
+voltage1=float(reply)
 
+gpib.write(con,'INSTRUMENT:SELECT out2\n')
+reply = cmd(con,"Measure:Current?\n")
+current2=float(reply)
 
+reply = cmd(con,"Measure:Voltage?\n")
+voltage2=float(reply)
+
+print("""<outputs-state xmlns="urn:lsi:params:xml:ns:yang:ivi-dc-power">""")
+print("""<output><name>out1</name><measurement><voltage>%.9f</voltage><current>%.9f</current></measurement></output>"""%(voltage1, current1))
+print("""<output><name>out2</name><measurement><voltage>%.9f</voltage><current>%.9f</current></measurement></output>"""%(voltage2, current2))
+print("""</outputs-state>""")

@@ -13,9 +13,9 @@ namespaces={"nc":"urn:ietf:params:xml:ns:netconf:base:1.0",
 	"nd":"urn:ietf:params:xml:ns:yang:ietf-network",
 	"nt":"urn:ietf:params:xml:ns:yang:ietf-network-topology"}
 
+global args
 args=None
 
-global args
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="Path to the netconf configuration *.xml file defining the configuration according to ietf-networks, ietf-networks-topology and netconf-node models e.g. ../networks.xml")
 parser.add_argument('--loops', default=[],help="Loop count.")

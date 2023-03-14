@@ -1,3 +1,11 @@
+yuma123-netconfd-module-lsi-ivi-dc-power (1.4) bullseye; urgency=medium
+
+  * Fixed the *_get script overwritten with the new version of the _set script in the previous release.
+  * GPIB: Replaced single byte read loops with 2KB buffer reads
+  * Updated README with yangcli configuration command and example results
+
+ -- Vladimir Vassilev <vladimir@lightside-instrhuments.com>  Sun, 05 Mar 2023 23:52:55 +0000
+
 yuma123-netconfd-module-lsi-ivi-dc-power (1.3) stable; urgency=medium
 
   * lsi-ivi-dc-power.yang: Fixed config false statement. Now moved to /output-state1

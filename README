@@ -1,7 +1,9 @@
 # Overview
-Simple template module for netconfd - with config true instrumentation.
 
-Replace contact information with yours, lsi -> your organization, bar -> your module base name
+YANG module based on the DC Power Supply IVI class
+
+Allows configuration of Voltage and Current limits for each channel and
+monitoring of the current values of the Current and Voltage for each channel.
 
 
 # Dependencies
@@ -16,21 +18,41 @@ Installed netconfd and yangcli
 
 # Testing installation
 
- netconfd --module=lsi-bar  --no-startup --superuser=$USER
+ netconfd --module=lsi-ivi-dc-power  --no-startup --superuser=$USER
 
 Other terminal:
  yangcli --server=localhost --user=$USER
 
+...
 
-yangcli vladimir@localhost> create /bar/enabled
+ yangcli pi@localhost> create /outputs/output[name='out1'] -- voltage-level=0.8 current-limit=0.2
+ 
+ yangcli pi@localhost> commit
+ 
+ yangcli pi@localhost> xget /outputs-state
+ 
+ rpc-reply {
+   data {
+     outputs-state {
+       output out1 {
+         name out1
+         measurement {
+           voltage 0.803552500
+           current 0.014911850
+         }
+       }
+       output out2 {
+         name out2
+         measurement {
+           voltage 0.001579323
+           current -0.000341327
+         }
+       }
+     }
+   }
+ }
+ 
+ yangcli pi@localhost> delete /outputs
+ 
+ yangcli pi@localhost>
 
-Filling optional leaf /bar/enabled:
-Enter boolean value for leaf <enabled>
-yangcli vladimir@localhost:create> true
-
-RPC OK Reply 2 for session 1:
-
-yangcli vladimir@localhost> commit
-
-
-This will create a file in the directory you started netconfd containing "1".

@@ -9,7 +9,7 @@
         <netconf-connect-params xmlns="urn:tntapi:netconf-node">
           <user>pi</user>
           <server>localhost</server>
-          <password>pi</password>
+          <password>raspberry</password>
           <ncport>830</ncport>
         </netconf-connect-params>
       </node>
