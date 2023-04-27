@@ -1,4 +1,4 @@
-AC_INIT([yuma123-netconfd-module-lsi-ivi-dc-power], [1.4], [vladimir@lightside-instruments.com])
+AC_INIT([yuma123-netconfd-module-lsi-ivi-dc-power], [1.5], [vladimir@lightside-instruments.com])
 
 AC_CANONICAL_SYSTEM
 

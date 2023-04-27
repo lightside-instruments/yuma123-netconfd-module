@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-dc-power (1.5) bullseye; urgency=medium
+
+  * Fixed bugs in example/diode-netconf.py
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 27 Apr 2023 09:53:37 +0200
+
 yuma123-netconfd-module-lsi-ivi-dc-power (1.4) bullseye; urgency=medium
 
   * Fixed the *_get script overwritten with the new version of the _set script in the previous release.
