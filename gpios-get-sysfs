@@ -1,0 +1,19 @@
+#!/bin/bash
+# Usage: ./lsi-gpios-get
+
+# Example: ./lsi-gpios-get
+#<gpios-state xmlns="urn:lsi:params:xml:ns:yang:gpios">
+#<gpio><name>gpio1</name><level>0</level></gpio>
+#...
+#<gpio><name>gpio27</name><level>1</level></gpio>
+#</gpios-state>
+
+echo '<gpios-state xmlns="urn:lsi:params:xml:ns:yang:gpios">'
+
+for i in `ls -d /sys/class/gpio/gpio[0-9]*`
+do
+   gpio=`basename ${i}`
+   gpio_num=`grep -oE '([0-9]+)' <<< $gpio`
+   echo "<gpio><name>${gpio_num}</name><level>`cat ${i}/value`</level></gpio>"
+done
+echo '</gpios-state>'

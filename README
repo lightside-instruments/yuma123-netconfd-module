@@ -1,9 +1,9 @@
 # Overview
 
-YANG module based on the DC Power Supply IVI class
+YANG module for management of GPIOs
 
-Allows configuration of Voltage and Current limits for each channel and
-monitoring of the current values of the Current and Voltage for each channel.
+Allows configuration of direction of each available GPIO and logic level
+for the outputs. Allows monitoring of the current values of the inputs.
 
 
 # Dependencies
@@ -16,43 +16,48 @@ Installed netconfd and yangcli
  make
  make install
 
+
 # Testing installation
 
- netconfd --module=lsi-ivi-dc-power  --no-startup --superuser=$USER
+ sudo netconfd --module=lsi-gpios  --no-startup --superuser=pi
 
 Other terminal:
- yangcli --server=localhost --user=$USER
+ yangcli --server=localhost --user=pi --password=raspberry
+
+
 
 ...
 
- yangcli pi@localhost> create /outputs/output[name='out1'] -- voltage-level=0.8 current-limit=0.2
+ yangcli pi@localhost> create /gpios/gpio[name='27'] -- level=0
+
+ yangcli pi@localhost> create /gpios/gpio[name='17']
  
  yangcli pi@localhost> commit
  
- yangcli pi@localhost> xget /outputs-state
+ yangcli pi@localhost> xget /gpios-state
  
  rpc-reply {
    data {
-     outputs-state {
-       output out1 {
-         name out1
-         measurement {
-           voltage 0.803552500
-           current 0.014911850
-         }
+     gpios {
+       gpio 17 {
+         name 17
+         level 0
        }
-       output out2 {
-         name out2
-         measurement {
-           voltage 0.001579323
-           current -0.000341327
-         }
+       gpio 27 {
+         name 27
+         level 0
        }
      }
    }
  }
- 
- yangcli pi@localhost> delete /outputs
- 
- yangcli pi@localhost>
 
+# Blinking LED
+We can validate the implementation with a makeshift resistor
+and LED circuit connecting GPIO17, GPIO27 and GND
+
+     R1=1K  +LED-    R2=1K
+  +-|/\/\|-+-K|-+-|/\/\|-+
+  |             |        |
+  x             x        x
+ GND          GPIO17   GPIO27
+PIN#09        PIN#11   PIN#13

@@ -1,0 +1,8 @@
+#!/bin/bash
+# Usage: ./lsi-gpio-init
+
+for i in {0..27}
+do
+    echo ${i} > /sys/class/gpio/export
+done
+
