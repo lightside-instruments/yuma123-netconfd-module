@@ -13,7 +13,7 @@ do
         echo ${gpio_num} > /sys/class/gpio/export
     fi
 
-    if [ val=="1" ] || [val=="0"] ; then
+    if [ ${val} == "1" ] || [ ${val} == "0" ] ; then
         echo $val > /sys/class/gpio/gpio${gpio_num}/value
         echo out > /sys/class/gpio/gpio${gpio_num}/direction
         echo $val > /sys/class/gpio/gpio${gpio_num}/value
