@@ -1,0 +1,3 @@
+#!/bin/bash
+#base64 -d | 
+convert -verbose  jpeg:- -resize 1920x1080\! RGBO:- | display-pipe

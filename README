@@ -1,9 +1,6 @@
 # Overview
 
-YANG module based on the DC Power Supply IVI class
-
-Allows configuration of Voltage and Current limits for each channel and
-monitoring of the current values of the Current and Voltage for each channel.
+YANG module of a display that can be configured to show binary image formated as JPEG file.
 
 
 # Dependencies
@@ -18,41 +15,21 @@ Installed netconfd and yangcli
 
 # Testing installation
 
- netconfd --module=lsi-ivi-dc-power  --no-startup --superuser=$USER
+ netconfd --module=lsi-display  --no-startup --superuser=$USER
 
 Other terminal:
  yangcli --server=localhost --user=$USER
 
 ...
 
- yangcli pi@localhost> create /outputs/output[name='out1'] -- voltage-level=0.8 current-limit=0.2
+# note the "..." below substitutes the base64 data for brevity
+ cat ~/image.jpg | base64 --wrap=0
+ /9j/4AAQSkZJRgABAQEBLAEsAAD//gATQ.../2Q==
+
+
+ yangcli pi@localhost> create /displays/display[name='default'] -- image="/9j/4AAQSkZJRgABAQEBLAEsAAD//gATQ.../2Q=="
  
  yangcli pi@localhost> commit
- 
- yangcli pi@localhost> xget /outputs-state
- 
- rpc-reply {
-   data {
-     outputs-state {
-       output out1 {
-         name out1
-         measurement {
-           voltage 0.803552500
-           current 0.014911850
-         }
-       }
-       output out2 {
-         name out2
-         measurement {
-           voltage 0.001579323
-           current -0.000341327
-         }
-       }
-     }
-   }
- }
- 
- yangcli pi@localhost> delete /outputs
  
  yangcli pi@localhost>
 
