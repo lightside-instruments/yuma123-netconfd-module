@@ -32,7 +32,7 @@
 #define BUFSIZE 1000000
 
 #define DC_POWER_MOD "lsi-ivi-dc-power"
-
+static char* visa_resource_name;
 static obj_template_t* outputs_state_obj;
 
 
@@ -48,12 +48,12 @@ static status_t
 
     /* /outputs-state */
 
-    char *cmd = "lsi-ivi-dc-power-get";
-
+    char cmd_buf[BUFSIZE]="lsi-ivi-dc-power-get";
     char buf[BUFSIZE]="";
     FILE *fp;
 
-    if ((fp = popen(cmd, "r")) == NULL) {
+    sprintf(cmd_buf+strlen(cmd_buf), " %s", "TCPIP::192.168.14.20::gpib,2::INSTR");
+    if ((fp = popen(cmd_buf, "r")) == NULL) {
         printf("Error opening pipe!\n");
         assert(0);
     }
@@ -97,7 +97,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     unsigned int i;
 
-    char setcmd_buf[256]="lsi-ivi-dc-power-set on 12 0.5 on 13 0.5";
+    char setcmd_buf[BUFSIZE];
     char* ptr;
 
     if(config_new_val == NULL) {
@@ -136,6 +136,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
 
     strcpy(setcmd_buf, "lsi-ivi-dc-power-set");
+    sprintf(setcmd_buf+strlen(setcmd_buf), " \"%s\"", visa_resource_name);
     if(current_limit1_val) {
         char* current_limit_str;
         char* voltage_level_str;
@@ -222,6 +223,16 @@ status_t
     if (res != NO_ERR) {
         return res;
     }
+
+    visa_resource_name = getenv ("LSI_IVI_DC_POWER_VISA_RESOURCE_NAME");
+    if(visa_resource_name==NULL) {
+        fprintf(stderr, "Environment variable LSI_IVI_DC_POWER_VISA_RESOURCE_NAME must be defined. E.g. setenv LSI_IVI_DC_POWER_VISA_RESOURCE_NAME=\"TCPIP::192.168.14.20::gpib,2::INSTR\"");
+        return SET_ERROR(ERR_INTERNAL_VAL);
+    } else {
+        printf("LSI_IVI_DC_POWER_VISA_RESOURCE_NAME=%s",visa_resource_name);
+    }
+
+
     res=agt_commit_complete_register("lsi-ivi-dc-power" /*SIL id string*/,
                                      y_commit_complete);
     assert(res == NO_ERR);

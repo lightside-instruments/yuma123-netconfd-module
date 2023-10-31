@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-dc-power (1.6) bullseye; urgency=medium
+
+  * Replaced python3 gpib (linux-gpib) interface with vxi11 VISA resource name based interface
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 31 Oct 2023 12:26:02 +0100
+
 yuma123-netconfd-module-lsi-ivi-dc-power (1.5) bullseye; urgency=medium
 
   * Fixed bugs in example/diode-netconf.py
