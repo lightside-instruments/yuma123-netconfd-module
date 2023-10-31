@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-dc-power (1.7) bullseye; urgency=medium
+
+  * Updated README and renamed to README.md 
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 31 Oct 2023 13:00:44 +0100
+
 yuma123-netconfd-module-lsi-ivi-dc-power (1.6) bullseye; urgency=medium
 
   * Replaced python3 gpib (linux-gpib) interface with vxi11 VISA resource name based interface

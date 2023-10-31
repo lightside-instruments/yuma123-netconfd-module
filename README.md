@@ -8,21 +8,28 @@ monitoring of the current values of the Current and Voltage for each channel.
 
 # Dependencies
 Installed netconfd and yangcli
- apt-get install netconfd yangcli
+```
+apt-get install netconfd yangcli
+```
 
 # Installation
- autoreconf -i -f
- ./configure CFLAGS="-g -O0"  CXXFLAGS="-g -O0" --prefix=/usr
- make
- make install
+```
+autoreconf -i -f
+./configure CFLAGS="-g -O0"  CXXFLAGS="-g -O0" --prefix=/usr
+make
+make install
+```
 
 # Testing installation
-
- netconfd --module=lsi-ivi-dc-power  --no-startup --superuser=$USER
+```
+export LSI_IVI_DC_POWER_VISA_RESOURCE_NAME="TCPIP::192.168.14.20::gpib,2::INSTR"
+netconfd --module=lsi-ivi-dc-power  --no-startup --superuser=$USER
+```
 
 Other terminal:
- yangcli --server=localhost --user=$USER
-
+```
+yangcli --server=localhost --user=$USER
+```
 ...
 
  yangcli pi@localhost> create /outputs/output[name='out1'] -- voltage-level=0.8 current-limit=0.2
