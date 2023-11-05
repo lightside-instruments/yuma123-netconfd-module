@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-dc-power (1.9) bullseye; urgency=medium
+
+  * Added second supported device - Ember - portable power supply by Blue Smoke Electronics
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 05 Nov 2023 22:01:54 +0100
+
 yuma123-netconfd-module-lsi-ivi-dc-power (1.8) bullseye; urgency=medium
 
   * Fixed markdown syntax

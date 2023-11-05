@@ -12,6 +12,12 @@ Installed netconfd and yangcli
 apt-get install netconfd yangcli
 ```
 
+# Supported devices
+* Agilient/Keysight E3647A (default)
+* Ember - portable power supply by Blue Smoke Electronics
+
+In order to change the device replace the symbolic links for lsi-ivi-dc-power-get and lsi-ivi-dc-power-get before installing.
+
 # Installation
 ```
 autoreconf -i -f
