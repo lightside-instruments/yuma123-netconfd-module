@@ -52,7 +52,7 @@ static status_t
     char buf[BUFSIZE]="";
     FILE *fp;
 
-    sprintf(cmd_buf+strlen(cmd_buf), " %s", "TCPIP::192.168.14.20::gpib,2::INSTR");
+    sprintf(cmd_buf+strlen(cmd_buf), " %s", visa_resource_name);
     if ((fp = popen(cmd_buf, "r")) == NULL) {
         printf("Error opening pipe!\n");
         assert(0);
@@ -142,7 +142,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         char* voltage_level_str;
         current_limit_str = val_make_sprintf_string(current_limit1_val);
         voltage_level_str = val_make_sprintf_string(voltage_level1_val);
-        sprintf(setcmd_buf+strlen(setcmd_buf), " %s %s %s", "on", current_limit_str, voltage_level_str);
+        sprintf(setcmd_buf+strlen(setcmd_buf), " %s %s %s", "on", voltage_level_str, current_limit_str);
         free(current_limit_str);
         free(voltage_level_str);
     } else {
@@ -154,7 +154,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         char* voltage_level_str;
         current_limit_str = val_make_sprintf_string(current_limit2_val);
         voltage_level_str = val_make_sprintf_string(voltage_level2_val);
-        sprintf(setcmd_buf+strlen(setcmd_buf), " %s %s %s", "on", current_limit_str, voltage_level_str);
+        sprintf(setcmd_buf+strlen(setcmd_buf), " %s %s %s", "on", voltage_level_str, current_limit_str);
         free(current_limit_str);
         free(voltage_level_str);
     } else {

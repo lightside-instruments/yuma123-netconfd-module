@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-dc-power (1.10) UNRELEASED; urgency=medium
+
+  * Fixed bug in ember implementation swapping current and voltage parameters
+  * Added README text explaining how to start multiple netconfd instances with different targets
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 06 Nov 2023 01:39:18 +0100
+
 yuma123-netconfd-module-lsi-ivi-dc-power (1.9) bullseye; urgency=medium
 
   * Added second supported device - Ember - portable power supply by Blue Smoke Electronics

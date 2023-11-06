@@ -69,3 +69,24 @@ yangcli pi@localhost> delete /outputs
  
 yangcli pi@localhost>
 ```
+
+# Starting multiple netconfd instances
+It is possible to start multiple instances of different device types. Here an example of starting a secondary instance on port 10830:
+```
+mkdir ember0
+cd ember0
+ln -s ../lsi-ivi-dc-power-gpib-ember-get lsi-ivi-dc-power-get
+ln -s ../lsi-ivi-dc-power-gpib-ember-set lsi-ivi-dc-power-set
+export PATH=`pwd`:"$PATH"
+export LSI_IVI_DC_POWER_VISA_RESOURCE_NAME="TCPIP::192.168.4.103::serial,ACM0::INSTR"
+netconfd --module=lsi-ivi-dc-power  --no-startup --ncxserver-sockname=/tmp/ncxserver-10830.sock --port=10830 --superuser=y123
+'''
+
+Keep in mind you need to have the corresponding ports enabled in /etc/ssh/sshd_config:
+
+```
+...
+Port 830
+Port 10830
+Subsystem netconf "/usr/sbin/netconf-subsystem --ncxserver-sockname=10831@/tmp/ncxserver.sock --ncxserver-sockname=10830@/tmp/ncxserver-10830.sock"
+```

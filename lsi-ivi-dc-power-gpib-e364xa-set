@@ -11,12 +11,12 @@ instr = vxi11.vxi11.Instrument(sys.argv[1])
 
 
 instr.write('INSTRUMENT:SELECT OUT1')
-instr.write('VOLTAGE %.09f'% (float(sys.argv[4])))
-instr.write('CURRENT %.09f'%(float(sys.argv[3])))
+instr.write('VOLTAGE %.09f'% (float(sys.argv[3])))
+instr.write('CURRENT %.09f'%(float(sys.argv[4])))
 instr.write('OUTPUT %s'%(sys.argv[2]))
 instr.write('INSTRUMENT:SELECT OUT2')
-instr.write('VOLTAGE %.8f'% (float(sys.argv[7])))
-instr.write('CURRENT %.8f'%(float(sys.argv[6])))
+instr.write('VOLTAGE %.8f'% (float(sys.argv[6])))
+instr.write('CURRENT %.8f'%(float(sys.argv[7])))
 #instr.write('OUTPUT %s'%(sys.argv[5]))
 
 #E3647A has a single output command. Not 2 separate based on select for each output as one would expect
