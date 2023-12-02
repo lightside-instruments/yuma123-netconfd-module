@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+#!/usr/bin/python3
+
+import sys
+import os
+
+print(sys.argv)
+
+def set_gpio(gpio, value):
+    os.system("echo %d > /sys/class/gpio/export"%(gpio))
+    os.system("echo out > /sys/class/gpio/gpio%d/direction"%(gpio))
+    os.system("echo %d > /sys/class/gpio/gpio%d/value"%(value, gpio))
+
+for symbol in sys.argv[1]:
+    print(symbol)
+    if(symbol=="A"):
+        value = 1
+    elif(symbol=="B"):
+        value = 0
+    elif(symbol=="1"):
+        gpio = 17
+        set_gpio(gpio, value)
+    elif(symbol=="2"):
+        gpio = 27
+        set_gpio(gpio, value)
+    elif(symbol=="3"):
+        gpio = 23
+        set_gpio(gpio, value)
+    elif(symbol=="4" or symbol=="5" or symbol=="6"):
+        print("ignore " + symbol)
+    else:
+        print("invalid symbol: " + symbol)
+        sys.exit(-1)
