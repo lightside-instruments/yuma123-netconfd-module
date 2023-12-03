@@ -29,25 +29,6 @@
 
 #define SWITCH_MOD "lsi-ivi-switch"
 
-static void ivi_switch_config(val_value_t* output_val, int enable)
-{
-    char cmd_buf[128];
-    val_value_t* index_val;
-
-    printf("ivi-switch-config:\n");
-    if(output_val != NULL) {
-        val_dump_value(output_val,NCX_DEF_INDENT);
-    }
-
-    index_val = val_find_child(output_val,SWITCH_MOD,"index");
-    assert(index_val);
-
-    sprintf(cmd_buf, "ivi-switch %u %u", enable?1:0, VAL_UINT32(index_val));
-    log_info(cmd_buf);
-    system(cmd_buf);
-}
-
-
 static int update_config(val_value_t* config_cur_val, val_value_t* config_new_val)
 {
 
@@ -91,7 +72,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
                      connection_val != NULL;
                      connection_val = val_get_next_child(connection_val)) {
 
-                    index=VAL_STRING(connection_val)[1]-'0';
+                    index=VAL_STRING(connection_val)[1]-'1';
                     assert(index<6);
                     if(VAL_STRING(name_val)[0]=='a' || VAL_STRING(connection_val)[0]=='a')
                     bitmask = bitmask | (1<<index);

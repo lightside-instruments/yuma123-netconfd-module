@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-switch (1.2) jammy; urgency=medium
+
+  * Fixed bug in netconfd module translating A1 to A2 .. A5 to A6
+  * Added example switching in a loop that allows to determine the speed latency/bandwidth of the implementation
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 03 Dec 2023 10:51:14 +0100
+
 yuma123-netconfd-module-lsi-ivi-switch (1.1) jammy; urgency=medium
 
   * Added set script implementing the model for spark-relay-actuator-pi

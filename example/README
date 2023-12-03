@@ -1,0 +1,19 @@
+The following script is provided as practical example. It implements a loop connecting channel pairs in a loop (b1->c1, b2->c2, b3->c3)
+
+Edit networks.xml adding the NETCONF access parameters for your device.
+
+Usage:
+
+python3 switch-loop-netconf.py --config=networks.xml --loops=10 | grep '^#'
+
+
+Output:
+
+
+This same procedure and values are used in the example part of the userguide for the device directly using GPIB.
+
+Corresponding GPIB script with identical functionality is also provided - switch-loop-gpib.py:
+
+Usage:
+
+sudo python3 switch-loop-gpib.py  | grep '^#'
