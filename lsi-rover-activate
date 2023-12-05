@@ -1,0 +1,64 @@
+#!/usr/bin/python3
+
+import datetime
+import serial
+import time
+
+def log():
+	# clear read pipe
+	ser.timeout=1
+	data = ser.read(1000)
+	print(str(data))
+	ser.timeout=None
+
+def state():
+	# clear read pipe
+	ser.timeout=0
+	data = ser.read(1000)
+	print(data)
+	ser.timeout=None
+	# status
+	ser.write(b'\x8E\x00')
+	data = ser.read(26)
+	print(data)
+	print(data[16])
+	print("charge   =%05d mAh" %(data[22]*256*data[23]))
+	print("capacity =%05d mAh" %(data[24]*256*data[25]))
+	return (data[16])
+
+
+# Open a serial connection to Roomba
+ser = serial.Serial(port='/dev/ttyUSB0', baudrate=115200)
+
+ser.write(b'\x07') #RESET?
+t = datetime.datetime.now()
+timeout = t+datetime.timedelta(seconds=20)
+
+while((timeout-t).total_seconds()>0):
+	log()
+	t = datetime.datetime.now()
+
+print("start")
+ser.write(b'\x80') #START
+time.sleep(2)
+print("control")
+ser.write(b'\x82') #CONTROL
+time.sleep(2)
+print("safe")
+ser.write(b'\x83') #SAFE=0x83, FULL=0x84
+time.sleep(2)
+state()
+
+
+state()
+
+print("go back")
+ser.write(b'\x89\xff\x9b\x80\x00') # back 100 mm/s
+time.sleep(4)
+
+#stop?
+ser.write(b'\x89\x00\x00\x00\x00')
+
+# Close the serial port; we're done for now.
+ser.close()
+

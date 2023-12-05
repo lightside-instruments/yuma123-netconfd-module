@@ -1,9 +1,8 @@
 # Overview
 
-YANG module based on the Switch IVI class
+YANG module for driving around a rover
 
-Allows configuration of channel and connections.
-
+Currently allows activating the rover from sleep and rotating it with the precision of integer degrees from 0 to 359
 
 # Dependencies
 Installed netconfd and yangcli
@@ -12,10 +11,9 @@ apt-get install netconfd yangcli
 ```
 
 # Supported devices
-* HP 59306A - GPIB relay actuator - 6x 2 position (a,b) switches with 1 connection peer (c)
-* LSI spark-relay-actuator-pi-3.x - same as HP 59306A but instead GPIB has GPIO control of the relays from a Raspberry Pi compatible device
+* iRoomba 600
 
-In order to change the device replace the symbolic links for lsi-ivi-switch-set and lsi-ivi-switch-set before installing.
+In order to change the device replace the symbolic links for lsi-rover-activate, lsi-rover-rotate, lsi-rover-dock
 
 # Installation
 ```
@@ -27,7 +25,7 @@ make install
 
 # Testing installation
 ```
-netconfd --module=lsi-ivi-switch  --no-startup --superuser=$USER
+netconfd --module=lsi-rover  --no-startup --superuser=$USER
 ```
 
 Other terminal:
@@ -36,9 +34,11 @@ yangcli --server=localhost --user=$USER
 
 ...
 
-yangcli pi@localhost> create /channels/channel[name='a1']/connections -- connection='c1'
-yangcli pi@localhost> create /channels/channel[name='c1']
+yangcli pi@localhost> create /rover -- angle=0
+yangcli pi@localhost> commit
+yangcli pi@localhost> replace /rover -- angle=180
+yangcli pi@localhost> commit
+yangcli pi@localhost> delete /rover
 yangcli pi@localhost> commit
 ```
 
-Check the example/README for a example using the interface from python scripts.

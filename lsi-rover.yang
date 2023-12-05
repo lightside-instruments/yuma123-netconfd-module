@@ -1,0 +1,26 @@
+module lsi-rover {
+  yang-version 1.1;
+  namespace "urn:lsi:params:xml:ns:yang:rover";
+  prefix rover;
+
+  organization  "Lightside Instruments AS";
+
+  description
+    "Rover management module.";
+
+  revision 2023-12-05 {
+    description
+      "Initial incomplete version.";
+  }
+
+  container rover {
+    presence "Activates the rover";
+    leaf angle {
+      description "Orientation angle in integer degrees";
+      type int32 {
+        range "0..359";
+      }
+      mandatory true;
+    }
+  }
+}
