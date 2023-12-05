@@ -41,19 +41,22 @@ for i in range(1,int(args.loops)):
 		assert(len(ok)==1)
 	tntapi.network_commit(conns)
 	for node_name in yconns.keys():
-		ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')
-		assert(len(ok)==1)
 		ok=yangcli(yconns[node_name],"""create /channels/channel[name='a2']/connections -- connection='c2'""").xpath('./ok')
 		assert(len(ok)==1)
 		ok=yangcli(yconns[node_name],"""create /channels/channel[name='c2']""").xpath('./ok')
 		assert(len(ok)==1)
 	tntapi.network_commit(conns)
 	for node_name in yconns.keys():
-		ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')
-		assert(len(ok)==1)
 		ok=yangcli(yconns[node_name],"""create /channels/channel[name='a3']/connections -- connection='c3'""").xpath('./ok')
 		assert(len(ok)==1)
 		ok=yangcli(yconns[node_name],"""create /channels/channel[name='c3']""").xpath('./ok')
 		assert(len(ok)==1)
 	tntapi.network_commit(conns)
+	time.sleep(0.5)
+
+	for node_name in yconns.keys():
+		ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')
+		assert(len(ok)==1)
+	tntapi.network_commit(conns)
+	time.sleep(0.5)
 
