@@ -26,7 +26,8 @@
 #include "rpc.h"
 #include "val.h"
 #include "val123.h"
-
+#include <sys/time.h>
+#include "relay-actuator-io.h"
 #define SWITCH_MOD "lsi-ivi-switch"
 
 static int update_config(val_value_t* config_cur_val, val_value_t* config_new_val)
@@ -41,11 +42,10 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *connection_val;
 
     unsigned int i;
+    int ret;
     unsigned int bitmask = 0;
     unsigned int index = 0;
 
-    char setcmd_buf[]="lsi-ivi-switch-set B135A246";
-    char* ptr;
 
     if(config_new_val == NULL) {
         channels_val = NULL;
@@ -81,27 +81,16 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         }
     }
 
-    /* e.g. B135A246 */
-    if(bitmask != 0x3F) {
-        ptr = setcmd_buf + strlen("lsi-ivi-switch-set ");
-        *ptr++='B';
-        for(i=0;i<6;i++) {
-            if(bitmask & (1<<i)) {
-                continue;
-            }
-            *ptr++=i+'1';
-        }
-    }
-    if(bitmask != 0) {
-        *ptr++='A';
-        for(i=0;i<6;i++) {
-            if(bitmask & (1<<i)) {
-                *ptr++=i+'1';
-            }
-        }
-    }
-    *ptr=0;
-    system(setcmd_buf);
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    ret=relay_actuator_io_set(bitmask);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double time_taken;
+    time_taken = (end.tv_sec - start.tv_sec) * 1e9;
+    time_taken = (time_taken + (end.tv_nsec - start.tv_nsec)) * 1e-9;
+    printf("call time=%lf", time_taken);
+    
+    assert(ret==0);
 
     return NO_ERR;
 }
@@ -149,6 +138,7 @@ status_t
 {
     agt_profile_t* agt_profile;
     status_t res;
+    int ret;
     ncx_module_t *mod;
 
     agt_profile = agt_get_profile();
@@ -164,6 +154,9 @@ status_t
     res=agt_commit_complete_register("lsi-ivi-switch" /*SIL id string*/,
                                      y_commit_complete);
     assert(res == NO_ERR);
+
+    ret=relay_actuator_io_init();
+    assert(ret==0);
 
     return res;
 }

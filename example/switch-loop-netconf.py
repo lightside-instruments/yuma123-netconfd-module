@@ -5,8 +5,28 @@ import time
 import sys, os
 import argparse
 import tntapi
-import yangrpc
-from yangcli import yangcli
+import lxml
+
+
+def copy_config_and_commit(conn,rpc):
+	ret = conn.send(rpc)
+	if ret == False:
+		print("[FAILED] Sending <copy-config>")
+		sys.exit(-1)
+
+	reply_xml=conns[node_name].receive()
+#	print(lxml.etree.tostring(reply_xml))
+	if reply_xml == None:
+		print("[FAILED] Receiving <copy-config> reply")
+		return(False)
+	ret = conn.send('''<commit xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"/>''')
+	reply_xml=conns[node_name].receive()
+	if reply_xml == None:
+		print("[FAILED] Receiving <commit> reply")
+		return(False)
+
+#	tntapi.network_commit(conns)
+	return(True)
 
 
 namespaces={"nc":"urn:ietf:params:xml:ns:netconf:base:1.0",
@@ -32,31 +52,125 @@ for node_name in yconns.keys():
 	tntapi.network_commit(conns)
 
 for i in range(1,int(args.loops)):
-	for node_name in yconns.keys():
-		ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')
-		#assert(len(ok)==1)
-		ok=yangcli(yconns[node_name],"""create /channels/channel[name='a1']/connections -- connection='c1'""").xpath('./ok')
-		assert(len(ok)==1)
-		ok=yangcli(yconns[node_name],"""create /channels/channel[name='c1']""").xpath('./ok')
-		assert(len(ok)==1)
-	tntapi.network_commit(conns)
-	for node_name in yconns.keys():
-		ok=yangcli(yconns[node_name],"""create /channels/channel[name='a2']/connections -- connection='c2'""").xpath('./ok')
-		assert(len(ok)==1)
-		ok=yangcli(yconns[node_name],"""create /channels/channel[name='c2']""").xpath('./ok')
-		assert(len(ok)==1)
-	tntapi.network_commit(conns)
-	for node_name in yconns.keys():
-		ok=yangcli(yconns[node_name],"""create /channels/channel[name='a3']/connections -- connection='c3'""").xpath('./ok')
-		assert(len(ok)==1)
-		ok=yangcli(yconns[node_name],"""create /channels/channel[name='c3']""").xpath('./ok')
-		assert(len(ok)==1)
-	tntapi.network_commit(conns)
-	time.sleep(0.5)
 
-	for node_name in yconns.keys():
-		ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')
-		assert(len(ok)==1)
-	tntapi.network_commit(conns)
-	time.sleep(0.5)
+	rpc='''
+  <copy-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <target>
+      <candidate/>
+    </target>
+
+    <source>
+    <config>
+      <channels xmlns="urn:lsi:params:xml:ns:yang:ivi-switch">
+        <channel>
+          <name>c1</name>
+        </channel>
+        <channel>
+          <name>a1</name>
+          <connections>
+            <connection>c1</connection>
+          </connections>
+        </channel>
+      </channels>
+    </config>
+    </source>
+  </copy-config>
+'''
+	copy_config_and_commit(conns[node_name],rpc);
+
+	rpc='''
+  <copy-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <target>
+      <candidate/>
+    </target>
+
+    <source>
+    <config>
+      <channels xmlns="urn:lsi:params:xml:ns:yang:ivi-switch">
+        <channel>
+          <name>c1</name>
+        </channel>
+        <channel>
+          <name>a1</name>
+          <connections>
+            <connection>c1</connection>
+          </connections>
+        </channel>
+        <channel>
+          <name>c2</name>
+        </channel>
+        <channel>
+          <name>a2</name>
+          <connections>
+            <connection>c2</connection>
+          </connections>
+        </channel>
+      </channels>
+    </config>
+    </source>
+  </copy-config>
+'''
+	copy_config_and_commit(conns[node_name],rpc);
+
+
+	rpc='''
+  <copy-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <target>
+      <candidate/>
+    </target>
+
+    <source>
+    <config>
+      <channels xmlns="urn:lsi:params:xml:ns:yang:ivi-switch">
+        <channel>
+          <name>c1</name>
+        </channel>
+        <channel>
+          <name>a1</name>
+          <connections>
+            <connection>c1</connection>
+          </connections>
+        </channel>
+        <channel>
+          <name>c2</name>
+        </channel>
+        <channel>
+          <name>a2</name>
+          <connections>
+            <connection>c2</connection>
+          </connections>
+        </channel>
+        <channel>
+          <name>c3</name>
+        </channel>
+        <channel>
+          <name>a3</name>
+          <connections>
+            <connection>c3</connection>
+          </connections>
+        </channel>
+      </channels>
+    </config>
+    </source>
+  </copy-config>
+'''
+	copy_config_and_commit(conns[node_name],rpc);
+
+	#time.sleep(0.5)
+
+	rpc='''
+  <copy-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <target>
+      <candidate/>
+    </target>
+
+    <source>
+    <config>
+    </config>
+    </source>
+  </copy-config>
+'''
+	copy_config_and_commit(conns[node_name],rpc);
+
+	#time.sleep(0.5)
 

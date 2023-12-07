@@ -10,10 +10,11 @@ python3 switch-loop-netconf.py --config=networks.xml --loops=10 | grep '^#'
 Output:
 
 
-This same procedure and values are used in the example part of the userguide for the device directly using GPIB.
-
-Corresponding GPIB script with identical functionality is also provided - switch-loop-gpib.py:
+Corresponding yangcli syntax based commandline to NETCONF PDUs script with identical functionality is also provided - switch-loop-yangcli.py:
 
 Usage:
 
-sudo python3 switch-loop-gpib.py  | grep '^#'
+sudo python3 switch-loop-yangcli.py  | grep '^#'
+
+
+The yangcli syntax makes configuration of YANG/NETCONF devices similar to programming SCPI command like instruments while converting to NETCONF is automated based on the YANG modules the device implements.

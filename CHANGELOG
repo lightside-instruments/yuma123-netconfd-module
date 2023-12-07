@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-switch (1.4) jammy; urgency=medium
+
+  * Added module implemlementation alternative that does not use external python script but programs the GPIOs from the same process writing to sysfs.
+  * Modified example by moveing the switch-loop-netconf.py to switch-loop-yangcli.py and refactoring switch-loop-netconf.py to use the low level NETCONF send and receive operations without yangcli parsing as alternative. 
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 07 Dec 2023 19:04:42 +0100
+
 yuma123-netconfd-module-lsi-ivi-switch (1.3) jammy; urgency=medium
 
   * Modified example switch loop to connect 3 channels in sequence one by one without disconnecting the previous. Then waiting 0.5 seconds to disconnect all together.
