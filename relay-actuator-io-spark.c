@@ -14,9 +14,16 @@ int relay_actuator_io_init(void)
     f = fopen("/sys/class/gpio/export","w");
     assert(f);
     ret=fwrite("17\n", 3,1, f);
+    fclose(f);
+    f = fopen("/sys/class/gpio/export","w");
+    assert(f);
     ret=fwrite("27\n", 3,1, f);
+    fclose(f);
+    f = fopen("/sys/class/gpio/export","w");
+    assert(f);
     ret=fwrite("23\n", 3,1, f);
     fclose(f);
+
     f = fopen("/sys/class/gpio/gpio17/direction", "w");
     assert(f);
     ret=fwrite("out\n", 4,1, f);

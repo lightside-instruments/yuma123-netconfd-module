@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-switch (1.6) jammy; urgency=medium
+
+  * Fixed bug in relay-actuator-io-spark.c causing assert if the GPIOs are not exported.
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 07 Dec 2023 20:32:19 +0100
+
 yuma123-netconfd-module-lsi-ivi-switch (1.5) jammy; urgency=medium
 
   * Modified example. Fixed bug. Modified switch-loop-netconf.py to showcase optimization removing significance of latency in multi-device setups.
