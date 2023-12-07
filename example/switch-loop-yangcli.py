@@ -27,10 +27,6 @@ network = tree.xpath('/nc:config/nd:networks/nd:network', namespaces=namespaces)
 conns = tntapi.network_connect(network)
 yconns = tntapi.network_connect_yangrpc(network)
 
-for node_name in yconns.keys():
-	ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')
-	tntapi.network_commit(conns)
-
 for i in range(1,int(args.loops)):
 	for node_name in yconns.keys():
 		ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')

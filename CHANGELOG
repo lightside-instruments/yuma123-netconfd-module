@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-switch (1.5) jammy; urgency=medium
+
+  * Modified example. Fixed bug. Modified switch-loop-netconf.py to showcase optimization removing significance of latency in multi-device setups.
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 07 Dec 2023 20:07:55 +0100
+
 yuma123-netconfd-module-lsi-ivi-switch (1.4) jammy; urgency=medium
 
   * Added module implemlementation alternative that does not use external python script but programs the GPIOs from the same process writing to sysfs.

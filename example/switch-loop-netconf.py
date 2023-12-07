@@ -8,25 +8,32 @@ import tntapi
 import lxml
 
 
-def copy_config_and_commit(conn,rpc):
+def copy_config_send(conn,rpc):
 	ret = conn.send(rpc)
 	if ret == False:
 		print("[FAILED] Sending <copy-config>")
 		sys.exit(-1)
 
-	reply_xml=conns[node_name].receive()
-#	print(lxml.etree.tostring(reply_xml))
-	if reply_xml == None:
-		print("[FAILED] Receiving <copy-config> reply")
-		return(False)
-	ret = conn.send('''<commit xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"/>''')
-	reply_xml=conns[node_name].receive()
-	if reply_xml == None:
-		print("[FAILED] Receiving <commit> reply")
-		return(False)
+def reply_recv(conn):
+	reply_xml=conn.receive()
+	return (reply_xml)
 
-#	tntapi.network_commit(conns)
-	return(True)
+def commit_send(conn):
+	ret = conn.send('''<commit xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"/>''')
+
+def copy_config_and_commit_network(conns, rpc):
+	for node_name in conns.keys():
+		copy_config_send(conns[node_name],rpc);
+
+	for node_name in conns.keys():
+		reply_recv(conns[node_name]);
+
+	for node_name in conns.keys():
+		commit_send(conns[node_name])
+
+	for node_name in conns.keys():
+		reply_recv(conns[node_name]);
+
 
 
 namespaces={"nc":"urn:ietf:params:xml:ns:netconf:base:1.0",
@@ -47,12 +54,7 @@ network = tree.xpath('/nc:config/nd:networks/nd:network', namespaces=namespaces)
 conns = tntapi.network_connect(network)
 yconns = tntapi.network_connect_yangrpc(network)
 
-for node_name in yconns.keys():
-	ok=yangcli(yconns[node_name],"""delete /channels""").xpath('./ok')
-	tntapi.network_commit(conns)
-
 for i in range(1,int(args.loops)):
-
 	rpc='''
   <copy-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
     <target>
@@ -76,7 +78,8 @@ for i in range(1,int(args.loops)):
     </source>
   </copy-config>
 '''
-	copy_config_and_commit(conns[node_name],rpc);
+
+	copy_config_and_commit_network(conns, rpc)
 
 	rpc='''
   <copy-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
@@ -110,7 +113,7 @@ for i in range(1,int(args.loops)):
     </source>
   </copy-config>
 '''
-	copy_config_and_commit(conns[node_name],rpc);
+	copy_config_and_commit_network(conns,rpc);
 
 
 	rpc='''
@@ -154,9 +157,9 @@ for i in range(1,int(args.loops)):
     </source>
   </copy-config>
 '''
-	copy_config_and_commit(conns[node_name],rpc);
+	copy_config_and_commit_network(conns,rpc);
 
-	#time.sleep(0.5)
+		#time.sleep(0.5)
 
 	rpc='''
   <copy-config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
@@ -170,7 +173,7 @@ for i in range(1,int(args.loops)):
     </source>
   </copy-config>
 '''
-	copy_config_and_commit(conns[node_name],rpc);
+	copy_config_and_commit_network(conns,rpc);
 
 	#time.sleep(0.5)
 
