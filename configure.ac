@@ -1,4 +1,4 @@
-AC_INIT([yuma123-netconfd-module-lsi-ivi-switch], [1.6], [vladimir@lightside-instruments.com])
+AC_INIT([yuma123-netconfd-module-lsi-ivi-switch], [1.7], [vladimir@lightside-instruments.com])
 
 AC_CANONICAL_SYSTEM
 
@@ -25,7 +25,11 @@ AC_SUBST(agt_netconf_includedir)
 CFLAGS="$CFLAGS -g -fPIC -DDEBUG=1 -DLINUX=1 -DGCC=1"
 AC_SUBST(CFLAGS)
 
-AM_PATH_XML2
+PKG_CHECK_MODULES([LIBXML2], [libxml-2.0 >= 2.3.9])
+XML_LIBS="$LIBXML2_LIBS"
+XML_CPPFLAGS="$LIBXML2_CFLAGS"
+AC_SUBST([XML_LIBS])
+AC_SUBST([XML_CPPFLAGS])
 
 AC_CONFIG_FILES([
         Makefile

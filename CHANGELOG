@@ -1,3 +1,11 @@
+yuma123-netconfd-module-lsi-ivi-switch (1.7) bookworm; urgency=medium
+
+  * Added fast gpib implementation option that does not use system call
+  * Added debian package directory
+  * Fixed issue with outdated libxml2 detection macro in configure.ac
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 12 Dec 2023 17:06:42 +0100
+
 yuma123-netconfd-module-lsi-ivi-switch (1.6) jammy; urgency=medium
 
   * Fixed bug in relay-actuator-io-spark.c causing assert if the GPIOs are not exported.
