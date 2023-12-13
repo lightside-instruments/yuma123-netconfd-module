@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-switch (1.8) bookworm; urgency=medium
+
+  * Fixed compilation error in GPIB implementation
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 13 Dec 2023 18:30:19 +0100
+
 yuma123-netconfd-module-lsi-ivi-switch (1.7) bookworm; urgency=medium
 
   * Added fast gpib implementation option that does not use system call

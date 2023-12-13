@@ -9,7 +9,7 @@ int relay_actuator_io_init(void)
 {
     int ret;
     device_descriptor=ibdev(0,GPIB_PAD,0,T1000s/*T3s*/,0,0);
-    assert(device>=0)
+    assert(device_descriptor>=0);
 
     return 0;
 }
@@ -41,6 +41,6 @@ int relay_actuator_io_set(unsigned int bitmask)
     }
     *ptr=0;
 
-    ibwrt(dev,setcmd_buf,8);
+    ibwrt(device_descriptor, setcmd_buf,8);
     return 0;
 }
