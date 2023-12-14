@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-display (1.1) jammy; urgency=medium
+
+  * Added preview example reading data from lsi-camera device
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 15 Dec 2023 00:21:19 +0100
+
 yuma123-netconfd-module-lsi-display (1.0) bullseye; urgency=medium
 
   * Initial release.
