@@ -1,4 +1,10 @@
-yuma123-netconfd-module-lsi-rover (1.0) UNRELEASED; urgency=medium
+yuma123-netconfd-module-lsi-rover (1.1) jammy; urgency=medium
+
+  * Added example
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 14 Dec 2023 23:02:21 +0100
+
+yuma123-netconfd-module-lsi-rover (1.0) jammy; urgency=medium
 
   * Rover management model and implementation for iRoomba 600. Currently just activates, rotates and docks back the rover.
 

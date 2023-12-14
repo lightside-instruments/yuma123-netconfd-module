@@ -1,0 +1,10 @@
+This example activates the rover turns around and deactivates it returning to the charging station.
+
+Edit networks.xml adding the NETCONF access parameters for your device.
+
+Usage:
+
+python3 test-yangcli.py --config=networks.xml --loops=10 | grep '^#'
+
+
+The yangcli syntax makes configuration of YANG/NETCONF devices similar to programming SCPI command like instruments while converting to NETCONF is automated based on the YANG modules the device implements.
