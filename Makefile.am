@@ -9,4 +9,4 @@ liblsi_rover_la_LDFLAGS = -module -lyumaagt -lyumancx
 
 yang_DATA = lsi-rover.yang
 
-bin_SCRIPTS = lsi-rover-activate lsi-rover-dock lsi-rover-rotate
+bin_SCRIPTS = lsi-rover-activate lsi-rover-dock lsi-rover-move

@@ -17,9 +17,17 @@ module lsi-rover {
     presence "Activates the rover";
     leaf angle {
       description "Orientation angle in integer degrees";
-      type int32 {
-        range "0..359";
-      }
+      type int32;
+      mandatory true;
+    }
+    leaf distance {
+      description "Distance to travel in millimeters";
+      type int32;
+      mandatory true;
+    }
+    leaf velocity {
+      description "Velocity in millimeters per second";
+      type int32;
       mandatory true;
     }
   }

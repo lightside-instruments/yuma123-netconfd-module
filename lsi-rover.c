@@ -38,6 +38,10 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *rover_cur_val;
     val_value_t *angle_new_val;
     val_value_t *angle_cur_val;
+    val_value_t *distance_new_val;
+    val_value_t *distance_cur_val;
+    val_value_t *velocity_new_val;
+    val_value_t *velocity_cur_val;
 
     unsigned int i;
 
@@ -59,21 +63,31 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         angle_new_val = val_find_child(rover_new_val,      
                                ROVER_MOD,
                                "angle");
+        distance_new_val = val_find_child(rover_new_val,      
+                               ROVER_MOD,
+                               "distance");
+        velocity_new_val = val_find_child(rover_new_val,      
+                               ROVER_MOD,
+                               "velocity");
     }
     if(rover_cur_val) {
         angle_cur_val = val_find_child(rover_cur_val,      
                                ROVER_MOD,
                                "angle");
+        distance_cur_val = val_find_child(rover_cur_val,      
+                               ROVER_MOD,
+                               "distance");
+        velocity_cur_val = val_find_child(rover_cur_val,      
+                               ROVER_MOD,
+                               "velocity");
     }
 
     if((rover_cur_val == NULL) && rover_new_val) {
         system("lsi-rover-activate &");
-        sprintf(setcmd_buf, "lsi-rover-rotate %d",VAL_UINT32(angle_new_val)-180);
-        system(setcmd_buf);
     } else if((rover_new_val == NULL) && rover_cur_val) {
         system("lsi-rover-dock &");
     } else {
-    	sprintf(setcmd_buf, "lsi-rover-rotate %d &",VAL_UINT32(angle_new_val)-VAL_UINT32(angle_cur_val));
+    	sprintf(setcmd_buf, "lsi-rover-move %d %d %d &",VAL_INT32(angle_new_val)-VAL_INT32(angle_cur_val), VAL_INT32(distance_new_val)-VAL_INT32(distance_cur_val), VAL_INT32(velocity_cur_val));
         system(setcmd_buf);
     }
 

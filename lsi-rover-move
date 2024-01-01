@@ -1,0 +1,98 @@
+#!/usr/bin/python3
+
+import datetime
+import serial
+import time
+import sys
+import math
+
+def log():
+	# clear read pipe
+	ser.timeout=1
+	data = ser.read(1000)
+	print(str(data))
+	ser.timeout=None
+
+def state():
+	# clear read pipe
+	ser.timeout=0
+	data = ser.read(1000)
+	print(data)
+	ser.timeout=None
+	# status
+	ser.write(b'\x8E\x00')
+	data = ser.read(26)
+	print(data)
+	print(data[16])
+	print("charge   =%05d mAh" %(data[22]*256*data[23]))
+	print("capacity =%05d mAh" %(data[24]*256*data[25]))
+	return (data[16])
+
+
+# Open a serial connection to Roomba
+ser = serial.Serial(port='/dev/ttyUSB0', baudrate=115200)
+
+angle = int(sys.argv[1])
+
+if len(sys.argv) >= 3:
+	distance=int(sys.argv[2])
+else:
+	distance=0
+
+if len(sys.argv) >= 4:
+	velocity=int(sys.argv[3])
+else:
+	velocity=500 # 500 mm/s
+
+print("moving angle=%d, distance=%d, velocity=%d"%(angle, distance, velocity))
+
+#max velocity x01\xf4 500 mm/s
+#used velocity x00\x64 100 mm/s
+
+if(angle > 0):
+	velocity_bytes=int(+velocity).to_bytes(2, 'big')
+else:
+	velocity_bytes=int(-velocity).to_bytes(2, 'big', signed=True)
+
+print(velocity_bytes)
+
+print("rotate")
+ser.write(b'\x89')
+ser.write(velocity_bytes)
+ser.write(b'\xff\xff')
+
+#if(angle > 0):
+#	print("clockwise")
+#	ser.write(b'\xff\xff') # rotate clockwise
+#else:
+#	print("counter clockwise")
+#	ser.write(b'\x00\x01') # rotate counter-clockwise
+
+time.sleep((abs(angle)/360)*100*12.2/(2.0*velocity)) # seems this calibration depends on the velocity. currently for 100 mm/s
+
+print("stop")
+ser.write(b'\x89\x00\x00\x00\x00') # back 100 mm/s
+
+print("moving distance=%d, velocity=%d"%(distance, velocity))
+
+#max velocity from -500 to 500 mm/s (0xFE0C to 0x01F4)
+
+
+if(distance > 0):
+	velocity_bytes=int(+velocity).to_bytes(2, 'big')
+else:
+	velocity_bytes=int(-velocity).to_bytes(2, 'big', signed=True)
+
+print(velocity_bytes)
+
+ser.write(b'\x89')
+ser.write(velocity_bytes)
+ser.write(b'\x80\x00')
+
+time.sleep((abs(distance)/velocity)*1.0)
+
+print("stop")
+ser.write(b'\x89\x00\x00\x00\x00')
+
+# Close the serial port; we're done for now.
+ser.close()

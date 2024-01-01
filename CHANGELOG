@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-rover (1.2) jammy; urgency=medium
+
+  * Added a /rover/distance which together with /rover/angle specifies the position in polar coordinate system
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 01 Jan 2024 14:14:56 +0100
+
 yuma123-netconfd-module-lsi-rover (1.1) jammy; urgency=medium
 
   * Added example
@@ -9,28 +15,3 @@ yuma123-netconfd-module-lsi-rover (1.0) jammy; urgency=medium
   * Rover management model and implementation for iRoomba 600. Currently just activates, rotates and docks back the rover.
 
  -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 05 Dec 2023 18:17:16 +0100
-
-yuma123-netconfd-module-lsi-ivi-switch (1.3) jammy; urgency=medium
-
-  * Modified example switch loop to connect 3 channels in sequence one by one without disconnecting the previous. Then waiting 0.5 seconds to disconnect all together.
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 05 Dec 2023 02:43:00 +0100
-
-yuma123-netconfd-module-lsi-ivi-switch (1.2) jammy; urgency=medium
-
-  * Fixed bug in netconfd module translating A1 to A2 .. A5 to A6
-  * Added example switching in a loop that allows to determine the speed latency/bandwidth of the implementation
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 03 Dec 2023 10:51:14 +0100
-
-yuma123-netconfd-module-lsi-ivi-switch (1.1) jammy; urgency=medium
-
-  * Added set script implementing the model for spark-relay-actuator-pi
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sat, 02 Dec 2023 03:02:29 +0100
-
-yuma123-netconfd-module-lsi-ivi-switch (1.0) stable; urgency=medium
-
-  * Minimalistic IVI Switch class like model for YANG
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 08 Apr 2022 13:05:11 +0200
