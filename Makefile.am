@@ -1,13 +1,12 @@
-netconfmodule_LTLIBRARIES = liblsi-gpios.la
+netconfmodule_LTLIBRARIES = liblsi-lights.la
 
-liblsi_gpios_la_SOURCES = \
-gpios.c
+liblsi_lights_la_SOURCES = \
+mod.c
 
 # Depends on installed libyuma-dev
-liblsi_gpios_la_CPPFLAGS = -I${includedir}/yuma/agt -I${includedir}/yuma/ncx -I${includedir}/yuma/platform $(XML_CPPFLAGS)
-liblsi_gpios_la_LDFLAGS = -module -lyumaagt -lyumancx
+liblsi_lights_la_CPPFLAGS = -I${includedir}/yuma/agt -I${includedir}/yuma/ncx -I${includedir}/yuma/platform $(XML_CPPFLAGS)
+liblsi_lights_la_LDFLAGS = -module -lyumaagt -lyumancx
 
-yang_DATA = lsi-gpios.yang lsi-gpios-raspberry-pi-names.yang
+yang_DATA = lsi-lights.yang
 
-bin_SCRIPTS = gpios-init gpios-set gpios-get
-
+bin_SCRIPTS = lights-init lights-set

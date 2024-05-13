@@ -1,4 +1,4 @@
-AC_INIT([yuma123-netconfd-module-lsi-gpio], [1.0], [vladimir@lightside-instruments.com])
+AC_INIT([yuma123-netconfd-module-lsi-lights], [1.0], [vladimir@lightside-instruments.com])
 
 AC_CANONICAL_SYSTEM
 

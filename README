@@ -1,9 +1,9 @@
 # Overview
 
-YANG module for management of GPIOs
+YANG module for management of lights
 
-Allows configuration of direction of each available GPIO and logic level
-for the outputs. Allows monitoring of the current values of the inputs.
+Allows configuration of RGB lights (currently implemented for ws2812b LED strips based on the ice4pi-example-i2cslave-ws2812b)
+
 
 
 # Dependencies
@@ -19,7 +19,7 @@ Installed netconfd and yangcli
 
 # Testing installation
 
- sudo netconfd --module=lsi-gpios  --no-startup --superuser=pi
+ sudo netconfd --module=lsi-lights  --no-startup --superuser=pi
 
 Other terminal:
  yangcli --server=localhost --user=pi --password=raspberry
@@ -28,36 +28,10 @@ Other terminal:
 
 ...
 
- yangcli pi@localhost> create /gpios/gpio[name='GPIO27'] -- level=0
+ yangcli pi@localhost> create /lights/light[name='main'] -- red=255 green=0 blue=0
 
- yangcli pi@localhost> create /gpios/gpio[name='GPIO17']
- 
  yangcli pi@localhost> commit
  
- yangcli pi@localhost> xget /gpios-state
- 
- rpc-reply {
-   data {
-     gpios {
-       gpio GPIO17 {
-         name GPIO17
-         level 0
-       }
-       gpio GPIO27 {
-         name GPIO27
-         level 0
-       }
-     }
-   }
- }
+...
 
-# Blinking LED
-We can validate the implementation with a makeshift resistor
-and LED circuit connecting GPIO17, GPIO27 and GND
-
-     R1=1K  +LED-    R2=1K
-  +-|/\/\|-+-K|-+-|/\/\|-+
-  |             |        |
-  x             x        x
- GND          GPIO17   GPIO27
-PIN#09        PIN#11   PIN#13
+And the lights are red with maximum intensity.

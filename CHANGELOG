@@ -1,18 +1,5 @@
-yuma123-netconfd-module-lsi-gpio (1.2) bookworm; urgency=medium
+yuma123-netconfd-module-lsi-lights (1.0) bookworm; urgency=medium
 
-  * Replaced sysfs implementation with gpiod
+  * Initial release.
 
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 13 May 2024 19:51:28 +0200
-
-yuma123-netconfd-module-lsi-gpio (1.1) bullseye; urgency=medium
-
-  * Fixed bug in gpios-set-sysfs causing input gpios to be configured as outputs
-  * Commented code in gpios-init-sysfs exporting all 0-27 gpios
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 02 May 2023 00:25:51 +0200
-
-yuma123-netconfd-module-lsi-gpio (1.0) bullseye; urgency=medium
-
-  * Initial
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 30 Apr 2023 20:56:30 +0200
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 14 May 2024 01:15:27 +0200
