@@ -1,1 +1,1 @@
-gpios-get-sysfs
+gpios-get-gpiod

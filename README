@@ -28,9 +28,9 @@ Other terminal:
 
 ...
 
- yangcli pi@localhost> create /gpios/gpio[name='27'] -- level=0
+ yangcli pi@localhost> create /gpios/gpio[name='GPIO27'] -- level=0
 
- yangcli pi@localhost> create /gpios/gpio[name='17']
+ yangcli pi@localhost> create /gpios/gpio[name='GPIO17']
  
  yangcli pi@localhost> commit
  
@@ -39,12 +39,12 @@ Other terminal:
  rpc-reply {
    data {
      gpios {
-       gpio 17 {
-         name 17
+       gpio GPIO17 {
+         name GPIO17
          level 0
        }
-       gpio 27 {
-         name 27
+       gpio GPIO27 {
+         name GPIO27
          level 0
        }
      }

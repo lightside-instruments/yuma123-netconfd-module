@@ -44,16 +44,56 @@ static status_t
 {
     status_t res;
     char* ptr;
-    res = NO_ERR;
+    cfg_template_t* runningcfg;
+    val_value_t *gpios_val;
+    val_value_t *gpio_val;
+    val_value_t *name_val;
+    val_value_t *level_val;
+
+
+    runningcfg = cfg_get_config_id(NCX_CFGID_RUNNING);
+    assert(runningcfg && runningcfg->root);
 
     /* /gpios-state */
 
-    char *cmd = "gpios-get";
+    char *getcmd_buf;
 
     char buf[BUFSIZE]="";
     FILE *fp;
 
-    if ((fp = popen(cmd, "r")) == NULL) {
+    gpios_val = val_find_child(runningcfg->root,
+                           GPIOS_MOD,
+                           "gpios");
+
+
+    getcmd_buf = malloc(strlen("gpios-get")+1);
+    sprintf(getcmd_buf, "gpios-get");
+ 
+    if(gpios_val!=NULL) {
+        for (gpio_val = val_get_first_child(gpios_val);
+             gpio_val != NULL;
+             gpio_val = val_get_next_child(gpio_val)) {
+            name_val = val_find_child(gpio_val,
+                               GPIOS_MOD,
+                               "name");
+
+            level_val = val_find_child(gpio_val,
+                                      GPIOS_MOD,
+                                      "level");
+
+            if(level_val == NULL) {
+                char* new_buf;
+                new_buf = malloc(strlen(getcmd_buf)+strlen(VAL_STRING(name_val))+2);
+                sprintf(new_buf, "%s %s", getcmd_buf, VAL_STRING(name_val));
+                free(getcmd_buf);
+                getcmd_buf = new_buf;
+            }
+        }
+    }
+
+    printf("Calling %s\n", getcmd_buf);
+
+    if ((fp = popen(getcmd_buf, "r")) == NULL) {
         printf("Error opening pipe!\n");
         assert(0);
     }
@@ -61,7 +101,10 @@ static status_t
         ptr = fgets(buf+strlen(buf), BUFSIZE, fp);
     } while(ptr);
 
-    printf("gpios-get: %s", buf);
+
+    printf("%s: %s", getcmd_buf, buf);
+
+    free(getcmd_buf);
 
     assert(strlen(buf));
 

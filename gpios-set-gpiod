@@ -1,0 +1,17 @@
+#!/bin/bash
+# Usage:
+# lsi-gpios-set GPIO26=1 GPIO27=0
+# Use the gpioinfo tool to figure the names e.g. GPIO26 and GPIO27 are present on Raspberry Pi
+
+for var in "$@"
+do
+    echo "Setting $var"
+    gpio=`cut -d '=' -f 1 <<< $var`
+    val=`cut -d '=' -f 2 <<< $var`
+
+    if [ ${val} == "1" ] || [ ${val} == "0" ] ; then
+        gpioset `gpiofind ${gpio}`=${val}
+    else
+        val=`gpioget \`gpiofind ${gpio}\``
+    fi
+done

@@ -1,1 +1,1 @@
-gpios-set-sysfs
+gpios-set-gpiod

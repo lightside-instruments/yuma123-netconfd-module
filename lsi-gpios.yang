@@ -8,7 +8,7 @@ module lsi-gpios {
   description
     "Simple GPIOs management model.";
 
-  revision 2023-04-28 {
+  revision 2024-05-13 {
     description
       "Initial.";
   }
@@ -23,7 +23,6 @@ module lsi-gpios {
       leaf name {
         type string {
           length "1..10";
-          pattern '[a-z]*[0-9]+';
         }
       }
       choice direction {
