@@ -41,7 +41,8 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     status_t res;
 
-    val_value_t *lights_val;
+    val_value_t *lights_cur_val;
+    val_value_t *lights_new_val;
     val_value_t *light_val;
     val_value_t *name_val;
     val_value_t *red_val;
@@ -52,15 +53,56 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     char setcmd_buf[1024]="lights-set "; // append parameters e.g. "lights-set left-red=FF0000 center-green=00FF00 right-blue=0000FF"
 
     if(config_new_val == NULL) {
-        lights_val = NULL;
+        lights_new_val = NULL;
     } else {
-        lights_val = val_find_child(config_new_val,
+        lights_new_val = val_find_child(config_new_val,
                                LIGHTS_MOD,
                                "lights");
     }
 
-    if(lights_val!=NULL) {
-        for (light_val = val_get_first_child(lights_val);
+    if(config_cur_val == NULL) {
+        lights_cur_val = NULL;
+    } else {
+        lights_cur_val = val_find_child(config_cur_val,
+                               LIGHTS_MOD,
+                               "lights");
+    }
+
+    if(lights_cur_val!=NULL) {
+        for (light_val = val_get_first_child(lights_cur_val);
+             light_val != NULL;
+             light_val = val_get_next_child(light_val)) {
+            int deleted;
+            deleted = 1;
+
+            name_val = val_find_child(light_val,
+                               LIGHTS_MOD,
+                               "name");
+
+            //if this light instance is deleted turn off
+            if(lights_new_val!=NULL) {
+                val_value_t * light_new_val;
+                val_value_t * name_new_val;
+                for (light_new_val = val_get_first_child(lights_new_val);
+                     light_new_val != NULL;
+                     light_new_val = val_get_next_child(light_new_val)) {
+                    name_new_val = val_find_child(light_new_val,
+                                       LIGHTS_MOD,
+                                       "name");
+                    if(0==strcmp(VAL_STRING(name_new_val),VAL_STRING(name_val))) {
+                        deleted=0;
+                    }
+                }
+            }
+            if(deleted) {
+                sprintf(setcmd_buf+strlen(setcmd_buf), " %s=%02X%02X%02X", VAL_STRING(name_val), 0, 0, 0);
+            }
+        }
+    }
+
+
+    if(lights_new_val!=NULL) {
+        for (light_val = val_get_first_child(lights_new_val);
              light_val != NULL;
              light_val = val_get_next_child(light_val)) {
             name_val = val_find_child(light_val,

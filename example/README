@@ -1,8 +1,8 @@
 The following script is provided as practical example. It implements a simple light
-switching test for 3 colors - Red Green and Blue.
+test incrementing the intensity of all 3 colors - Red Green and Blue.
 
 Edit networks.xml adding the NETCONF access parameters for your device.
 
 Usage:
 
-python lights-netconf.py --config=networks.xml | grep '^#'
+python3 lights-netconf.py --config=networks.xml

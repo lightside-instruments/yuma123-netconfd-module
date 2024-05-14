@@ -5,7 +5,6 @@ import time
 import sys, os
 import argparse
 import tntapi
-import yangrpc
 from yangcli import yangcli
 
 namespaces={"nc":"urn:ietf:params:xml:ns:netconf:base:1.0",
@@ -33,6 +32,5 @@ while(brightness<256):
 		ok=yangcli(yconns[node_name],"""replace /lights/light[name='main'] -- red=%d green=%d blue=%d"""%(brightness, brightness, brightness)).xpath('./ok')
 		assert(len(ok)==1)
 	tntapi.network_commit(conns)
-#	time.sleep(10/256)
 	brightness = brightness + 1
 

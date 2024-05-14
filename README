@@ -19,7 +19,7 @@ Installed netconfd and yangcli
 
 # Testing installation
 
- sudo netconfd --module=lsi-lights  --no-startup --superuser=pi
+ netconfd --module=lsi-lights  --no-startup --superuser=pi
 
 Other terminal:
  yangcli --server=localhost --user=pi --password=raspberry
