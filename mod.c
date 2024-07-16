@@ -1,6 +1,6 @@
 /*
-    module lsi-lights
-    namespace urn:lsi:params:xml:ns:yang:lights
+    module lsi-gcode
+    namespace urn:lsi:params:xml:ns:yang:gcode
  */
 
 #include <stdio.h>
@@ -31,9 +31,9 @@
 
 #define BUFSIZE 1000000
 
-#define LIGHTS_MOD "lsi-lights"
+#define GCODE_MOD "lsi-gcode"
 
-static obj_template_t* lights_state_obj;
+static obj_template_t* gcode_state_obj;
 
 
 static int update_config(val_value_t* config_cur_val, val_value_t* config_new_val)
@@ -41,86 +41,58 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     status_t res;
 
-    val_value_t *lights_cur_val;
-    val_value_t *lights_new_val;
-    val_value_t *light_val;
-    val_value_t *name_val;
-    val_value_t *red_val;
-    val_value_t *green_val;
-    val_value_t *blue_val;
+    val_value_t *gcode_cur_val;
+    val_value_t *gcode_new_val;
+    val_value_t *command_cur_val;
+    val_value_t *command_new_val;
     unsigned int i;
+    unsigned int deleted;
 
-    char setcmd_buf[1024]="lights-set "; // append parameters e.g. "lights-set left-red=FF0000 center-green=00FF00 right-blue=0000FF"
+    char setcmd_buf[1024]="gcode-run --command=123 "; // append parameters e.g. "gcode-run --command=123"
 
     if(config_new_val == NULL) {
-        lights_new_val = NULL;
+        gcode_new_val = NULL;
     } else {
-        lights_new_val = val_find_child(config_new_val,
-                               LIGHTS_MOD,
-                               "lights");
+        gcode_new_val = val_find_child(config_new_val,
+                               GCODE_MOD,
+                               "gcode");
     }
 
     if(config_cur_val == NULL) {
-        lights_cur_val = NULL;
+        gcode_cur_val = NULL;
     } else {
-        lights_cur_val = val_find_child(config_cur_val,
-                               LIGHTS_MOD,
-                               "lights");
+        gcode_cur_val = val_find_child(config_cur_val,
+                               GCODE_MOD,
+                               "gcode");
     }
 
-    if(lights_cur_val!=NULL) {
-        for (light_val = val_get_first_child(lights_cur_val);
-             light_val != NULL;
-             light_val = val_get_next_child(light_val)) {
-            int deleted;
-            deleted = 1;
+    if(gcode_cur_val!=NULL) {
 
-            name_val = val_find_child(light_val,
-                               LIGHTS_MOD,
-                               "name");
+        command_cur_val = val_find_child(gcode_cur_val,
+                           GCODE_MOD,
+                           "command");
 
-            //if this light instance is deleted turn off
-            if(lights_new_val!=NULL) {
-                val_value_t * light_new_val;
-                val_value_t * name_new_val;
-                for (light_new_val = val_get_first_child(lights_new_val);
-                     light_new_val != NULL;
-                     light_new_val = val_get_next_child(light_new_val)) {
-                    name_new_val = val_find_child(light_new_val,
-                                       LIGHTS_MOD,
-                                       "name");
-                    if(0==strcmp(VAL_STRING(name_new_val),VAL_STRING(name_val))) {
-                        deleted=0;
-                    }
-                }
+        //if this light instance is deleted turn off
+        if(gcode_new_val!=NULL) {
+            command_new_val = val_find_child(gcode_cur_val,
+                               GCODE_MOD,
+                               "command");
+            if(0==strcmp(VAL_STRING(command_new_val),VAL_STRING(command_cur_val))) {
+                deleted=0;
             }
-            if(deleted) {
-                sprintf(setcmd_buf+strlen(setcmd_buf), " %s=%02X%02X%02X", VAL_STRING(name_val), 0, 0, 0);
-            }
+
+//            if(deleted) {
+//            	//do nothing, no effect
+//            }
         }
     }
 
 
-    if(lights_new_val!=NULL) {
-        for (light_val = val_get_first_child(lights_new_val);
-             light_val != NULL;
-             light_val = val_get_next_child(light_val)) {
-            name_val = val_find_child(light_val,
-                               LIGHTS_MOD,
-                               "name");
-
-            red_val = val_find_child(light_val,
-                                      LIGHTS_MOD,
-                                      "red");
-            green_val = val_find_child(light_val,
-                                      LIGHTS_MOD,
-                                      "green");
-            blue_val = val_find_child(light_val,
-                                      LIGHTS_MOD,
-                                      "blue");
-
-            sprintf(setcmd_buf+strlen(setcmd_buf), " %s=%02X%02X%02X", VAL_STRING(name_val), VAL_UINT8(red_val), VAL_UINT8(green_val), VAL_UINT8(blue_val));
-        }
+    if(gcode_new_val!=NULL) {
+        command_new_val = val_find_child(gcode_new_val,
+                           GCODE_MOD,
+                           "command");
+        sprintf(setcmd_buf, "gcode-run --command=\"%s\"", VAL_STRING(command_new_val));
     }
 
 
@@ -164,10 +136,10 @@ static status_t y_commit_complete(void)
     return NO_ERR;
 }
 
-/* The 3 mandatory callback functions: y_lsi_lights_init, y_lsi_lights_init2, y_lsi_lights_cleanup */
+/* The 3 mandatory callback functions: y_lsi_gcode_init, y_lsi_gcode_init2, y_lsi_gcode_cleanup */
 
 status_t
-    y_lsi_lights_init (
+    y_lsi_gcode_init (
         const xmlChar *modname,
         const xmlChar *revision)
 {
@@ -178,23 +150,23 @@ status_t
     agt_profile = agt_get_profile();
 
     res = ncxmod_load_module(
-        LIGHTS_MOD,
+        GCODE_MOD,
         NULL,
         &agt_profile->agt_savedevQ,
         &mod);
     if (res != NO_ERR) {
         return res;
     }
-    res=agt_commit_complete_register("lsi-lights" /*SIL id string*/,
+    res=agt_commit_complete_register("lsi-gcode" /*SIL id string*/,
                                      y_commit_complete);
     assert(res == NO_ERR);
 
-    system("lights-init");
+    system("gcode-init");
 
     return res;
 }
 
-status_t y_lsi_lights_init2(void)
+status_t y_lsi_gcode_init2(void)
 {
     status_t res=NO_ERR;
 
@@ -204,6 +176,6 @@ status_t y_lsi_lights_init2(void)
     return res;
 }
 
-void y_lsi_lights_cleanup (void)
+void y_lsi_gcode_cleanup (void)
 {
 }

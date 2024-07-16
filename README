@@ -1,8 +1,8 @@
 # Overview
 
-YANG module for management of lights
+YANG module for management of gcode execution
 
-Allows configuration of RGB lights (currently implemented for ws2812b LED strips based on the ice4pi-example-i2cslave-ws2812b)
+Allows running gcode command and waiting for its completion
 
 
 
@@ -28,10 +28,10 @@ Other terminal:
 
 ...
 
- yangcli pi@localhost> create /lights/light[name='main'] -- red=255 green=0 blue=0
+ yangcli pi@localhost> create /gcode -- cmd="G0 X0Y0Z4"
 
  yangcli pi@localhost> commit
  
 ...
 
-And the lights are red with maximum intensity.
+And the CNC machine moves.

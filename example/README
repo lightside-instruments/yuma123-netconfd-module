@@ -1,8 +1,8 @@
-The following script is provided as practical example. It implements a simple light
-test incrementing the intensity of all 3 colors - Red Green and Blue.
+The following script is provided as practical example. It implements a simple gcode
+test making 2 3D printers to home their axes and go back and fourth between x0y0z100 and x100y100z100.
 
-Edit networks.xml adding the NETCONF access parameters for your device.
+Edit networks.xml adding the NETCONF access parameters for your devices or add more devices.
 
 Usage:
 
-python3 lights-netconf.py --config=networks.xml
+python3 test.py --config=networks.xml

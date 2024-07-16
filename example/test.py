@@ -25,12 +25,26 @@ conns = tntapi.network_connect(network)
 yconns = tntapi.network_connect_yangrpc(network)
 
 
-brightness = 0
-while(brightness<256):
+time.sleep(2)
+
+#for node_name in yconns.keys():
+#	# Home all axes
+#	res=yangcli(yconns[node_name],"""replace /gcode -- command='G28 XYZ' """).xpath('./ok')
+#	assert(len(ok)==1)
+#tntapi.network_commit(conns)
+
+for i in range(1,10):
 	for node_name in yconns.keys():
-		# Set output voltage
-		ok=yangcli(yconns[node_name],"""replace /lights/light[name='main'] -- red=%d green=%d blue=%d"""%(brightness, brightness, brightness)).xpath('./ok')
+		# Movet to A
+		ok=yangcli(yconns[node_name],"""replace /gcode -- command='G0 X100Y100Z100' """).xpath('./ok')
+		print(len(ok))
 		assert(len(ok)==1)
 	tntapi.network_commit(conns)
-	brightness = brightness + 1
+	time.sleep(1)
+	for node_name in yconns.keys():
+		# Move to B
+		ok=yangcli(yconns[node_name],"""replace /gcode -- command='G0 X0Y0Z100' """).xpath('./ok')
+		assert(len(ok)==1)
+	tntapi.network_commit(conns)
+	time.sleep(1)
 

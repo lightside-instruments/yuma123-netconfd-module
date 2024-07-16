@@ -2,14 +2,14 @@
 <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
   <networks xmlns="urn:ietf:params:xml:ns:yang:ietf-network">
     <network>
-      <network-id>lsi</network-id>
+      <network-id>bitraf-3dprinters</network-id>
       <node>
-        <node-id>laser-room-lights</node-id>
-        <description>WS2812B LED strip</description>
+        <node-id>caterpillar</node-id>
+        <description>Prusa 0,4 mm row=1,column=3</description>
         <netconf-connect-params xmlns="urn:tntapi:netconf-node">
           <user>pi</user>
-          <server>localhost</server>
-          <password>raspberry</password>
+          <server>10.13.37.177</server>
+          <password>grimbadgerassault</password>
           <ncport>830</ncport>
         </netconf-connect-params>
       </node>

@@ -1,0 +1,23 @@
+module lsi-gcode {
+  yang-version 1.1;
+  namespace "urn:lsi:params:xml:ns:yang:gcode";
+  prefix gcode;
+
+  organization
+    "Lightside Instruments AS";
+  description
+    "Simple gcode execution management model.";
+
+  revision 2024-07-16 {
+    description
+      "Initial.";
+  }
+
+  container gcode {
+    leaf command {
+      type string {
+        length "2..1024";
+      }
+    }
+  }
+}
