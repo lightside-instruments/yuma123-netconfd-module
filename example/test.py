@@ -27,24 +27,42 @@ yconns = tntapi.network_connect_yangrpc(network)
 
 time.sleep(2)
 
-#for node_name in yconns.keys():
-#	# Home all axes
-#	res=yangcli(yconns[node_name],"""replace /gcode -- command='G28 XYZ' """).xpath('./ok')
-#	assert(len(ok)==1)
-#tntapi.network_commit(conns)
+for node_name in yconns.keys():
+	# Home all axes
+	ok=yangcli(yconns[node_name],"""replace /gcode -- command='G28 XYZ' """).xpath('./ok')
+	assert(len(ok)==1)
+tntapi.network_commit(conns)
+for node_name in yconns.keys():
+	# Home all axes
+	ok=yangcli(yconns[node_name],"""replace /gcode -- command='M400' """).xpath('./ok')
+	assert(len(ok)==1)
+tntapi.network_commit(conns)
 
-for i in range(1,10):
+
+
+for i in range(1,100):
 	for node_name in yconns.keys():
-		# Movet to A
-		ok=yangcli(yconns[node_name],"""replace /gcode -- command='G0 X100Y100Z100' """).xpath('./ok')
+		# Move to A
+		ok=yangcli(yconns[node_name],"""replace /gcode -- command='G0 X100Y100Z100 F600000' """).xpath('./ok')
 		print(len(ok))
 		assert(len(ok)==1)
 	tntapi.network_commit(conns)
-	time.sleep(1)
 	for node_name in yconns.keys():
-		# Move to B
-		ok=yangcli(yconns[node_name],"""replace /gcode -- command='G0 X0Y0Z100' """).xpath('./ok')
+		# Wait for movement to complete
+		ok=yangcli(yconns[node_name],"""replace /gcode -- command='M400' """).xpath('./ok')
+		print(len(ok))
 		assert(len(ok)==1)
 	tntapi.network_commit(conns)
-	time.sleep(1)
+	for node_name in yconns.keys():
+		# Move to B
+		ok=yangcli(yconns[node_name],"""replace /gcode -- command='G0 X0Y0Z100 F600000' """).xpath('./ok')
+		assert(len(ok)==1)
+	tntapi.network_commit(conns)
+	for node_name in yconns.keys():
+		# Wait for movement to complete
+		ok=yangcli(yconns[node_name],"""replace /gcode -- command='M400' """).xpath('./ok')
+		print(len(ok))
+		assert(len(ok)==1)
+	tntapi.network_commit(conns)
+
 
