@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+import re
+import serial
+import sys
+import time
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description='Log temperature data from the USB port of a Prusa printer to an MQTT server.',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument('--serial-port', help='Path to serial port device.', default='/dev/ttyS0')
+    parser.add_argument('--serial-baud-rate', help='Serial baud rate.', default='115200')
+    parser.add_argument('--serial-timeout', help='Serial baud timeout.', default='5')
+    parser.add_argument('--command', help='GCODE command e.g. "G0 X100" .')
+
+    args = parser.parse_args()
+
+    
+    ser = serial.Serial(args.serial_port, int(args.serial_baud_rate), timeout=int(args.serial_timeout))
+    ser.write(bytearray(f'{args.command}\n', 'utf-8'))
+
+    while(1):
+        line = ser.readline().decode('utf-8')
+        print(line.rstrip('\n'))
+        if(line.rstrip('\n') == 'ok'):
+            return(0)
+
+
+if __name__ == '__main__':
+    main()
+

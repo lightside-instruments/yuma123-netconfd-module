@@ -1,8 +1,14 @@
-yuma123-netconfd-module-lsi-gcode (1.1) UNRELEASED; urgency=medium
+yuma123-netconfd-module-lsi-gcode (1.2) bookworm; urgency=medium
+
+  * Removed irrelevant scripts and added missing gcode-run
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 18 Jul 2024 16:27:34 +0200
+
+yuma123-netconfd-module-lsi-gcode (1.1) bookworm; urgency=medium
 
   * Added motion completion wait gcode M400 and removed time.sleep calls for speed optimization
 
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 18 Jul 2024 16:19:16 +0200
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 18 Jul 2024 16:26:43 +0200
 
 yuma123-netconfd-module-lsi-gcode (1.0) bookworm; urgency=medium
 
