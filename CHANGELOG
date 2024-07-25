@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-thermometers (1.1) bookworm; urgency=medium
+
+  * Fixed bug in thermometers-get
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 26 Jul 2024 01:02:23 +0200
+
 yuma123-netconfd-module-lsi-thermometer (1.0) bookworm; urgency=medium
 
   * Initial release.
