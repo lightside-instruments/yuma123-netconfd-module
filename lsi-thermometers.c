@@ -1,5 +1,5 @@
 /*
-    module lsi-foo
+    module lsi-thermometers
  */
 
 #define _DEFAULT_SOURCE
@@ -35,26 +35,26 @@
 #include "val_set_cplxval_obj.h"
 
 /* module static variables */
-static ncx_module_t *lsi_foo_mod;
-static obj_template_t* foo_obj;
+static ncx_module_t *lsi_thermometers_mod;
+static obj_template_t* thermometers_obj;
 
-#define BUFSIZE 1000000
+#define BUFSIZE 1024
 
 /* Registered callback functions */
 
 static status_t
-    get_foo(ses_cb_t *scb,
-                         getcb_mode_t cbmode,
-                         val_value_t *vir_val,
-                         val_value_t *dst_val)
+    get_thermometers(ses_cb_t *scb,
+                     getcb_mode_t cbmode,
+                     val_value_t *vir_val,
+                     val_value_t *dst_val)
 {
     status_t res;
     char* ptr;
     res = NO_ERR;
 
-    /* /foo */
+    /* /thermometers */
 
-    char *cmd = "lsi-foo-get";
+    char *cmd = "thermometers-get";
 
     char buf[BUFSIZE];
     FILE *fp;
@@ -67,7 +67,7 @@ static status_t
     ptr = fgets(buf, BUFSIZE, fp);
     assert(ptr!=NULL);
 
-    printf("lsi-foo-get: %s", buf);
+    printf("thermometers-get: %s", buf);
 
     assert(strlen(buf));
 
@@ -85,10 +85,10 @@ static status_t
     return res;
 }
 
-/* The 3 mandatory callback functions: y_lsi_foo_init, y_lsi_foo_init2, y_lsi_foo_cleanup */
+/* The 3 mandatory callback functions: y_lsi_thermometers_init, y_lsi_thermometers_init2, y_lsi_thermometers_cleanup */
 
 status_t
-    y_lsi_foo_init (
+    y_lsi_thermometers_init (
         const xmlChar *modname,
         const xmlChar *revision)
 {
@@ -98,30 +98,29 @@ status_t
     agt_profile = agt_get_profile();
 
     res = ncxmod_load_module(
-        "lsi-foo",
+        "lsi-thermometers",
         NULL,
         &agt_profile->agt_savedevQ,
-        &lsi_foo_mod);
+        &lsi_thermometers_mod);
     if (res != NO_ERR) {
         return res;
     }
 
-    foo_obj = ncx_find_object(
-        lsi_foo_mod,
-        "foo");
-    if (foo_obj == NULL) {
+    thermometers_obj = ncx_find_object(
+        lsi_thermometers_mod,
+        "thermometers");
+    if (thermometers_obj == NULL) {
         return SET_ERROR(ERR_NCX_DEF_NOT_FOUND);
     }
 
     return res;
 }
 
-status_t y_lsi_foo_init2(void)
+status_t y_lsi_thermometers_init2(void)
 {
     status_t res;
     cfg_template_t* runningcfg;
-    val_value_t* foo_val;
-    obj_template_t* obj;
+    val_value_t* thermometers_val;
 
     res = NO_ERR;
 
@@ -130,19 +129,19 @@ status_t y_lsi_foo_init2(void)
         return SET_ERROR(ERR_INTERNAL_VAL);
     }
 
-    foo_val = val_new_value();
-    assert(foo_val != NULL);
+    thermometers_val = val_new_value();
+    assert(thermometers_val != NULL);
 
-    val_init_virtual(foo_val,
-                     get_foo,
-                     foo_obj);
+    val_init_virtual(thermometers_val,
+                     get_thermometers,
+                     thermometers_obj);
 
-    val_add_child(foo_val, runningcfg->root);
+    val_add_child(thermometers_val, runningcfg->root);
 
 
     return res;
 }
 
-void y_lsi_foo_cleanup (void)
+void y_lsi_thermometers_cleanup (void)
 {
 }
