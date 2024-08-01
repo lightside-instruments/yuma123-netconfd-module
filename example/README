@@ -1,33 +1,12 @@
-The following script is provided as practical example. It implements a simple diode
+The following script is provided as practical example. It configures the function generator in
+arbitrary waveform signal data mode.
 characterization test for 11 voltage levels and reports the corresponding current measurements.
 
 Edit networks.xml adding the NETCONF access parameters for your device.
 
 Usage:
 
-python diode-netconf.py --config=networks.xml | grep '^#'
+python3 test.py --config=networks.xml
 
 
-Output:
-
-# Voltage Current
-# 0.620 -0.0000
-# 0.640 -0.0000
-# 0.660 0.0000
-# 0.680 0.0001
-# 0.700 0.0004
-# 0.720 0.0008
-# 0.740 0.0017
-# 0.760 0.0037
-# 0.780 0.0077
-# 0.800 0.0156
-# 0.820 0.0323
-
-
-This same procedure and values are used in the example part of the userguide for the device directly using GPIB.
-
-Corresponding GPIB script with identical output is also provided - diode-gpib.py:
-
-Usage:
-
-sudo python diode-gpib.py  | grep '^#'
+# 10 second 1 KHz - 2 KHz linear chirp is played on the default ALSA device with aplay

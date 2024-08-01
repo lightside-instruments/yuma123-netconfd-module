@@ -4,8 +4,8 @@
     <network>
       <network-id>lsi</network-id>
       <node>
-        <node-id>dc-power-0</node-id>
-        <description>Keysight E3647A</description>
+        <node-id>generator0</node-id>
+        <description>Function generator with channel named 'default' </description>
         <netconf-connect-params xmlns="urn:tntapi:netconf-node">
           <user>pi</user>
           <server>localhost</server>
