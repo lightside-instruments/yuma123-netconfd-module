@@ -1,6 +1,6 @@
 /*
-    module lsi-ivi-function-generator
-    namespace urn:lsi:params:xml:ns:yang:ivi-function-generator
+    module lsi-ivi-scope
+    namespace urn:lsi:params:xml:ns:yang:ivi-scope
  */
 
 #include <stdio.h>
@@ -31,7 +31,7 @@
 
 #define BUFSIZE 1000000
 
-#define FUNCTION_GENERATOR_MOD "lsi-ivi-function-generator"
+#define SCOPE_MOD "lsi-ivi-scope"
 static char* visa_resource_name;
 static obj_template_t* outputs_state_obj;
 
@@ -40,6 +40,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     status_t res;
 
+    val_value_t *acquisition_val;
     val_value_t *channels_val;
     val_value_t *channel_val;
     val_value_t *name_val;
@@ -51,36 +52,43 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     char* ptr;
 
     if(config_new_val == NULL) {
-        channels_val = NULL;
-    } else {
-        channels_val = val_find_child(config_new_val,
-                               FUNCTION_GENERATOR_MOD,
-                               "channels");
+        return NO_ERR;
     }
+
+    acquisition_val = val_find_child(config_new_val,
+                               SCOPE_MOD,
+                               "acquisition");
+    if(acquisition_val == NULL) {
+        return NO_ERR;
+    }
+
+    channels_val = val_find_child(acquisition_val,
+                               SCOPE_MOD,
+                               "channels");
+    if(channels_val == NULL) {
+        return NO_ERR;
+    }
+
 
     if(channels_val!=NULL) {
         for (channel_val = val_get_first_child(channels_val);
              channel_val != NULL;
              channel_val = val_get_next_child(channel_val)) {
             name_val = val_find_child(channel_val,
-                               FUNCTION_GENERATOR_MOD,
+                               SCOPE_MOD,
                                "name");
 
             data_val = val_find_child(channel_val,
-                                      FUNCTION_GENERATOR_MOD,
+                                      SCOPE_MOD,
                                       "data");
             assert(data_val);
-            sprintf(buf, "/tmp/%s-signal.wav", VAL_STRING(name_val));
-            f=fopen(buf, "w");
-            assert(f);
-            fwrite(data_val->v.binary.ustr, data_val->v.binary.ustrlen, 1, f);
-            fflush(f);
-            fclose(f);
-            sprintf(buf, "aplay -D \"%s\"  \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), VAL_STRING(name_val));
+            sprintf(buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
+            system(buf);
+            sprintf(buf, "arecord -D \"%s\"  \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), VAL_STRING(name_val));
 
             printf("Calling: %s\n", buf);
             system(buf);
-            
+
         }
     }
 
@@ -121,10 +129,10 @@ static status_t y_commit_complete(void)
     return NO_ERR;
 }
 
-/* The 3 mandatory callback functions: y_lsi_ivi_function_generator_init, y_lsi_ivi_function_generator_init2, y_lsi_ivi_function_generator_cleanup */
+/* The 3 mandatory callback functions: y_lsi_ivi_scope_init, y_lsi_ivi_scope_init2, y_lsi_ivi_scope_cleanup */
 
 status_t
-    y_lsi_ivi_function_generator_init (
+    y_lsi_ivi_scope_init (
         const xmlChar *modname,
         const xmlChar *revision)
 {
@@ -135,7 +143,7 @@ status_t
     agt_profile = agt_get_profile();
 
     res = ncxmod_load_module(
-        FUNCTION_GENERATOR_MOD,
+        SCOPE_MOD,
         NULL,
         &agt_profile->agt_savedevQ,
         &mod);
@@ -143,14 +151,14 @@ status_t
         return res;
     }
 
-    res=agt_commit_complete_register("lsi-ivi-function-generator" /*SIL id string*/,
+    res=agt_commit_complete_register("lsi-ivi-scope" /*SIL id string*/,
                                      y_commit_complete);
     assert(res == NO_ERR);
 
     return res;
 }
 
-status_t y_lsi_ivi_function_generator_init2(void)
+status_t y_lsi_ivi_scope_init2(void)
 {
     status_t res=NO_ERR;
     cfg_template_t* runningcfg;
@@ -166,6 +174,6 @@ status_t y_lsi_ivi_function_generator_init2(void)
     return res;
 }
 
-void y_lsi_ivi_function_generator_cleanup (void)
+void y_lsi_ivi_scope_cleanup (void)
 {
 }

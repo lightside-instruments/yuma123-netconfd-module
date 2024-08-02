@@ -4,8 +4,8 @@
     <network>
       <network-id>lsi</network-id>
       <node>
-        <node-id>generator0</node-id>
-        <description>Function generator with channel named 'default' </description>
+        <node-id>scope0</node-id>
+        <description>Scope with channel named 'default' </description>
         <netconf-connect-params xmlns="urn:tntapi:netconf-node">
           <user>pi</user>
           <server>localhost</server>

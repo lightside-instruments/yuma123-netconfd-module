@@ -1,0 +1,55 @@
+module lsi-ivi-scope {
+  yang-version 1.1;
+  namespace "urn:lsi:params:xml:ns:yang:ivi-scope";
+  prefix scope;
+
+  organization  "Lightside Instruments AS";
+
+  description
+    "Scope management module designed
+     after the IVI Scope.";
+
+  revision 2024-08-01 {
+    description
+      "Initial.";
+  }
+
+  feature measurement;
+
+  //reference "IVI-4.1: Scope Class Specification";
+
+  container acquisition {
+    list channels {
+      key "name";
+      leaf name {
+        type string;
+      }
+    }
+    leaf sample-rate {
+      description
+        "Specifies the sample rate of the arbitrary waveforms the function generator produces.";
+      units "Samples per second";
+      type int32;
+    }
+    leaf samples {
+      description
+        "Specifies the sample rate of the arbitrary waveforms the function generator produces.";
+      units "Samples per second";
+      type uint64;
+    }
+
+    leaf state {
+      config false;
+      type string;
+    }
+    leaf data {
+      type binary;
+      description
+        "Specifies the array of data to use for the new arbitrary
+         waveform. The array’s elements must be normalized
+         between -1.00 and +1.00.
+
+         Double-precision floating point formated data according to IEEE 754.";
+    }
+  }
+}

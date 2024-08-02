@@ -33,25 +33,22 @@ network = tree.xpath('/nc:config/nd:networks/nd:network', namespaces=namespaces)
 conns = tntapi.network_connect(network)
 yconns = tntapi.network_connect_yangrpc(network)
 
-yangcli(yconns["generator0"],"""delete /channels""")
+yangcli(yconns["scope0"],"""delete /acquisition""")
 tntapi.network_commit(conns)
 
-data_b64 = generate_data()
-print("""data=%s"""%(data_b64.decode('ascii')))
-ok=yangcli(yconns["generator0"],"""create /channels/channel[name='default'] -- data=%s"""%(data_b64.decode('ascii'))).xpath('./ok')
+ok=yangcli(yconns["generator0"],"""create /acquisition""").xpath('./ok')
 assert(len(ok)==1)
 
-
-print("committing")
 tntapi.network_commit(conns)
-
-print("waiting 10")
 
 time.sleep(10)
 
-print("deleting")
+data=yangcli(yconns["scope0"],"""xget /acquisition""").xpath('./acquisition/data')
+assert(len(data)==1)
 
-ok=yangcli(yconns["generator0"],"""delete /channels""").xpath('./ok')
+#TODO decode data from base64 and write as signal.wav
+
+ok=yangcli(yconns["scope0"],"""delete /acquisition""").xpath('./ok')
 assert(len(ok)==1)
 
 tntapi.network_commit(conns)
