@@ -9,5 +9,5 @@ liblsi_ivi_scope_la_LDFLAGS = -module -lyumaagt -lyumancx
 
 yang_DATA = lsi-ivi-scope.yang
 
-#bin_SCRIPTS = lsi-ivi-scope-set lsi-ivi-scope-gpib-e364xa-set lsi-ivi-scope-get lsi-ivi-scope-gpib-e364xa-get
+bin_SCRIPTS = lsi-acquisition-data-get
 

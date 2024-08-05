@@ -2,6 +2,7 @@
 
 from lxml import etree
 import time
+import base64
 import sys, os
 import argparse
 import subprocess
@@ -36,20 +37,30 @@ yconns = tntapi.network_connect_yangrpc(network)
 yangcli(yconns["scope0"],"""delete /acquisition""")
 tntapi.network_commit(conns)
 
-ok=yangcli(yconns["generator0"],"""create /acquisition""").xpath('./ok')
+ok=yangcli(yconns["scope0"],"""create /acquisition -- samples=480000""").xpath('./ok')
 assert(len(ok)==1)
+
+ok=yangcli(yconns["scope0"],"""create /acquisition/channels/channel[name='default']""").xpath('./ok')
+assert(len(ok)==1)
+
 
 tntapi.network_commit(conns)
 
-time.sleep(10)
+time.sleep(480000/48000)
 
-data=yangcli(yconns["scope0"],"""xget /acquisition""").xpath('./acquisition/data')
+data=yangcli(yconns["scope0"],"""xget /acquisition/channels/channel[name='default']""") .xpath('./data/acquisition/channels/channel/data')
+#print(len(data))
+#print(etree.tostring(data[0]))
 assert(len(data)==1)
 
-#TODO decode data from base64 and write as signal.wav
+data_b64 = data[0].text
 
-ok=yangcli(yconns["scope0"],"""delete /acquisition""").xpath('./ok')
-assert(len(ok)==1)
+f = open("signal.wav", "wb")
+f.write(base64.b64decode(data_b64))
+f.close()
 
-tntapi.network_commit(conns)
+#ok=yangcli(yconns["scope0"],"""delete /acquisition""").xpath('./ok')
+#assert(len(ok)==1)
+
+#tntapi.network_commit(conns)
 

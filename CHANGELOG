@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope (1.1) bookworm; urgency=medium
+
+  * Fixed design error in the YANG module and completed example test code and implementation
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 05 Aug 2024 15:50:39 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope (1.0) bookworm; urgency=medium
 
   * Initial release
