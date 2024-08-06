@@ -114,6 +114,8 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     status_t res;
 
+    val_value_t *acquisition_cur_val;
+    val_value_t *acquisition_new_val;
     val_value_t *acquisition_val;
     val_value_t *channels_val;
     val_value_t *channel_val;
@@ -130,12 +132,28 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         return NO_ERR;
     }
 
-    acquisition_val = val_find_child(config_new_val,
+    acquisition_new_val = val_find_child(config_new_val,
                                SCOPE_MOD,
                                "acquisition");
-    if(acquisition_val == NULL) {
+
+    if(acquisition_new_val == NULL) {
         return NO_ERR;
     }
+
+    if(config_cur_val != NULL) {
+        acquisition_cur_val = val_find_child(config_cur_val,
+                               SCOPE_MOD,
+                               "acquisition");
+
+        if(acquisition_cur_val) {
+            if(0==val_compare_ex(acquisition_cur_val, acquisition_new_val, TRUE)) {
+                /*no change*/
+                return NO_ERR;
+            }
+        }
+    }
+    acquisition_val = acquisition_new_val;
+
 
     samples_val = val_find_child(acquisition_val,
                                SCOPE_MOD,
@@ -156,7 +174,14 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
                                SCOPE_MOD,
                                "name");
 
-                                                                                                                              
+            data_val = val_find_child(channel_val,
+                               SCOPE_MOD,
+                               "data");
+
+            if(data_val != NULL) {
+            	printf("Virtual node /acquisition/channels/channel/data already exists. Skipping.\n");
+            	continue;
+            }                                                                                                              
 
             data_obj = obj_find_child(channel_val->obj,
                              SCOPE_MOD,
@@ -197,7 +222,7 @@ static int update_config_wrapper()
     if(prev_root_val!=NULL) {
         val_value_t* cur_root_val;
         cur_root_val = val_clone_config_data(runningcfg->root, &res);
-        if(0==val_compare(cur_root_val,prev_root_val)) {
+        if(0==val_compare_ex(cur_root_val,prev_root_val,TRUE)) {
             /*no change*/
             val_free_value(cur_root_val);
             return 0;

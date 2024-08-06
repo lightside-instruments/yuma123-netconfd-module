@@ -9,9 +9,9 @@ module lsi-ivi-scope {
     "Scope management module designed
      after the IVI Scope.";
 
-  revision 2024-08-05 {
+  revision 2024-08-06 {
     description
-      "Moved data inside channel.";
+      "Changed data to config false.";
   }
 
   feature measurement;
@@ -27,6 +27,7 @@ module lsi-ivi-scope {
         }
       
         leaf data {
+          config false;
           type binary;
           description
             "Specifies the array of data to use for the new arbitrary
