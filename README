@@ -3,7 +3,7 @@ Thermometer module for netconfd.
 
 # Dependencies
 Installed netconfd and yangcli
- apt-get install netconfd yangcli lm-sensors bc
+ apt-get install netconfd yangcli lm-sensors bc jq
 
 # Installation
  autoreconf -i -f

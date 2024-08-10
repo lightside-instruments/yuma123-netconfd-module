@@ -22,7 +22,7 @@ module lsi-thermometers {
       }
       leaf value {
         description
-          "Temperature in degrees Celsius.";
+          "Temperature in degrees Celsius multiplied by 100.";
         type int32 {
           range "-27315..max";
         }
