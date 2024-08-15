@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope (1.5) bookworm; urgency=medium
+
+  * Fixed bug missing parameters_val initialization causing segmentation fault
+  * Fixed bug in example/test-w-generator.py typo in <arbitrary-waveform> tag
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 15 Aug 2024 17:00:16 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope (1.4) bookworm; urgency=medium
 
   * Updated example/test-w-generator.py to reflect the added arbitrary-waveform container in lsi-ivi-function-generator@2024-08-15

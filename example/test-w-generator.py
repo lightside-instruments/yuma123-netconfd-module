@@ -60,9 +60,9 @@ edit_config_rpc = """<edit-config>
   <channels xmlns="urn:lsi:params:xml:ns:yang:ivi-function-generator">
     <channel>
       <name>%s</name>
-      <arbitraty-waveform>
+      <arbitrary-waveform>
         <data>%s</data>
-      </arbitraty-waveform>
+      </arbitrary-waveform>
     </channel>
   </channels>
 </config>

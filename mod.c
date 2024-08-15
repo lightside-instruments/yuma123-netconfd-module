@@ -199,6 +199,11 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             val_add_child(data_val, channel_val);
 
 
+            parameters_val = val_find_child(channel_val,
+                               SCOPE_MOD,
+                               "parameters");
+
+
             sprintf(buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
             system(buf);
             sprintf(buf, "arecord -D \"%s\" %s -s %" PRIu64 " \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), parameters_val?VAL_STRING(parameters_val):"", VAL_UINT64(samples_val), VAL_STRING(name_val));
