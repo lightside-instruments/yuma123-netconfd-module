@@ -28,9 +28,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="Path to the netconf configuration *.xml file defining the configuration according to ietf-networks, ietf-networks-topology and netconf-node models e.g. ../networks.xml")
 parser.add_argument("--generator-channel", help="Name of generator channel e.g. 'default' or 'hw:1,0'")
 parser.add_argument("--scope-channel", help="Name of sope channel e.g. 'default' or 'hw:1,0'")
+parser.add_argument("--scope-parameters", help="Scope parameters e.g. '-c 2 -f S16LE'")
 args = parser.parse_args()
 
 scope_channel=args.scope_channel
+scope_parameters=args.scope_parameters
 generator_channel=args.generator_channel
 
 tree=etree.parse(args.config)
@@ -42,8 +44,6 @@ yconns = tntapi.network_connect_yangrpc(network)
 yangcli(yconns["scope0"],"""delete /acquisition""")
 yangcli(yconns["generator0"],"""delete /channels""")
 tntapi.network_commit(conns)
-
-
 
 data_b64 = generate_data()
 print("""data=%s"""%(data_b64.decode('ascii')))
@@ -71,14 +71,13 @@ print(etree.tostring(result))
 rpc_error = result.xpath('rpc-error')
 assert(len(rpc_error)==0)
 
-print("committing")
-tntapi.network_commit(conns)
-
 ok=yangcli(yconns["scope0"],"""create /acquisition -- samples=480000 sample-rate=48000""").xpath('./ok')
 assert(len(ok)==1)
 
-ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s']"""%(scope_channel)).xpath('./ok')
+ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- parameters='%s'"""%(scope_channel, scope_parameters)).xpath('./ok')
 assert(len(ok)==1)
+
+
 tntapi.network_commit(conns)
 
 

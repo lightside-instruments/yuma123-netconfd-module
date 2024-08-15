@@ -121,6 +121,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *channel_val;
     val_value_t *name_val;
     val_value_t *samples_val;
+    val_value_t *parameters_val;
     val_value_t *data_val=NULL;
 
     unsigned int i;
@@ -200,7 +201,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
             sprintf(buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
             system(buf);
-            sprintf(buf, "arecord -D \"%s\"  -r 48000 -s %" PRIu64 " -f S16_LE \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), VAL_UINT64(samples_val), VAL_STRING(name_val));
+            sprintf(buf, "arecord -D \"%s\" %s -s %" PRIu64 " \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), parameters_val?VAL_STRING(parameters_val):"", VAL_UINT64(samples_val), VAL_STRING(name_val));
 
             printf("Calling: %s\n", buf);
             system(buf);

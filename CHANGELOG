@@ -1,5 +1,10 @@
-yuma123-netconfd-module-lsi-ivi-scope (1.2) UNRELEASED; urgency=medium
+yuma123-netconfd-module-lsi-ivi-scope (1.3) UNRELEASED; urgency=medium
 
+  * Added /acquisition/channels/channel/parameters leaf to add implementation specific parameters as string
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 15 Aug 2024 12:34:58 +0200
+
+yuma123-netconfd-module-lsi-ivi-scope (1.2) bookworm; urgency=medium
 
   * Fixed YANG module specified config false for the acquisition data
   * Added example with lsi-ivi-generator model combination example/test-w-generator.py

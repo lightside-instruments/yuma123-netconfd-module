@@ -1,12 +1,14 @@
-The following script is provided as practical example. It configures the function generator in
-arbitrary waveform signal data mode.
-characterization test for 11 voltage levels and reports the corresponding current measurements.
+The following script is provided as practical example. It configures the scope in
+acquisition mode.
 
 Edit networks.xml adding the NETCONF access parameters for your device.
 
 Usage:
-
 python3 test.py --config=networks.xml
 
+
+
+# Here is a more complex example involving a generator 
+python3 test-w-generator.py --config=networks-lab.xml --scope-channel="hw:4,0" --scope-parameters="-c 2 -r 48000 -f S24_3LE" --generator-channel="hw:1,0"
 
 # 10 second 1 KHz - 2 KHz linear chirp is played on the default ALSA device with aplay

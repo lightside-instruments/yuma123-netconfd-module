@@ -9,7 +9,7 @@ module lsi-ivi-scope {
     "Scope management module designed
      after the IVI Scope.";
 
-  revision 2024-08-06 {
+  revision 2024-08-15 {
     description
       "Changed data to config false.";
   }
@@ -26,6 +26,12 @@ module lsi-ivi-scope {
           type string;
         }
       
+        leaf parameters {
+          description
+            "Specifies implementation specific parameters e.g. -c 2 -f S16_LE";
+          type string;
+        }
+
         leaf data {
           config false;
           type binary;
