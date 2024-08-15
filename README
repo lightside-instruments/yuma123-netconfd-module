@@ -13,7 +13,7 @@ Installed netconfd and yangcli
 
 # Testing installation
 
- netconfd --module=lsi-thermometer  --no-startup --superuser=$USER
+ netconfd --module=lsi-thermometers  --no-startup --superuser=$USER
 
 Other terminal:
  yangcli --server=localhost --user=$USER
