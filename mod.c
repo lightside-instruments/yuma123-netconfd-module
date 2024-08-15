@@ -43,6 +43,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *channels_val;
     val_value_t *channel_val;
     val_value_t *name_val;
+    val_value_t *arbitrary_waveform_val;
     val_value_t *data_val=NULL;
 
     unsigned int i;
@@ -65,8 +66,15 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             name_val = val_find_child(channel_val,
                                FUNCTION_GENERATOR_MOD,
                                "name");
+            arbitrary_waveform_val = val_find_child(channel_val,
+                               FUNCTION_GENERATOR_MOD,
+                               "arbitrary-waveform");
 
-            data_val = val_find_child(channel_val,
+            if(arbitrary_waveform_val==NULL) {
+                continue;
+            }
+
+            data_val = val_find_child(arbitrary_waveform_val,
                                       FUNCTION_GENERATOR_MOD,
                                       "data");
             assert(data_val);

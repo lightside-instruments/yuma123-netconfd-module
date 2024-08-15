@@ -38,8 +38,29 @@ tntapi.network_commit(conns)
 
 data_b64 = generate_data()
 print("""data=%s"""%(data_b64.decode('ascii')))
-ok=yangcli(yconns["generator0"],"""create /channels/channel[name='default'] -- data=%s"""%(data_b64.decode('ascii'))).xpath('./ok')
-assert(len(ok)==1)
+#ok=yangcli(yconns["generator0"],"""create /channels/channel[name='default']/arbitrary-waveform -- data=%s"""%(data_b64.decode('ascii'))).xpath('./ok')
+#assert(len(ok)==1)
+edit_config_rpc = """<edit-config>
+   <target>
+     <candidate/>
+   </target>
+   <default-operation>merge</default-operation>
+   <test-option>set</test-option>
+<config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <channels xmlns="urn:lsi:params:xml:ns:yang:ivi-function-generator">
+    <channel>
+      <name>%s</name>
+      <arbitrary-waveform>
+        <data>%s</data>
+      </arbitrary-waveform>
+    </channel>
+  </channels>
+</config>
+</edit-config>"""%('default', data_b64.decode('ascii'))
+result = conns['generator0'].rpc(edit_config_rpc)
+print(etree.tostring(result))
+rpc_error = result.xpath('rpc-error')
+assert(len(rpc_error)==0)
 
 
 print("committing")

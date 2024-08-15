@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.0) bookworm; urgency=medium
+
+  * Reorganized model to have standard-function and arbitrary-waveform configuration cases as in the IVI FGen class
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 15 Aug 2024 14:10:03 +0200
+
 yuma123-netconfd-module-lsi-ivi-function-generator (1.0) bookworm; urgency=medium
 
   * Initial release

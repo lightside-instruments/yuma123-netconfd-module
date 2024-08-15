@@ -9,7 +9,7 @@ module lsi-ivi-function-generator {
     "Function generator management module designed
      after the IVI Fgen Class.";
 
-  revision 2024-07-25 {
+  revision 2024-08-15 {
     description
       "Initial.";
   }
@@ -25,9 +25,31 @@ module lsi-ivi-function-generator {
         type string;
       }
       choice type {
-        case single-arbitrary-waveform {
-          container waveform {
-            leaf offset {
+        case standard-function-case {
+          container standard-function {
+            leaf waveform-type {
+              type enumeration {
+                enum dc;
+                enum sine;
+                enum square;
+                enum triangle;
+                enum ramp-up;
+                enum ramp-down;
+              }
+            }
+            leaf amplitude {
+              description
+                "Specifies the amplitude of the standard waveform the function generator produces. When the
+                 Waveform attribute is set to Waveform DC, this attribute does not affect signal output. The units
+                 are volts.";
+              units "Volt";
+              type decimal64 {
+                fraction-digits 9;
+              }
+              default "1.00";
+            }
+
+            leaf dc-offset {
               description
                 "Specifies the offset of the arbitrary waveform the function generator produces.";
               units "Volt";
@@ -36,34 +58,42 @@ module lsi-ivi-function-generator {
               }
               default "0.00";
             }
+
+            leaf frequency {
+              description
+                "Specifies the frequency at which the function generator produces its waveform.";
+              units "Samples per second";
+              type decimal64 {
+                fraction-digits 9;
+              }
+            }
+            leaf duty-cycle-high {
+              when '../waveform-type = "square"';
+              description
+                "Specifies the duty cycle for a square waveform. This attribute affects function generator behavior
+                 only when the Waveform attribute is set to Waveform Square. The value is expressed as a
+                 percentage.";
+
+              units "Percent";
+              type decimal64 {
+                fraction-digits 9;
+              }
+            }
           }
         }
-      }
-      leaf gain {
-        description
-          "Specifies the offset of the arbitrary waveform the function generator produces.";
-        units "Volt";
-        type decimal64 {
-          fraction-digits 9;
-        }
-        default "1.00";
-      }
-      leaf sample-rate {
-        description
-          "Specifies the sample rate of the arbitrary waveforms the function generator produces.";
-        units "Samples per second";
-        type decimal64 {
-          fraction-digits 9;
-        }
-      }
-      leaf data {
-        type binary;
-        description
-          "Specifies the array of data to use for the new arbitrary
-           waveform. The array’s elements must be normalized
-           between -1.00 and +1.00.
+        case arbitrary-waveform-case {
+          container arbitrary-waveform {
+            leaf data {
+              type binary;
+              description
+                "Specifies the array of data to use for the new arbitrary
+                 waveform. The array’s elements must be normalized
+                 between -1.00 and +1.00.
 
-           Double-precision floating point formated data according to IEEE 754.";
+                 Double-precision floating point formated data according to IEEE 754.";
+            }
+          }
+        }
       }
     }
   }
