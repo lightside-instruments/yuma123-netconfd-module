@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-1) bookworm; urgency=medium
+
+  * Forked a project to enhance the testing script so it supports multiple scopes
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 20 Aug 2024 15:33:11 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope (1.5) bookworm; urgency=medium
 
   * Fixed bug missing parameters_val initialization causing segmentation fault

@@ -8,7 +8,10 @@ python3 test.py --config=networks.xml
 
 
 
-# Here is a more complex example involving a generator 
-python3 test-w-generator.py --config=networks-lab.xml --scope-channel="hw:4,0" --scope-parameters="-c 2 -r 48000 -f S24_3LE" --generator-channel="hw:1,0"
+# Here is a more complex example involving a generator
+python3 test-w-generator.py --config=networks-lab.xml --scope-channel="hw:U18dB,0" --scope-parameters="-c 2 -r 48000 -f S24_3LE" --generator-channel="hw:CODEC,0"
 
-# 10 second 1 KHz - 2 KHz linear chirp is played on the default ALSA device with aplay
+# 10 second 1550-1700 Hz linear chirp is played on the "hw:CODEC,0" ALSA device with aplay
+# Products:
+# * chirp.wav - WAV file with 10 sec. chirp generated from generate-chirp.m script
+# * signal.wav - WAV file with 10 sec. recorded signal
