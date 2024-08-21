@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-2) bookworm; urgency=medium
+
+  * Added example/find-resonance.m
+  * Added SCPI generator/scope scripts to be used as base for the implementation of the model
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 22 Aug 2024 01:00:21 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-1) bookworm; urgency=medium
 
   * Forked a project to enhance the testing script so it supports multiple scopes
