@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-3) bookworm; urgency=medium
+
+  * oscilloscope-acquire fixed to download full 2M samples effectively in chuncks
+  * fixed find-resonance.m to also work with negative slack
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 22 Aug 2024 20:07:50 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-2) bookworm; urgency=medium
 
   * Added example/find-resonance.m

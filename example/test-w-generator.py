@@ -29,11 +29,15 @@ parser.add_argument("--config", help="Path to the netconf configuration *.xml fi
 parser.add_argument("--generator-channel", help="Name of generator channel e.g. 'default' or 'hw:1,0'")
 parser.add_argument("--scope-channel", help="Name of sope channel e.g. 'default' or 'hw:1,0'")
 parser.add_argument("--scope-parameters", help="Scope parameters e.g. '-c 2 -f S16LE'")
+parser.add_argument("--samples", help="Scope acquisition total samples e.g. 480000")
+parser.add_argument("--sample-rate", help="Sample rate for acquisition e.g. 48000")
 args = parser.parse_args()
 
 scope_channel=args.scope_channel
 scope_parameters=args.scope_parameters
 generator_channel=args.generator_channel
+samples = int(args.samples)
+sample_rate = int(args.sample_rate)
 
 tree=etree.parse(args.config)
 network = tree.xpath('/nc:config/nd:networks/nd:network', namespaces=namespaces)[0]
@@ -73,7 +77,7 @@ print(etree.tostring(result))
 rpc_error = result.xpath('rpc-error')
 assert(len(rpc_error)==0)
 
-ok=yangcli(yconns["scope0"],"""create /acquisition -- samples=480000 sample-rate=48000""").xpath('./ok')
+ok=yangcli(yconns["scope0"],"""create /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
 assert(len(ok)==1)
 
 ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- parameters='%s'"""%(scope_channel, scope_parameters)).xpath('./ok')

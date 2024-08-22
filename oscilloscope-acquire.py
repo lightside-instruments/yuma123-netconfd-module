@@ -9,6 +9,8 @@ import vxi11
 instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,1::INSTR")
 instr.write("*IDN?")
 
+samples=2000000
+
 print(instr.read())
 
 con = instr
@@ -49,14 +51,6 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
         reply=cmd(con, "WAVeform:END?\n")
         print(reply)
 
-        con.write('WAVeform:START ' + str(0) + '\n')
-        con.write('WAVeform:END '+ str(2000000-1) + '\n')
-
-        reply=cmd(con, "WAVeform:START?\n")
-        print(reply)
-        reply=cmd(con, "WAVeform:END?\n")
-        print(reply)
-
         reply=cmd(con, "WAVeform:BITS?\n")
         print(reply)
 
@@ -66,48 +60,66 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
         reply=cmd(con, "WAVeform:SIGN?\n")
         print(reply)
 
-        reply=cmd(con, 'WAVeform?\n')
-        print(reply)
+        float_array = []
+        block_size_max=10000
 
-        start = time.time()
+        for offset in range(0,samples,block_size_max):
+            con.write('WAVeform:START ' + str(offset) + '\n')
+            if((offset+block_size_max) > samples):
+                block_size=samples-offset
+            else:
+                block_size=block_size_max
+            con.write('WAVeform:END '+ str(offset+block_size-1) + '\n')
+
+            reply=cmd(con, "WAVeform:START?\n")
+            print(reply)
+            reply=cmd(con, "WAVeform:END?\n")
+            print(reply)
 
 
-        if(type=="ASCII"):
-            reply=cmd(con, "WAVeform:SEND?\n")
-        else:
-            c=cmd_binary(con, "WAVeform:SEND?\n")
+            reply=cmd(con, 'WAVeform?\n')
+            print(reply)
 
-        end = time.time()
+            start = time.time()
 
-        if(type=="BYTE"):
-            reply=""
-            for byte in c[10:-1]:
-                val = float(vdiv)*(float(byte)-128)*1.0/25;
-                if(reply==""):
-                    reply = str(val)
-                else:
-                    reply = reply + "," + str(val)
-        elif(type=="WORD"):
-            reply=""
-            for i in range(10,(len(c)-1),2):
-                num=int.from_bytes(c[i:i+2], byteorder='big', signed=True)
 
-                val = float(vdiv)*(num)*1.0/3200
-                if(reply==""):
-                    reply = str(val);
-                else:
-                    reply = reply + "," + str(val)
+            if(type=="ASCII"):
+                reply=cmd(con, "WAVeform:SEND?\n")
+            else:
+                c=cmd_binary(con, "WAVeform:SEND?\n")
 
-        if(type=="ASCII"):
-            print("Read %d bytes in %lf seconds" %(len(reply), (end - start)))
-            #print(reply)
-        else:
-            print("Read %d bytes in %lf seconds" %(len(c), (end - start)))
-            #print(c)
+            end = time.time()
 
-        
-        float_array = [float(i) for i in reply.split(',')]
-        print("ch%d=%s"%(trace,str(float_array)))
+            if(type=="BYTE"):
+                reply=""
+                for byte in c[10:-1]:
+                    val = float(vdiv)*(float(byte)-128)*1.0/25;
+                    if(reply==""):
+                        reply = str(val)
+                    else:
+                        reply = reply + "," + str(val)
+            elif(type=="WORD"):
+                reply=""
+                for i in range(10,(len(c)-1),2):
+                    num=int.from_bytes(c[i:i+2], byteorder='big', signed=True)
+
+                    val = float(vdiv)*(num)*1.0/3200
+                    if(reply==""):
+                        reply = str(val);
+                    else:
+                        reply = reply + "," + str(val)
+
+            if(type=="ASCII"):
+                print("Read %d bytes in %lf seconds" %(len(reply), (end - start)))
+                #print(reply)
+            else:
+                print("Read %d bytes in %lf seconds" %(len(c), (end - start)))
+                #print(c)
+
+
+            float_array.append([float(i) for i in reply.split(',')])
+
+        print("signal%d=%s"%(trace,str(float_array)))
 
 #con=gpib.dev(0,3)
 
@@ -136,9 +148,6 @@ print(reply2)
 
 setup_channel(1)
 disable_channel(2)
-reply=cmd(con, "TIMebase:SRATe?\n")
-print(reply)
-
 disable_channel(3)
 disable_channel(4)
 
@@ -151,7 +160,7 @@ reply=cmd(con, 'TRIGger?\n')
 print (reply)
 
 con.write('TRIGger:MODE SINGLE\n')
-con.write('TRIGger:POSITION -5\n')
+con.write('TRIGger:POSITION -3\n')
 con.write('TRIGGER:SIMPLE:EDGE:SLOPE FALL\n')
 con.write('TRIGger:SOURce:CHANnel1:LEVel -0.0 V\n')
 con.write('TRIGger:SOURce:COUPling AC\n')
@@ -166,34 +175,19 @@ reply=cmd(con, "TIMebase:SRATe?\n")
 print(reply)
 
 
-con.write('ACQuire:RECordlength 2000000\n')
+con.write('ACQuire:RECordlength %d\n'%(samples))
 
 
 #con.write('*WAI\n')
 #print (reply)
 #time.sleep(4)
 
-reply=cmd(con, 'ACQuire:RECordlength?\n')
-print (reply)
-
-reply=cmd(con, "TIMebase:SRATe?\n")
-print(reply)
-
-print("Setting SRATE")
-
-con.write('TIMebase:SRATe 1.000000E+06\n')
-
 reply=cmd(con, "TIMebase:SRATe?\n")
 print(reply)
 
 reply=cmd(con, 'ACQuire:RECordlength?\n')
 print (reply)
 
-print("Setting RECordlength 480000")
-con.write('ACQuire:RECordlength 480000\n')
-
-reply=cmd(con, "TIMebase:SRATe?\n")
-print(reply)
 
 reply=cmd(con, 'ACQuire:RECordlength?\n')
 print (reply)
