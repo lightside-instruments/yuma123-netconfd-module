@@ -9,5 +9,5 @@ liblsi_ivi_function_generator_la_LDFLAGS = -module -lyumaagt -lyumancx
 
 yang_DATA = lsi-ivi-function-generator.yang
 
-#bin_SCRIPTS = lsi-ivi-function-generator-set lsi-ivi-function-generator-gpib-e364xa-set lsi-ivi-function-generator-get lsi-ivi-function-generator-gpib-e364xa-get
+bin_SCRIPTS = lsi-ivi-function-generator-set
 

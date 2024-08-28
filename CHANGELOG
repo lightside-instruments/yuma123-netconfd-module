@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.1) bookworm; urgency=medium
+
+  * Added implementation of standard-function mode HP 33120A
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 29 Aug 2024 00:12:53 +0200
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.0) bookworm; urgency=medium
 
   * Reorganized model to have standard-function and arbitrary-waveform configuration cases as in the IVI FGen class

@@ -35,6 +35,112 @@
 static char* visa_resource_name;
 static obj_template_t* outputs_state_obj;
 
+int run_arbitrary_waveform(val_value_t* name_val, val_value_t* arbitrary_waveform_val)
+{
+
+    val_value_t *data_val;
+    FILE* f;
+    char buf[BUFSIZE];
+    char* ptr;
+
+    data_val = val_find_child(arbitrary_waveform_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "data");
+    assert(data_val);
+    sprintf(buf, "/tmp/%s-signal.wav", VAL_STRING(name_val));
+    f=fopen(buf, "w");
+    assert(f);
+    fwrite(data_val->v.binary.ustr, data_val->v.binary.ustrlen, 1, f);
+    fflush(f);
+    fclose(f);
+    sprintf(buf, "aplay -D \"%s\"  \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), VAL_STRING(name_val));
+
+    printf("Calling: %s\n", buf);
+    system(buf);
+
+    return NO_ERR;
+}
+
+int run_standard_function(val_value_t* name_val, val_value_t* standard_function_val)
+{
+    val_value_t *waveform_type_val;
+    val_value_t *frequency_val;
+    val_value_t *amplitude_val;
+    val_value_t *dc_offset_val;
+    val_value_t *duty_cycle_val;
+    char buf[BUFSIZE];
+    char* ptr;
+
+    waveform_type_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "waveform-type");
+    assert(waveform_type_val);
+
+    amplitude_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "amplitude");
+
+    dc_offset_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "dc-offset");
+
+    frequency_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "frequency");
+
+    duty_cycle_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "duty-cycle");
+
+    if(0==strcmp("default",VAL_STRING(name_val))) {
+        char* frequency_str;
+        char* amplitude_str;
+        char* dc_offset_str;
+        char* duty_cycle_str;
+
+        if(frequency_val) {
+            frequency_str = val_make_sprintf_string(frequency_val);
+        }
+        if(amplitude_val) {
+            amplitude_str = val_make_sprintf_string(amplitude_val);
+        }
+
+        if(dc_offset_val) {
+            dc_offset_str = val_make_sprintf_string(dc_offset_val);
+        }
+
+        if(0==strcmp(VAL_STRING(waveform_type_val),"square")) {
+            if(duty_cycle_val) {
+                duty_cycle_str = val_make_sprintf_string(duty_cycle_val);
+    	    }
+            sprintf(buf, "lsi-ivi-function-generator-set \"%s\" on square %s %s %s %s", getenv ("LSI_IVI_FUNCTION_GENERATOR_VISA_RESOURCE_NAME"), frequency_str, amplitude_str, dc_offset_str, duty_cycle_val?duty_cycle_str:"50");
+            if(duty_cycle_val) {
+                free(duty_cycle_str);
+            }
+        } else if(0==strcmp(VAL_STRING(waveform_type_val),"sine")) {
+            assert(frequency_val);
+            sprintf(buf, "lsi-ivi-function-generator-set \"%s\" on sine %s %s %s", getenv ("LSI_IVI_FUNCTION_GENERATOR_VISA_RESOURCE_NAME"), frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0");
+        } else if(0==strcmp(VAL_STRING(waveform_type_val),"dc")) {
+            sprintf(buf, "lsi-ivi-function-generator-set \"%s\" on dc %s %s %s", getenv ("LSI_IVI_FUNCTION_GENERATOR_VISA_RESOURCE_NAME"), frequency_val?frequency_str:0, amplitude_val?amplitude_str:0, dc_offset_val?dc_offset_str:"0");
+        }
+
+        if(frequency_val) {
+            free(frequency_str);
+        }
+
+        free(amplitude_str);
+
+        if(dc_offset_val) {
+            free(dc_offset_str);
+        }
+
+        printf("Calling: %s\n", buf);
+        system(buf);
+    }
+
+    return NO_ERR;
+}
+
 static int update_config(val_value_t* config_cur_val, val_value_t* config_new_val)
 {
 
@@ -45,11 +151,9 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *name_val;
     val_value_t *arbitrary_waveform_val;
     val_value_t *data_val=NULL;
+    val_value_t *standard_function_val;
 
     unsigned int i;
-    FILE* f;
-    char buf[BUFSIZE];
-    char* ptr;
 
     if(config_new_val == NULL) {
         channels_val = NULL;
@@ -66,28 +170,22 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             name_val = val_find_child(channel_val,
                                FUNCTION_GENERATOR_MOD,
                                "name");
+
+            standard_function_val = val_find_child(channel_val,
+                               FUNCTION_GENERATOR_MOD,
+                               "standard-function");
+
+            if(standard_function_val!=NULL) {
+                return run_standard_function(name_val, standard_function_val);
+            }
+
             arbitrary_waveform_val = val_find_child(channel_val,
                                FUNCTION_GENERATOR_MOD,
                                "arbitrary-waveform");
 
-            if(arbitrary_waveform_val==NULL) {
-                continue;
+            if(arbitrary_waveform_val!=NULL) {
+                return run_arbitrary_waveform(name_val, arbitrary_waveform_val);
             }
-
-            data_val = val_find_child(arbitrary_waveform_val,
-                                      FUNCTION_GENERATOR_MOD,
-                                      "data");
-            assert(data_val);
-            sprintf(buf, "/tmp/%s-signal.wav", VAL_STRING(name_val));
-            f=fopen(buf, "w");
-            assert(f);
-            fwrite(data_val->v.binary.ustr, data_val->v.binary.ustrlen, 1, f);
-            fflush(f);
-            fclose(f);
-            sprintf(buf, "aplay -D \"%s\"  \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), VAL_STRING(name_val));
-
-            printf("Calling: %s\n", buf);
-            system(buf);
             
         }
     }

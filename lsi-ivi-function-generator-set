@@ -1,0 +1,23 @@
+#!/usr/bin/python3
+
+global args
+args=None
+
+import sys
+import time
+import vxi11
+
+# Usage: ./lsi-ivi-function-generator-gpib-...-set <visa-resource-name> <on|off> <waveform-type> <frequency> <amplitude> <dc-offset> <duty-cycle>
+
+# Example: ./lsi-ivi-function-generator-gpib-...-set "TCPIP::10.13.37.195::gpib,4::INSTR" on square 1634.45 5 2.5 50
+
+instr = vxi11.vxi11.Instrument(sys.argv[1])
+
+if(sys.argv[3]=="square"):
+    instr.write("APPL:SQUare %s Hz, %s VPP, %s V"%(sys.argv[4], sys.argv[5], sys.argv[6]))
+elif(sys.argv[3]=="sine"):
+    instr.write("APPL:SINusoid %s Hz, %s VPP, %s V"%(sys.argv[4], sys.argv[5], sys.argv[6]))
+elif(sys.argv[3]=="dc"):
+    instr.write("APPL:DC %s Hz, %s VPP, %s V"%(sys.argv[4], sys.argv[5], sys.argv[6]))
+else:
+    print("Unsupported waveform-type: %s"%(sys.argv[3]))
