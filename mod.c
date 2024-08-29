@@ -113,15 +113,15 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
             if(duty_cycle_val) {
                 duty_cycle_str = val_make_sprintf_string(duty_cycle_val);
     	    }
-            sprintf(buf, "lsi-ivi-function-generator-set \"%s\" on square %s %s %s %s", getenv ("LSI_IVI_FUNCTION_GENERATOR_VISA_RESOURCE_NAME"), frequency_str, amplitude_str, dc_offset_str, duty_cycle_val?duty_cycle_str:"50");
+            sprintf(buf, "lsi-ivi-function-generator-set on square %s %s %s %s", frequency_str, amplitude_str, dc_offset_str, duty_cycle_val?duty_cycle_str:"50");
             if(duty_cycle_val) {
                 free(duty_cycle_str);
             }
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"sine")) {
             assert(frequency_val);
-            sprintf(buf, "lsi-ivi-function-generator-set \"%s\" on sine %s %s %s", getenv ("LSI_IVI_FUNCTION_GENERATOR_VISA_RESOURCE_NAME"), frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0");
+            sprintf(buf, "lsi-ivi-function-generator-set on sine %s %s %s", frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0");
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"dc")) {
-            sprintf(buf, "lsi-ivi-function-generator-set \"%s\" on dc %s %s %s", getenv ("LSI_IVI_FUNCTION_GENERATOR_VISA_RESOURCE_NAME"), frequency_val?frequency_str:0, amplitude_val?amplitude_str:0, dc_offset_val?dc_offset_str:"0");
+            sprintf(buf, "lsi-ivi-function-generator-set on dc %s %s %s", frequency_val?frequency_str:0, amplitude_val?amplitude_str:0, dc_offset_val?dc_offset_str:"0");
         }
 
         if(frequency_val) {

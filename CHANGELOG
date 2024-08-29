@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.2) bookworm; urgency=medium
+
+  * Removed VISA instrument identifier passed to netconfd as exnvironment variable and to the script as parameter
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 29 Aug 2024 15:47:35 +0200
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.1) bookworm; urgency=medium
 
   * Added implementation of standard-function mode HP 33120A
