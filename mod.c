@@ -206,7 +206,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
             sprintf(buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
             system(buf);
-            sprintf(buf, "arecord -D \"%s\" %s -s %" PRIu64 " \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), parameters_val?VAL_STRING(parameters_val):"", VAL_UINT64(samples_val), VAL_STRING(name_val));
+            sprintf(buf, "lsi-ivi-scope-acquisition-start \"%s\" %" PRIu64 " %s", VAL_STRING(name_val), VAL_UINT64(samples_val), parameters_val?VAL_STRING(parameters_val):"");
 
             printf("Calling: %s\n", buf);
             system(buf);

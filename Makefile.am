@@ -9,5 +9,5 @@ liblsi_ivi_scope_la_LDFLAGS = -module -lyumaagt -lyumancx
 
 yang_DATA = lsi-ivi-scope.yang
 
-bin_SCRIPTS = lsi-acquisition-data-get
+bin_SCRIPTS = lsi-ivi-scope-acquisition-data-get lsi-ivi-scope-acquisition-start
 

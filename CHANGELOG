@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-4) bookworm; urgency=medium
+
+  * Added support for support for yokogawa dl1540l scope
+  * Added example/test-w-generator-standard-function.py
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 29 Aug 2024 15:32:37 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-3) bookworm; urgency=medium
 
   * oscilloscope-acquire fixed to download full 2M samples effectively in chuncks
