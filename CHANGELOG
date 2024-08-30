@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-6) bookworm; urgency=medium
+
+  * Fixed bug not passing range parameter to scope acquisition start script
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sat, 31 Aug 2024 01:15:35 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-5) bookworm; urgency=medium
 
   * Added vertical range parameter in Volts to the YANG model
