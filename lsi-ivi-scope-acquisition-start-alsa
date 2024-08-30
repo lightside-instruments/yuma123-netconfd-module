@@ -1,4 +1,4 @@
 #!/bin/bash
 
 rm -f /tmp/${1}-signal.wav
-echo "-D $1 -s $2 $3 /tmp/$1-signal.wav" | xargs arecord &
+echo "-D $1 -r ${2%.*} -s $3 $4 /tmp/$1-signal.wav" | xargs arecord &

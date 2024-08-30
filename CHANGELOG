@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-5) bookworm; urgency=medium
+
+  * Added vertical range parameter in Volts to the YANG model
+  * Modified Yokogawa scope implementation to use sample-rate and samples to determine "horizontal range"
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 30 Aug 2024 15:57:30 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-4) bookworm; urgency=medium
 
   * Added support for support for yokogawa dl1540l scope

@@ -49,13 +49,13 @@ yangcli(yconns["scope0"],"""delete /acquisition""")
 yangcli(yconns["generator0"],"""delete /channels""")
 tntapi.network_commit(conns)
 
-ok=yangcli(yconns["generator0"],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=1000 amplitude=1 dc-offset=0"""%("default", "sine")).xpath('./ok')
+ok=yangcli(yconns["generator0"],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=1000 amplitude=3.3 dc-offset=1.65"""%("default", "square")).xpath('./ok')
 assert(len(ok)==1)
 
-ok=yangcli(yconns["scope0"],"""create /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
+ok=yangcli(yconns["scope0"],"""replace /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
 assert(len(ok)==1)
 
-ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- parameters='%s'"""%(scope_channel, scope_parameters)).xpath('./ok')
+ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=10.0 parameters='%s'"""%(scope_channel, scope_parameters)).xpath('./ok')
 assert(len(ok)==1)
 
 

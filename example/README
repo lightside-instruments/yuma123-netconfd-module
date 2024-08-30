@@ -6,10 +6,18 @@ Edit networks.xml adding the NETCONF access parameters for your device.
 Usage:
 python3 test.py --config=networks.xml
 
-
-
 # Here is a more complex example involving a generator
+You need to install and load the function generator module together with the scope module:
+
+netconfd --module=lsi-ivi-scope --module=lsi-ivi-function-generator --no-startup --superuser=$USER
+
+Depending on the ../lsi-ivi-scope-acquisition-start the implementation can need a scope-parameter:
+
+ALSA:
 python3 test-w-generator.py --config=networks-lab.xml --scope-channel="hw:U18dB,0" --scope-parameters="-c 2 -r 48000 -f S24_3LE" --generator-channel="hw:CODEC,0"
+
+Yokogawa scope:
+python3 test-w-generator.py --config=networks-lab.xml --scope-channel="default" --scope-parameters="1ms" --generator-channel="default"
 
 # 10 second 1550-1700 Hz linear chirp is played on the "hw:CODEC,0" ALSA device with aplay
 # Products:

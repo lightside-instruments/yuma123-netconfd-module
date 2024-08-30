@@ -9,9 +9,9 @@ module lsi-ivi-scope {
     "Scope management module designed
      after the IVI Scope.";
 
-  revision 2024-08-15 {
+  revision 2024-08-30 {
     description
-      "Changed data to config false.";
+      "Added range.";
   }
 
   feature measurement;
@@ -25,7 +25,18 @@ module lsi-ivi-scope {
         leaf name {
           type string;
         }
-      
+        leaf range {
+          description
+            "Specifies the absolute value of the full-scale input range
+             for a channel. For example, to acquire a sine wave that
+             spans between -5.0 and 5.0 volts, set the Vertical Range
+             attribute to 10.0 volts.";
+          units "Volt";
+          type decimal64 {
+            fraction-digits 9;
+          }
+        }
+
         leaf parameters {
           description
             "Specifies implementation specific parameters e.g. -c 2 -f S16_LE";
@@ -46,14 +57,15 @@ module lsi-ivi-scope {
     }
     leaf sample-rate {
       description
-        "Specifies the sample rate of the arbitrary waveforms the function generator produces.";
+        "Specifies the sample rate of the acquired waveform.";
       units "Samples per second";
-      type int32;
+      type decimal64 {
+        fraction-digits 9;
+      }
     }
     leaf samples {
       description
-        "Specifies the sample rate of the arbitrary waveforms the function generator produces.";
-      units "Samples per second";
+        "Specifies the number of sample points to be acquired for each channel.";
       type uint64;
     }
 

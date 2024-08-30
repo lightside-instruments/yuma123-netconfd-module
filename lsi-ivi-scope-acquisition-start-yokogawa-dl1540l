@@ -13,9 +13,9 @@ import vxi11
 import numpy as np
 import scipy.io.wavfile as wf
 
-# Usage: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l <channel-name> <samples> <misc-params>
+# Usage: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l <channel-name> <sample-rate> <samples> <range> <misc-params>
 
-# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l default 1000 1ms
+# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l default 100000 1000 1ms
 
 instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,1::INSTR")
 
@@ -26,11 +26,14 @@ instr.write("*IDN?")
 samples=2000000
 
 if(len(sys.argv)>2):
-    samples=int(sys.argv[2])
+    sample_rate=float(sys.argv[2])
+
+if(len(sys.argv)>3):
+    samples=int(sys.argv[3])
 
 tdiv="1000ms"
-if(len(sys.argv)>3):
-    tdiv=sys.argv[3]
+if(len(sys.argv)>4):
+    tdiv=sys.argv[4]
 
 
 print(instr.read())
@@ -50,13 +53,13 @@ def cmd(instr, cmd):
         #result=c.decode("utf-8")
         return result
 
-def setup_channel(channel):
+def setup_channel(channel, range):
         reply=cmd(con, ':CHANnel'+str(channel)+'?\n')
         print (reply)
         con.write(':CHAN'+str(channel)+':MODE ON\n')
         con.write(':CHAN'+str(channel)+':POS 0\n')
         con.write(':CHAN'+str(channel)+':PROBE 1\n')
-        con.write('CHAN'+str(channel)+':VDIV:VALue 0.1V\n')
+        con.write('CHAN'+str(channel)+':VDIV:VALue %f V\n'%(range/10))
 
 def disable_channel(channel):
         reply=cmd(con, ':CHANnel'+str(channel)+'?\n')
@@ -161,18 +164,17 @@ time_string = now.strftime("%H:%M:%S")
 
 print(date_string)
 print(time_string)
-con.write('SYSTem:CLOCk:DATE "%s"\n'%(date_string[2:]))
 con.write('SYSTem:CLOCk:TIME "%s"\n'%(time_string))
 
-con.write(':TIM:TDIV %s\n'%(tdiv))
+con.write(':TIM:TDIV %f\n'%((float(samples)/10)/sample_rate))
 
 reply2=cmd(con, "WAVeform:LENGth?\n")
 print(reply2)
 
-setup_channel(1)
-setup_channel(2)
-setup_channel(3)
-setup_channel(4)
+setup_channel(1,range)
+setup_channel(2,range)
+setup_channel(3,range)
+setup_channel(4,range)
 
 
 reply=cmd(con, 'ACQuire:RECordlength?\n')
@@ -184,9 +186,9 @@ print (reply)
 
 con.write('TRIGger:MODE SINGLE\n')
 con.write('TRIGger:POSITION -3\n')
-con.write('TRIGGER:SIMPLE:EDGE:SLOPE FALL\n')
-con.write('TRIGger:SOURce:CHANnel1:LEVel -0.0 V\n')
-con.write('TRIGger:SOURce:COUPling AC\n')
+con.write('TRIGGER:SIMPLE:EDGE:SLOPE RISE\n')
+con.write('TRIGger:SOURce:CHANnel1:LEVel 1 V\n')
+con.write('TRIGger:SOURce:COUPling DC\n')
 
 reply=cmd(con, 'TRIGger?\n')
 print (reply)

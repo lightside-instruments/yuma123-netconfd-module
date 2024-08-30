@@ -120,9 +120,14 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *channels_val;
     val_value_t *channel_val;
     val_value_t *name_val;
+    val_value_t *sample_rate_val;
     val_value_t *samples_val;
     val_value_t *parameters_val;
+    val_value_t *range_val;
     val_value_t *data_val=NULL;
+
+    char* sample_rate_str;
+    char* range_str;
 
     unsigned int i;
     FILE* f;
@@ -155,6 +160,11 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     }
     acquisition_val = acquisition_new_val;
 
+
+    sample_rate_val = val_find_child(acquisition_val,
+                               SCOPE_MOD,
+                               "sample-rate");
+    assert(sample_rate_val);
 
     samples_val = val_find_child(acquisition_val,
                                SCOPE_MOD,
@@ -199,17 +209,31 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             val_add_child(data_val, channel_val);
 
 
+            range_val = val_find_child(channel_val,
+                               SCOPE_MOD,
+                               "range");
+
+
             parameters_val = val_find_child(channel_val,
                                SCOPE_MOD,
                                "parameters");
 
 
+            sample_rate_str = val_make_sprintf_string(sample_rate_val);
+
+            if(range_val) {
+                range_str = val_make_sprintf_string(range_val);
+            }
+
             sprintf(buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
             system(buf);
-            sprintf(buf, "lsi-ivi-scope-acquisition-start \"%s\" %" PRIu64 " %s", VAL_STRING(name_val), VAL_UINT64(samples_val), parameters_val?VAL_STRING(parameters_val):"");
-
+            sprintf(buf, "lsi-ivi-scope-acquisition-start \"%s\" %s %" PRIu64 " %s %s", VAL_STRING(name_val), sample_rate_str, VAL_UINT64(samples_val), range_str, parameters_val?VAL_STRING(parameters_val):"");
             printf("Calling: %s\n", buf);
             system(buf);
+            free(sample_rate_str);
+            if(range_val) {
+                free(range_str);
+            }
 
         }
     }
