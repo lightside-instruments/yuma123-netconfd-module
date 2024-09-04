@@ -59,7 +59,7 @@ static status_t
 
 
 #if 1
-    sprintf(buf, "/usr/bin/lsi-acquisition-data-get %s", VAL_STRING(name_val));
+    sprintf(buf, "/usr/bin/lsi-ivi-scope-acquisition-data-get %s", VAL_STRING(name_val));
 
 
     printf("Calling: %s\n", buf);
@@ -117,6 +117,10 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *acquisition_cur_val;
     val_value_t *acquisition_new_val;
     val_value_t *acquisition_val;
+    val_value_t *trigger_val;
+    val_value_t *trigger_slope_val;
+    val_value_t *trigger_level_val;
+    val_value_t *trigger_source_val;
     val_value_t *channels_val;
     val_value_t *channel_val;
     val_value_t *name_val;
@@ -127,11 +131,13 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *data_val=NULL;
 
     char* sample_rate_str;
+    char* trigger_level_str;
     char* range_str;
 
     unsigned int i;
     FILE* f;
     char buf[BUFSIZE];
+    char buf_rm_cmd[BUFSIZE];
     char* ptr;
 
     if(config_new_val == NULL) {
@@ -166,9 +172,29 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
                                "sample-rate");
     assert(sample_rate_val);
 
+    sample_rate_str = val_make_sprintf_string(sample_rate_val);
+
+
     samples_val = val_find_child(acquisition_val,
                                SCOPE_MOD,
                                "samples");
+
+    trigger_val = val_find_child(channel_val,
+                       SCOPE_MOD,
+                       "trigger");
+
+    if(trigger_val) {
+        trigger_level_val = val_find_child(channel_val,
+                       SCOPE_MOD,
+                       "level");
+        trigger_source_val = val_find_child(channel_val,
+                       SCOPE_MOD,
+                       "source");
+        trigger_slope_val = val_find_child(channel_val,
+                       SCOPE_MOD,
+                       "slope");
+    }
+
     channels_val = val_find_child(acquisition_val,
                                SCOPE_MOD,
                                "channels");
@@ -176,67 +202,77 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         return NO_ERR;
     }
 
+    if(trigger_val) {
+        trigger_level_str = val_make_sprintf_string(trigger_level_val);
 
-    if(channels_val!=NULL) {
-        for (channel_val = val_get_first_child(channels_val);
-             channel_val != NULL;
-             channel_val = val_get_next_child(channel_val)) {
-            name_val = val_find_child(channel_val,
-                               SCOPE_MOD,
-                               "name");
-
-            data_val = val_find_child(channel_val,
-                               SCOPE_MOD,
-                               "data");
-
-            if(data_val != NULL) {
-            	printf("Virtual node /acquisition/channels/channel/data already exists. Skipping.\n");
-            	continue;
-            }                                                                                                              
-
-            data_obj = obj_find_child(channel_val->obj,
-                             SCOPE_MOD,
-                             "data");
-            assert(data_obj);
-
-            data_val = val_new_value();
-            assert(data_val);
-
-            val_init_virtual(data_val,
-                         get_data,
-                         data_obj);
-
-            val_add_child(data_val, channel_val);
-
-
-            range_val = val_find_child(channel_val,
-                               SCOPE_MOD,
-                               "range");
-
-
-            parameters_val = val_find_child(channel_val,
-                               SCOPE_MOD,
-                               "parameters");
-
-
-            sample_rate_str = val_make_sprintf_string(sample_rate_val);
-
-            if(range_val) {
-                range_str = val_make_sprintf_string(range_val);
-            }
-
-            sprintf(buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
-            system(buf);
-            sprintf(buf, "lsi-ivi-scope-acquisition-start \"%s\" %s %" PRIu64 " %s %s", VAL_STRING(name_val), sample_rate_str, VAL_UINT64(samples_val), range_str, parameters_val?VAL_STRING(parameters_val):"");
-            printf("Calling: %s\n", buf);
-            system(buf);
-            free(sample_rate_str);
-            if(range_val) {
-                free(range_str);
-            }
-
-        }
     }
+    sprintf(buf, "lsi-ivi-scope-acquisition-start %s %" PRIu64 " %s %s %s", sample_rate_str, VAL_UINT64(samples_val), trigger_source_val?VAL_STRING(trigger_source_val):"-",trigger_slope_val?VAL_STRING(trigger_slope_val):"-",trigger_level_val?trigger_level_str:"0.0");
+    free(sample_rate_str);
+
+    if(trigger_val) {
+       free(trigger_level_str);   	
+    }
+
+    for (channel_val = val_get_first_child(channels_val);
+         channel_val != NULL;
+         channel_val = val_get_next_child(channel_val)) {
+        name_val = val_find_child(channel_val,
+                           SCOPE_MOD,
+                           "name");
+
+        data_val = val_find_child(channel_val,
+                           SCOPE_MOD,
+                           "data");
+
+        if(data_val != NULL) {
+            printf("Virtual node /acquisition/channels/channel/data already exists. Skipping.\n");
+            continue;
+        }                     
+
+        data_obj = obj_find_child(channel_val->obj,
+                         SCOPE_MOD,
+                         "data");
+        assert(data_obj);
+
+        data_val = val_new_value();
+        assert(data_val);
+
+        val_init_virtual(data_val,
+                     get_data,
+                     data_obj);
+
+        val_add_child(data_val, channel_val);
+
+
+        range_val = val_find_child(channel_val,
+                           SCOPE_MOD,
+                           "range");
+
+
+        parameters_val = val_find_child(channel_val,
+                           SCOPE_MOD,
+                           "parameters");
+
+
+        sample_rate_str = val_make_sprintf_string(sample_rate_val);
+
+        if(range_val) {
+            range_str = val_make_sprintf_string(range_val);
+        }
+
+        sprintf(buf+strlen(buf), " %s %s %s", VAL_STRING(name_val), range_str, parameters_val?VAL_STRING(parameters_val):"\" \"");
+
+        if(range_val) {
+           free(range_str);
+        }
+
+        sprintf(buf_rm_cmd, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
+        system(buf_rm_cmd);
+    }
+
+    printf("Calling: %s\n", buf);
+    system(buf);
+
 
     return NO_ERR;
 }

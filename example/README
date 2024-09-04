@@ -3,6 +3,9 @@ acquisition mode.
 
 Edit networks.xml adding the NETCONF access parameters for your device.
 
+Resolve dependencies:
+sudo apt-get install python3-scipy python3-numpy
+
 Usage:
 python3 test.py --config=networks.xml
 

@@ -9,9 +9,9 @@ module lsi-ivi-scope {
     "Scope management module designed
      after the IVI Scope.";
 
-  revision 2024-08-30 {
+  revision 2024-09-04 {
     description
-      "Added range.";
+      "Added /acquisition/trigger configuration container";
   }
 
   feature measurement;
@@ -72,6 +72,31 @@ module lsi-ivi-scope {
     leaf state {
       config false;
       type string;
+    }
+    container trigger {
+      leaf source {
+        type string;
+      }
+      leaf level {
+        //mandatory true;
+        description
+          "Specifies the voltage threshold for the trigger sub-system.";
+        units "Volts";
+        type decimal64 {
+          fraction-digits 9;
+        }
+      }
+      leaf slope {
+        //mandatory true;
+        type enumeration {
+          enum positive {
+            description "A positive (rising) edge passing through the trigger level triggers the oscilloscope";
+          }
+          enum negative{
+            description "A negative (falling) edge passing through the trigger level triggers the oscilloscope";
+          }
+        }
+      }
     }
   }
 }

@@ -37,10 +37,10 @@ yconns = tntapi.network_connect_yangrpc(network)
 yangcli(yconns["scope0"],"""delete /acquisition""")
 tntapi.network_commit(conns)
 
-ok=yangcli(yconns["scope0"],"""create /acquisition -- samples=480000""").xpath('./ok')
+ok=yangcli(yconns["scope0"],"""create /acquisition -- samples=480000 sample-rate=48000""").xpath('./ok')
 assert(len(ok)==1)
 
-ok=yangcli(yconns["scope0"],"""create /acquisition/channels/channel[name='default']""").xpath('./ok')
+ok=yangcli(yconns["scope0"],"""create /acquisition/channels/channel[name='default'] -- range=3.47""").xpath('./ok')
 assert(len(ok)==1)
 
 
