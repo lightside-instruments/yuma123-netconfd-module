@@ -1,3 +1,11 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-9) bookworm; urgency=medium
+
+  * Fixed trigger implementation for yokogawa-dl1540l
+  * Added all generator parameters to the example test-w-generator-standard-function.py
+  * Backgrounded the acquisition script for yokogawa-dl1540l
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 06 Sep 2024 19:26:10 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-8) bookworm; urgency=medium
 
   * Implemented multi channel multi range configuration for lsi-ivi-scope-acquisition-start-yokogawa-dl1540l

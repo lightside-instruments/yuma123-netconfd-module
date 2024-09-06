@@ -270,6 +270,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         system(buf_rm_cmd);
     }
 
+    sprintf(buf+strlen(buf), " &");
     printf("Calling: %s\n", buf);
     system(buf);
 

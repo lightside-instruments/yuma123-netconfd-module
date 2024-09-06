@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from lxml import etree
 import time
@@ -27,7 +27,10 @@ args=None
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="Path to the netconf configuration *.xml file defining the configuration according to ietf-networks, ietf-networks-topology and netconf-node models e.g. ../networks.xml")
 parser.add_argument("--generator-channel", help="Name of generator channel e.g. 'default' or 'hw:1,0'")
+parser.add_argument("--generator-waveform-type", help="Type of generated waveform e.g. 'sine', 'square' or 'dc'")
 parser.add_argument("--generator-frequency", help="Frequency generated in Hz e.g. '1352.3'")
+parser.add_argument("--generator-amplitude", help="Amplitude of generated waveform in Volts e.g. '1.1'")
+parser.add_argument("--generator-dc-offset", help="DC offset of generated waveform in Volts e.g. '0.55'")
 parser.add_argument("--scope-channel-name", help="Name of sope channel e.g. 'default' or 'hw:1,0'")
 parser.add_argument("--scope-channel-range", help="Scope range in Volts e.g. 0.1")
 parser.add_argument("--scope-trigger-source", help="Scope trigger source e.g. ch1")
@@ -45,6 +48,10 @@ scope_trigger_level=float(args.scope_trigger_level)
 scope_trigger_slope=args.scope_trigger_slope
 generator_channel=args.generator_channel
 generator_frequency=args.generator_frequency
+generator_waveform_type=args.generator_waveform_type
+generator_amplitude=float(args.generator_amplitude)
+generator_dc_offset=float(args.generator_dc_offset)
+
 samples = int(args.samples)
 sample_rate = int(args.sample_rate)
 
@@ -58,13 +65,15 @@ yangcli(yconns["scope0"],"""delete /acquisition""")
 yangcli(yconns["generator0"],"""delete /channels""")
 tntapi.network_commit(conns)
 
-ok=yangcli(yconns["generator0"],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=%s amplitude=0.165 dc-offset=0.08250"""%("default", "sine", generator_frequency)).xpath('./ok')
+ok=yangcli(yconns["generator0"],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=%s amplitude=%f dc-offset=%f"""%("default", generator_waveform_type, generator_frequency, generator_amplitude, generator_dc_offset)).xpath('./ok')
 assert(len(ok)==1)
+
+tntapi.network_commit(conns)
 
 ok=yangcli(yconns["scope0"],"""replace /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
 assert(len(ok)==1)
 
-ok=yangcli(yconns["scope0"],"""replace /acquisition/trigger -- source=%s level=%f slope=%s"""%(scope_trigger_source, scope_trigger_level, scope_trigger_slope)).xpath('./ok')
+ok=yangcli(yconns["scope0"],"""merge /acquisition/trigger -- source=%s level=%f slope=%s"""%(scope_trigger_source, scope_trigger_level, scope_trigger_slope)).xpath('./ok')
 assert(len(ok)==1)
 
 

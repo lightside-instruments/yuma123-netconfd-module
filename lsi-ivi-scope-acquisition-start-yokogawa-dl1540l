@@ -22,7 +22,7 @@ instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,1::INSTR")
 
 # Communication interface User's Manual https://cdn.tmi.yokogawa.com/IM701530-11E.pdf
 
-instr.write("*IDN?")
+#instr.write("*IDN?")
 
 samples=2000000
 
@@ -32,7 +32,7 @@ trigger_source=sys.argv[3]
 trigger_slope=sys.argv[4]
 trigger_level=float(sys.argv[5])
 
-print(instr.read())
+#print(instr.read())
 
 con = instr
 
@@ -146,8 +146,8 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
 
 #con=gpib.dev(0,3)
 
-reply = cmd(instr,"*IDN?")
-print(reply)
+#reply = cmd(instr,"*IDN?")
+#print(reply)
 
 con.write('*RST\n')
 reply=cmd(con, '*IDN?\n')
@@ -194,23 +194,25 @@ print (reply)
 con.write('TRIGger:MODE SINGLE\n')
 #con.write('TRIGger:POSITION 0\n')
 if (trigger_slope=='negative'):
-    str="FALL"
+    slope_str="FALL"
 else:
-    str="RISE"
-
-con.write('TRIGGER:SIMPLE:EDGE:SLOPE %s\n'%(str))
-con.write('TRIGger:SOURce:CHANnel%d:LEVel %f V\n'%(int(trigger_source[2:]), trigger_level))
-print('TRIGger:SOURce:CHANnel%d:LEVel %f V\n'%(int(trigger_source[2:]), trigger_level))
+    slope_str="RISE"
+con.write('TRIGGER:SIMPLE:EDGE:SOURCE %d\n'%(int(trigger_source[2:])))
+con.write('TRIGGER:EDGE:SLOPE %s\n'%(slope_str))
+con.write('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
+print('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
 con.write('TRIGger:SOURce:COUPling DC\n')
+con.write('TRIGger:POSITION -5\n')
 
-reply=cmd(con, 'TRIGger?\n')
-print (reply)
+#reply=cmd(con, 'TRIGger?\n')
+#print (reply)
 
-reply=cmd(con, 'ACQuire:RECordlength?\n')
-print (reply)
 
-reply=cmd(con, "TIMebase:SRATe?\n")
-print(reply)
+#reply=cmd(con, 'ACQuire:RECordlength?\n')
+#print (reply)
+
+#reply=cmd(con, "TIMebase:SRATe?\n")
+#print(reply)
 
 
 con.write('ACQuire:RECordlength %d\n'%(samples))
@@ -220,18 +222,18 @@ con.write('ACQuire:RECordlength %d\n'%(samples))
 #print (reply)
 #time.sleep(4)
 
-reply=cmd(con, "TIMebase:SRATe?\n")
-print(reply)
+#reply=cmd(con, "TIMebase:SRATe?\n")
+#print(reply)
 
 reply=cmd(con, 'ACQuire:RECordlength?\n')
 print (reply)
 
 
-reply=cmd(con, 'ACQuire:RECordlength?\n')
-print (reply)
+#reply=cmd(con, 'ACQuire:RECordlength?\n')
+#print (reply)
 
-reply=cmd(con, "ACQuire?\n")
-print(reply)
+#reply=cmd(con, "ACQuire?\n")
+#print(reply)
 
 #con.write('WAVEFORM:DATASELECT ACQDATA\n')
 #con.write('TRIGger:ACTion:STARt\n')
@@ -269,7 +271,7 @@ for i in range(0,channels_num):
     voltage_range=float(sys.argv[6+i*3+1])
     params=sys.argv[6+i*3+2]
 
-    signal = read_waveform(int(name[2:]), type="ASCII")
+    signal = read_waveform(int(name[2:]), type="BYTE")
     wf.write("/tmp/%s-signal.wav"%(name), int(sample_rate), np.array([signal]))
 
 sys.exit(0)
