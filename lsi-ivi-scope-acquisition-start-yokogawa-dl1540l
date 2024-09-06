@@ -13,9 +13,10 @@ import vxi11
 import numpy as np
 import scipy.io.wavfile as wf
 
-# Usage: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l <channel-name> <sample-rate> <samples> <voltage-range> <misc-params>
+# Usage: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
 
-# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l default 100000 1000 1ms
+# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l 100000 1000 ch1 positive 0.0 ch1 10 - ch2 1 -
+
 
 instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,1::INSTR")
 
@@ -25,19 +26,11 @@ instr.write("*IDN?")
 
 samples=2000000
 
-if(len(sys.argv)>2):
-    sample_rate=float(sys.argv[2])
-
-if(len(sys.argv)>3):
-    samples=int(sys.argv[3])
-
-if(len(sys.argv)>4):
-    voltage_range=float(sys.argv[4])
-
-tdiv="1000ms"
-if(len(sys.argv)>5):
-    tdiv=sys.argv[5]
-
+sample_rate=float(sys.argv[1])
+samples=int(sys.argv[2])
+trigger_source=sys.argv[3]
+trigger_slope=sys.argv[4]
+trigger_level=float(sys.argv[5])
 
 print(instr.read())
 
@@ -62,7 +55,8 @@ def setup_channel(channel, voltage_range):
         con.write(':CHAN'+str(channel)+':MODE ON\n')
         con.write(':CHAN'+str(channel)+':POS 0\n')
         con.write(':CHAN'+str(channel)+':PROBE 1\n')
-        con.write('CHAN'+str(channel)+':VDIV:VALue %f V\n'%(voltage_range/10))
+        con.write('CHAN'+str(channel)+':VDIV:VALue %f V\n'%(voltage_range/8))
+        print('CHAN'+str(channel)+':VDIV:VALue %f V\n'%(voltage_range/8))
 
 def disable_channel(channel):
         reply=cmd(con, ':CHANnel'+str(channel)+'?\n')
@@ -174,10 +168,20 @@ con.write(':TIM:TDIV %f\n'%((float(samples)/10)/sample_rate))
 reply2=cmd(con, "WAVeform:LENGth?\n")
 print(reply2)
 
-setup_channel(1,voltage_range)
-setup_channel(2,voltage_range)
-setup_channel(3,voltage_range)
-setup_channel(4,voltage_range)
+disable_channel(1)
+disable_channel(2)
+disable_channel(3)
+disable_channel(4)
+
+channels_num = int((len(sys.argv)-6)/3)
+print (channels_num)
+for i in range(0,channels_num):
+    name=sys.argv[6+i*3]
+    voltage_range=float(sys.argv[6+i*3+1])
+    params=sys.argv[6+i*3+2]
+
+    setup_channel(int(name[2:]),voltage_range)
+
 
 
 reply=cmd(con, 'ACQuire:RECordlength?\n')
@@ -188,9 +192,15 @@ reply=cmd(con, 'TRIGger?\n')
 print (reply)
 
 con.write('TRIGger:MODE SINGLE\n')
-con.write('TRIGger:POSITION -3\n')
-con.write('TRIGGER:SIMPLE:EDGE:SLOPE RISE\n')
-con.write('TRIGger:SOURce:CHANnel1:LEVel 1 V\n')
+#con.write('TRIGger:POSITION 0\n')
+if (trigger_slope=='negative'):
+    str="FALL"
+else:
+    str="RISE"
+
+con.write('TRIGGER:SIMPLE:EDGE:SLOPE %s\n'%(str))
+con.write('TRIGger:SOURce:CHANnel%d:LEVel %f V\n'%(int(trigger_source[2:]), trigger_level))
+print('TRIGger:SOURce:CHANnel%d:LEVel %f V\n'%(int(trigger_source[2:]), trigger_level))
 con.write('TRIGger:SOURce:COUPling DC\n')
 
 reply=cmd(con, 'TRIGger?\n')
@@ -250,6 +260,20 @@ print(reply)
 
 reply=cmd(con, "WAVeform:TRIGger?\n")
 print(reply)
+
+
+channels_num = int((len(sys.argv)-6)/3)
+print (channels_num)
+for i in range(0,channels_num):
+    name=sys.argv[6+i*3]
+    voltage_range=float(sys.argv[6+i*3+1])
+    params=sys.argv[6+i*3+2]
+
+    signal = read_waveform(int(name[2:]), type="ASCII")
+    wf.write("/tmp/%s-signal.wav"%(name), int(sample_rate), np.array([signal]))
+
+sys.exit(0)
+
 
 
 #os.system("cat /proc/interrupts > interrupts-before.txt")

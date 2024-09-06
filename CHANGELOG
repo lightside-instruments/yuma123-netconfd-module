@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-8) bookworm; urgency=medium
+
+  * Implemented multi channel multi range configuration for lsi-ivi-scope-acquisition-start-yokogawa-dl1540l
+  * Implemented trigger configuration support
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 06 Sep 2024 02:02:16 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-7) bookworm; urgency=medium
 
   * Added /acquisition/trigger configuration container

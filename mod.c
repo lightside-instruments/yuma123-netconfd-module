@@ -179,18 +179,18 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
                                SCOPE_MOD,
                                "samples");
 
-    trigger_val = val_find_child(channel_val,
+    trigger_val = val_find_child(acquisition_val,
                        SCOPE_MOD,
                        "trigger");
 
     if(trigger_val) {
-        trigger_level_val = val_find_child(channel_val,
+        trigger_level_val = val_find_child(trigger_val,
                        SCOPE_MOD,
                        "level");
-        trigger_source_val = val_find_child(channel_val,
+        trigger_source_val = val_find_child(trigger_val,
                        SCOPE_MOD,
                        "source");
-        trigger_slope_val = val_find_child(channel_val,
+        trigger_slope_val = val_find_child(trigger_val,
                        SCOPE_MOD,
                        "slope");
     }

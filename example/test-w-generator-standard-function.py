@@ -27,15 +27,24 @@ args=None
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="Path to the netconf configuration *.xml file defining the configuration according to ietf-networks, ietf-networks-topology and netconf-node models e.g. ../networks.xml")
 parser.add_argument("--generator-channel", help="Name of generator channel e.g. 'default' or 'hw:1,0'")
-parser.add_argument("--scope-channel", help="Name of sope channel e.g. 'default' or 'hw:1,0'")
-parser.add_argument("--scope-parameters", help="Scope parameters e.g. '-c 2 -f S16LE'")
+parser.add_argument("--generator-frequency", help="Frequency generated in Hz e.g. '1352.3'")
+parser.add_argument("--scope-channel-name", help="Name of sope channel e.g. 'default' or 'hw:1,0'")
+parser.add_argument("--scope-channel-range", help="Scope range in Volts e.g. 0.1")
+parser.add_argument("--scope-trigger-source", help="Scope trigger source e.g. ch1")
+parser.add_argument("--scope-trigger-level", help="Scope trigger level e.g. 0.6")
+parser.add_argument("--scope-trigger-slope", help="Scope trigger slope e.g. positive or negative")
 parser.add_argument("--samples", help="Scope acquisition total samples e.g. 480000")
 parser.add_argument("--sample-rate", help="Sample rate for acquisition e.g. 48000")
 args = parser.parse_args()
 
-scope_channel=args.scope_channel
-scope_parameters=args.scope_parameters
+generator_frequency="1000"
+scope_channel_name=args.scope_channel_name
+scope_channel_range=float(args.scope_channel_range)
+scope_trigger_source=args.scope_trigger_source
+scope_trigger_level=float(args.scope_trigger_level)
+scope_trigger_slope=args.scope_trigger_slope
 generator_channel=args.generator_channel
+generator_frequency=args.generator_frequency
 samples = int(args.samples)
 sample_rate = int(args.sample_rate)
 
@@ -49,13 +58,17 @@ yangcli(yconns["scope0"],"""delete /acquisition""")
 yangcli(yconns["generator0"],"""delete /channels""")
 tntapi.network_commit(conns)
 
-ok=yangcli(yconns["generator0"],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=1000 amplitude=1.65 dc-offset=0.8250"""%("default", "square")).xpath('./ok')
+ok=yangcli(yconns["generator0"],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=%s amplitude=0.165 dc-offset=0.08250"""%("default", "sine", generator_frequency)).xpath('./ok')
 assert(len(ok)==1)
 
 ok=yangcli(yconns["scope0"],"""replace /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
 assert(len(ok)==1)
 
-ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=10.0 parameters='%s'"""%(scope_channel, scope_parameters)).xpath('./ok')
+ok=yangcli(yconns["scope0"],"""replace /acquisition/trigger -- source=%s level=%f slope=%s"""%(scope_trigger_source, scope_trigger_level, scope_trigger_slope)).xpath('./ok')
+assert(len(ok)==1)
+
+
+ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=%f"""%(scope_channel_name, scope_channel_range)).xpath('./ok')
 assert(len(ok)==1)
 
 
@@ -70,7 +83,7 @@ print("deleting")
 
 time.sleep(480000/48000 + 2)
 
-result=yangcli(yconns["scope0"],"""xget /acquisition/channels/channel[name='%s']"""%(scope_channel))
+result=yangcli(yconns["scope0"],"""xget /acquisition/channels/channel[name='%s']"""%(scope_channel_name))
 
 print(etree.tostring(result))
 data=result.xpath('./data/acquisition/channels/channel/data')
