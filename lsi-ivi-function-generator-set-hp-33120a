@@ -1,0 +1,25 @@
+#!/usr/bin/python3
+
+global args
+args=None
+
+import sys
+import time
+import vxi11
+
+# Usage: ./lsi-ivi-function-generator-set-hp-33120a <on|off> <waveform-type> <frequency> <amplitude> <dc-offset> <duty-cycle>
+
+# Example: ./lsi-ivi-function-generator-set-hp-33120a on square 1634.45 5 2.5 50
+
+print("Starting: %s" %(sys.argv))
+
+instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,4::INSTR")
+
+if(sys.argv[2]=="square"):
+    instr.write("APPL:SQUare %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
+elif(sys.argv[2]=="sine"):
+    instr.write("APPL:SINusoid %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
+elif(sys.argv[2]=="dc"):
+    instr.write("APPL:DC %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
+else:
+    print("Unsupported waveform-type: %s"%(sys.argv[2]))

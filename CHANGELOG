@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.3) bookworm; urgency=medium
+
+  * Renamed implementation specific script to lsi-ivi-function-generator-set-hp-33120a and added symlink
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 06 Sep 2024 19:52:33 +0200
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.2) bookworm; urgency=medium
 
   * Removed VISA instrument identifier passed to netconfd as exnvironment variable and to the script as parameter
