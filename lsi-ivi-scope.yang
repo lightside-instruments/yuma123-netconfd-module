@@ -9,9 +9,9 @@ module lsi-ivi-scope {
     "Scope management module designed
      after the IVI Scope.";
 
-  revision 2024-09-04 {
+  revision 2024-09-07 {
     description
-      "Added /acquisition/trigger configuration container";
+      "Added acquisition-complete notification.";
   }
 
   feature measurement;
@@ -98,5 +98,10 @@ module lsi-ivi-scope {
         }
       }
     }
+  }
+  notification acquisition-complete {
+    description
+      "Sent when acquisition process is complete
+       and data can be read.";
   }
 }

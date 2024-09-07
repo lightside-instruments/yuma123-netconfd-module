@@ -16,6 +16,7 @@
 #include "agt_cb.h"
 #include "agt_commit_complete.h"
 #include "agt_timer.h"
+#include "agt_fd_event_cb.h"
 #include "agt_util.h"
 #include "agt_not.h"
 #include "agt_rpc.h"
@@ -33,6 +34,7 @@
 #define BUFSIZE 4000000
 
 #define SCOPE_MOD "lsi-ivi-scope"
+static obj_template_t* acquisition_complete_obj;
 static obj_template_t* data_obj;
 
 static status_t
@@ -57,9 +59,7 @@ static status_t
                               "name");
     assert(name_val);
 
-
-#if 1
-    sprintf(buf, "/usr/bin/lsi-ivi-scope-acquisition-data-get %s", VAL_STRING(name_val));
+    sprintf(buf, "lsi-ivi-scope-acquisition-data-get %s", VAL_STRING(name_val));
 
 
     printf("Calling: %s\n", buf);
@@ -81,33 +81,38 @@ static status_t
         printf("Command not found or exited with error status\n");
         assert(0);
     }
-#if 1
     res = val_set_simval_obj(dst_val,
                               vir_val->obj,
                               buf);
-#else
-    res = val_set_cplxval_obj(dst_val,
-                              vir_val->obj,
-                              "<geo-location xmlns=\"http://example.com/ns/geo-location\"><latitude>40.73297</latitude><longitude>-74.007696</longitude></geo-location>");
-#endif
 
-#else
-    sprintf(buf, "%s-signal.wav", VAL_STRING(name_val));
-    f = fopen(filename, "r");
-    if (f == NULL) {
-       return ERR_NCX_SKIPPED; 
-    }
-    read_bytes = fread(buf, BUFSIZE, 1, f);
-    assert(read_bytes>0);
-    fclose(f);
-
-#endif
     /* disable cache */
     vir_val->cachetime = 0;
 
     return res;
 }
 
+static void send_acquisition_complete_notification(void)
+{
+    status_t res;
+    obj_template_t* notification_obj;
+    agt_not_msg_t *notif;
+
+
+    notification_obj = acquisition_complete_obj;
+
+
+    notif = agt_not_new_notification(notification_obj);
+    assert (notif != NULL);
+    agt_not_queue_notification(notif);
+}
+
+int my_fd_event_cb_fn(int fd)
+{
+    send_acquisition_complete_notification();
+    agt_fd_event_cb_unregister(fd);
+
+    return 0;
+}
 
 static int update_config(val_value_t* config_cur_val, val_value_t* config_new_val)
 {
@@ -136,8 +141,8 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     unsigned int i;
     FILE* f;
-    char buf[BUFSIZE];
-    char buf_rm_cmd[BUFSIZE];
+    char cmd_buf[BUFSIZE];
+    char rm_cmd_buf[BUFSIZE];
     char* ptr;
 
     if(config_new_val == NULL) {
@@ -206,7 +211,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         trigger_level_str = val_make_sprintf_string(trigger_level_val);
 
     }
-    sprintf(buf, "lsi-ivi-scope-acquisition-start %s %" PRIu64 " %s %s %s", sample_rate_str, VAL_UINT64(samples_val), trigger_source_val?VAL_STRING(trigger_source_val):"-",trigger_slope_val?VAL_STRING(trigger_slope_val):"-",trigger_level_val?trigger_level_str:"0.0");
+    sprintf(cmd_buf, "lsi-ivi-scope-acquisition-start %s %" PRIu64 " %s %s %s", sample_rate_str, VAL_UINT64(samples_val), trigger_source_val?VAL_STRING(trigger_source_val):"-",trigger_slope_val?VAL_STRING(trigger_slope_val):"-",trigger_level_val?trigger_level_str:"0.0");
     free(sample_rate_str);
 
     if(trigger_val) {
@@ -260,19 +265,51 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             range_str = val_make_sprintf_string(range_val);
         }
 
-        sprintf(buf+strlen(buf), " %s %s %s", VAL_STRING(name_val), range_str, parameters_val?VAL_STRING(parameters_val):"\" \"");
+        sprintf(cmd_buf+strlen(cmd_buf), " %s %s %s", VAL_STRING(name_val), range_str, parameters_val?VAL_STRING(parameters_val):"\" \"");
 
         if(range_val) {
            free(range_str);
         }
 
-        sprintf(buf_rm_cmd, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
-        system(buf_rm_cmd);
+        sprintf(rm_cmd_buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
+        system(rm_cmd_buf);
     }
 
-    sprintf(buf+strlen(buf), " &");
-    printf("Calling: %s\n", buf);
-    system(buf);
+//    sprintf(cmd_buf+strlen(cmd_buf), " &");
+    printf("Calling: %s\n", cmd_buf);
+
+//    system(cmd_buf);
+    {
+        int     fd_in[2];
+        int     fd_out[2];
+        pid_t   childpid;
+
+        pipe(fd_in);
+        pipe(fd_out);
+
+        childpid = fork();
+
+        if(childpid == -1) {
+            perror("fork");
+            assert(0);
+        } else if(childpid == 0) {
+            dup2(fd_out[0], 0);
+            close(fd_out[0]);
+            close(fd_out[1]);
+            dup2(fd_in[1], 1);
+            close(fd_in[0]);
+            close(fd_in[1]);
+            execl("/bin/sh", "sh", "-c", cmd_buf, (char *) 0);
+        } else {
+
+            close(fd_out[0]);
+            close(fd_in[1]);
+
+            /* when the process terminates the select loop will execute fd_event_cb_fn */
+            agt_fd_event_cb_register(fd_in[0], my_fd_event_cb_fn);
+
+        }
+    }
 
 
     return NO_ERR;
@@ -333,6 +370,9 @@ status_t
     if (res != NO_ERR) {
         return res;
     }
+
+    acquisition_complete_obj = ncx_find_object(mod,"acquisition-complete");
+    assert(acquisition_complete_obj);
 
     res=agt_commit_complete_register("lsi-ivi-scope" /*SIL id string*/,
                                      y_commit_complete);
