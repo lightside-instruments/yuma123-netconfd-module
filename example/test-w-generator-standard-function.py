@@ -33,6 +33,7 @@ parser.add_argument("--generator-amplitude", help="Amplitude of generated wavefo
 parser.add_argument("--generator-dc-offset", help="DC offset of generated waveform in Volts e.g. '0.55'")
 parser.add_argument("--scope-channel-name", help="Name of sope channel e.g. 'default' or 'hw:1,0'")
 parser.add_argument("--scope-channel-range", help="Scope range in Volts e.g. 0.1")
+parser.add_argument("--scope-channel-parameters", help="Scope implementation specific parameters e.g. '-c 2'")
 parser.add_argument("--scope-trigger-source", help="Scope trigger source e.g. ch1")
 parser.add_argument("--scope-trigger-level", help="Scope trigger level e.g. 0.6")
 parser.add_argument("--scope-trigger-slope", help="Scope trigger slope e.g. positive or negative")
@@ -43,6 +44,7 @@ args = parser.parse_args()
 generator_frequency="1000"
 scope_channel_name=args.scope_channel_name
 scope_channel_range=float(args.scope_channel_range)
+scope_channel_parameters=args.scope_channel_parameters
 scope_trigger_source=args.scope_trigger_source
 scope_trigger_level=float(args.scope_trigger_level)
 scope_trigger_slope=args.scope_trigger_slope
@@ -77,7 +79,7 @@ ok=yangcli(yconns["scope0"],"""merge /acquisition/trigger -- source=%s level=%f 
 assert(len(ok)==1)
 
 
-ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=%f"""%(scope_channel_name, scope_channel_range)).xpath('./ok')
+ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=%f parameters=%s"""%(scope_channel_name, scope_channel_range, scope_channel_parameters)).xpath('./ok')
 assert(len(ok)==1)
 
 

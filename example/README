@@ -30,4 +30,4 @@ python3 test-w-generator.py --config=networks-lab.xml --scope-channel="default" 
 
 Standard function model:
 
-python3 ./test-w-generator-standard-function.py --config=networks-local.xml --scope-channel-name="ch2" --scope-channel-range=4.0 --generator-channel="default" --generator-waveform-type=square --generator-amplitude=1.65 --generator-dc-offset=0.825 --samples=1000 --sample-rate=100000 --generator-frequency="1352.3" --scope-trigger-source=ch2 --scope-trigger-level=0.8 --scope-trigger-slope=positive
+python3 ./test-w-generator-standard-function.py --config=networks-local.xml --scope-channel-name="ch2" --scope-channel-range=4.0 --scope-channel-parameters="-" --generator-channel="default" --generator-waveform-type=square --generator-amplitude=1.65 --generator-dc-offset=0.825 --samples=1000 --sample-rate=100000 --generator-frequency="1352.3" --scope-trigger-source=ch2 --scope-trigger-level=0.8 --scope-trigger-slope=positive
