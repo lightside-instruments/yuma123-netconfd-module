@@ -15,6 +15,11 @@ print("Starting: %s" %(sys.argv))
 
 instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,4::INSTR")
 
+if(sys.argv[1]=="off"):
+    instr.write("APPL:DC 1000 Hz, 1.0 VPP, 0.0 V")
+    sys.exit(0)
+
+
 if(sys.argv[2]=="square"):
     instr.write("APPL:SQUare %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
 elif(sys.argv[2]=="sine"):

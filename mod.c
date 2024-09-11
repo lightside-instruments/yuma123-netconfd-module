@@ -152,6 +152,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
     val_value_t *arbitrary_waveform_val;
     val_value_t *data_val=NULL;
     val_value_t *standard_function_val;
+    val_value_t *channels_cur_val;
 
     unsigned int i;
 
@@ -188,8 +189,18 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             }
             
         }
+    } else {
+        if(config_cur_val == NULL) {
+            channels_cur_val = NULL;
+        } else {
+            channels_cur_val = val_find_child(config_cur_val,
+                               FUNCTION_GENERATOR_MOD,
+                               "channels");
+        }
+        if(channels_val==NULL && channels_cur_val!=NULL) {
+            system("lsi-ivi-function-generator-set off");
+        }
     }
-
     return NO_ERR;
 }
 
