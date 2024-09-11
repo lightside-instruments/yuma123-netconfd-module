@@ -15,7 +15,7 @@ import scipy.io.wavfile as wf
 
 # Usage: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
 
-# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l 100000 1000 ch1 positive 0.0 ch1 10 - ch2 1 -
+# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l 1000 100000 ch1 positive 0.0 ch1 10 - ch2 1 -
 
 
 instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,1::INSTR")
@@ -271,7 +271,7 @@ for i in range(0,channels_num):
     voltage_range=float(sys.argv[6+i*3+1])
     params=sys.argv[6+i*3+2]
 
-    signal = read_waveform(int(name[2:]), type="BYTE")
+    signal = read_waveform(int(name[2:]), type="ASCII")
     wf.write("/tmp/%s-signal.wav"%(name), int(sample_rate), np.array([signal]))
 
 sys.exit(0)

@@ -79,18 +79,14 @@ ok=yangcli(yconns["scope0"],"""merge /acquisition/trigger -- source=%s level=%f 
 assert(len(ok)==1)
 
 
-ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=%f parameters=%s"""%(scope_channel_name, scope_channel_range, scope_channel_parameters)).xpath('./ok')
+ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=%f parameters='%s'"""%(scope_channel_name, scope_channel_range, scope_channel_parameters)).xpath('./ok')
 assert(len(ok)==1)
 
 
 tntapi.network_commit(conns)
 
 
-print("waiting 10")
-
-time.sleep(10)
-
-print("deleting")
+print("waiting 2 sec +  %u sec"%(samples/sample_rate))
 
 time.sleep(480000/48000 + 2)
 

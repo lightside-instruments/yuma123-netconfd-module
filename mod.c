@@ -265,7 +265,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             range_str = val_make_sprintf_string(range_val);
         }
 
-        sprintf(cmd_buf+strlen(cmd_buf), " %s %s %s", VAL_STRING(name_val), range_str, parameters_val?VAL_STRING(parameters_val):"\" \"");
+        sprintf(cmd_buf+strlen(cmd_buf), " %s %s \"%s\"", VAL_STRING(name_val), range_str, parameters_val?VAL_STRING(parameters_val):"\" \"");
 
         if(range_val) {
            free(range_str);

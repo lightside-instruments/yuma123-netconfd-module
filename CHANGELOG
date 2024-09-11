@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-12) bookworm; urgency=medium
+
+  * Fixed bug with reordered sample-rate and samples parameters in ALSA acquisition script
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 11 Sep 2024 13:14:06 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-11) bookworm; urgency=medium
 
   * Synced lsi-ivi-scope-acquisition-start-alsa to the latest parameter order convention
