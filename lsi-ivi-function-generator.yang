@@ -92,6 +92,32 @@ module lsi-ivi-function-generator {
 
                  Double-precision floating point formated data according to IEEE 754.";
             }
+            leaf gain {
+              description
+                "Specifies the gain of the arbitrary waveform the function generator produces.
+                 This value is unitless.";
+              type decimal64 {
+                fraction-digits 9;
+              }
+              default "1.00";
+            }
+            leaf offset {
+              description
+                "Specifies the offset of the arbitrary waveform the function generator produces.";
+              units "Volt";
+              type decimal64 {
+                fraction-digits 9;
+              }
+              default "0.00";
+            }
+            leaf sample-rate {
+              description
+                "Specifies the sample rate of the arbitrary waveforms the function generator produces.";
+              units "Samples per second";
+              type decimal64 {
+                fraction-digits 9;
+              }
+            }
           }
         }
       }

@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+# Usage: ./lsi-ivi-function-generator-arbitrary-waveform-set-alsa <channel-name> <data-file-name> <sample-rate> <gain> <offset>
+
+# Example: ./lsi-ivi-function-generator-arbitrary-waveform-set-alsa default /tmp/signal-default.wav 48000 2.0 0.0
+
+aplay -D $1 -r ${3%.*} $2

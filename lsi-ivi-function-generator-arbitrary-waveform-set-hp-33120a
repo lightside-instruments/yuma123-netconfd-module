@@ -1,0 +1,103 @@
+#!/usr/bin/python3
+
+global args
+args=None
+
+import sys
+import time
+import vxi11
+import struct
+from scipy.io import wavfile
+import numpy as np
+
+# Usage: ./lsi-ivi-function-generator-arbitrary-waveform-set-hp-33120a <channel-name> <data-file-name> <sample-rate> <gain> <offset>
+
+# Example: ./lsi-ivi-function-generator-arbitrary-waveform-set-hp-33120a default /tmp/signal-default.wav 48000 2.0 0.0
+
+
+def cmd(instr, cmd):
+        result = ""
+        instr.write(cmd)
+        c = instr.read(4*1024*1024)
+        result=c
+        #result=c.decode("utf-8")
+        return result
+
+# This works with up to 107 samples with more gives -103,"Invalid separator"
+def send_signal_str(instr, ndata):
+
+    #generate an array with strings
+    data_arrstr = np.char.mod('%f', ndata)
+    #combine to a string
+    data_str = ",".join(data_arrstr)
+    print("DATA VOLATILE, %s"%(data_str))
+    instr.write("DATA VOLATILE, %s"%(data_str))
+
+
+# When tested fails with -113,"Undefined header"
+def send_signal_bin(instr, ndata):
+
+    len_data= len(ndata)
+    data = bytes()
+    data = data.join((struct.pack("<H", 0) for val in ndata))
+    data_w_header=str.encode("DATA:DAC VOLATILE, #%d%d "%(len(str(len_data)),len_data))+data
+    print(data_w_header)
+    instr.write(data_w_header)
+
+
+print("Starting: %s" %(sys.argv))
+data_file_name = sys.argv[2]
+sample_rate = float(sys.argv[3])
+gain = float(sys.argv[4])
+offset = float(sys.argv[5])
+
+sample_rate_from_file, data = wavfile.read(data_file_name)
+
+print("Data of len=%d"%(len(data)))
+ndata = np.array(data) * 1/32767
+
+
+#print(x_str)
+
+instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,4::INSTR")
+reply=cmd(instr, "SYSTem:ERRor?\n")
+print(reply)
+
+instr.write("FORM:BORD SWAP\n")
+reply=cmd(instr, "FORM:BORD?\n")
+print(reply)
+
+reply=cmd(instr, "DATA:ATTRibute:POINts?\n")
+print(reply)
+
+#print("delete old data")
+#instr.write("DATA:DELete:ALL\n")
+#print("done")
+
+reply=cmd(instr, "SYSTem:ERRor?\n")
+print(reply)
+
+#sys.exit(0)
+
+reply=cmd(instr, "DATA:ATTRibute:POINts?\n")
+print(reply)
+
+
+send_signal_str(instr,ndata)
+#send_signal_bin(instr,ndata)
+
+reply=cmd(instr, "DATA:ATTRibute:POINts?\n")
+print(reply)
+
+print("APPLy:USER %f, %f, %f\n"%(sample_rate/len(data), gain, offset))
+instr.write("APPLy:USER %f, %f, %f\n"%(sample_rate/len(data), gain, offset))
+
+
+instr.write("FUNC:USER VOLATILE")
+instr.write("FUNCtion:SHAPe USER")
+
+reply=cmd(instr, "DATA:ATTRibute:POINts?\n")
+print(reply)
+
+
+sys.exit(0)

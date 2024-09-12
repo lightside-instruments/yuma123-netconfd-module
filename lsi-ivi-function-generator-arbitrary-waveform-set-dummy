@@ -1,0 +1,12 @@
+#!/usr/bin/python3
+
+import sys
+
+# Usage: ./lsi-ivi-function-generator-arbitrary-waveform-set-dummy <channel-name> <data-file-name> <sample-rate> <gain> <offset>
+
+# Example: ./lsi-ivi-function-generator-arbitrary-waveform-set-dummy default /tmp/signal-default.wav 48000 2.0 0.0
+
+
+
+print("Starting: %s" %(sys.argv))
+

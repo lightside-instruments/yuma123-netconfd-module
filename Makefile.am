@@ -9,5 +9,6 @@ liblsi_ivi_function_generator_la_LDFLAGS = -module -lyumaagt -lyumancx
 
 yang_DATA = lsi-ivi-function-generator.yang
 
-bin_SCRIPTS = lsi-ivi-function-generator-set
+bin_SCRIPTS = lsi-ivi-function-generator-set \
+              lsi-ivi-function-generator-arbitrary-waveform-set
 

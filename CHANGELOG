@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.5) bookworm; urgency=medium
+
+  * Added gain, offset and sampling-rate to the arbitrary-waveform configuration model
+  * Implemented *-set scripts for arbitrary-waveform mode for hp-33120a in addition to ALSA
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 12 Sep 2024 16:46:50 +0200
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.4) bookworm; urgency=medium
 
   * Fixed implementation turning off the generator

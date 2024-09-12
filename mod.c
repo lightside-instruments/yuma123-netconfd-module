@@ -35,9 +35,12 @@
 static char* visa_resource_name;
 static obj_template_t* outputs_state_obj;
 
+
 int run_arbitrary_waveform(val_value_t* name_val, val_value_t* arbitrary_waveform_val)
 {
-
+    val_value_t *sample_rate_val;
+    val_value_t *gain_val;
+    val_value_t *offset_val;
     val_value_t *data_val;
     FILE* f;
     char buf[BUFSIZE];
@@ -53,10 +56,53 @@ int run_arbitrary_waveform(val_value_t* name_val, val_value_t* arbitrary_wavefor
     fwrite(data_val->v.binary.ustr, data_val->v.binary.ustrlen, 1, f);
     fflush(f);
     fclose(f);
-    sprintf(buf, "aplay -D \"%s\"  \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), VAL_STRING(name_val));
 
-    printf("Calling: %s\n", buf);
-    system(buf);
+    gain_val = val_find_child(arbitrary_waveform_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "gain");
+
+    offset_val = val_find_child(arbitrary_waveform_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "offset");
+
+    sample_rate_val = val_find_child(arbitrary_waveform_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "sample-rate");
+
+    if(1) {
+        char* sample_rate_str;
+        char* offset_str;
+        char* gain_str;
+
+        if(sample_rate_val) {
+            sample_rate_str = val_make_sprintf_string(sample_rate_val);
+        }
+        if(gain_val) {
+            gain_str = val_make_sprintf_string(gain_val);
+        }
+
+        if(offset_val) {
+            offset_str = val_make_sprintf_string(offset_val);
+        }
+
+//      sprintf(buf, "aplay -D \"%s\"  \"/tmp/%s-signal.wav\" &", VAL_STRING(name_val), VAL_STRING(name_val));
+        sprintf(buf, "lsi-ivi-function-generator-arbitrary-waveform-set %s \"/tmp/%s-signal.wav\" %s %s %s", VAL_STRING(name_val), VAL_STRING(name_val), sample_rate_str, gain_str, offset_str);
+
+        if(sample_rate_val) {
+            free(sample_rate_str);
+        }
+
+        if(gain_val) {
+            free(gain_str);
+        }
+
+        if(offset_val) {
+            free(offset_str);
+        }
+
+        printf("Calling: %s\n", buf);
+        system(buf);
+    }
 
     return NO_ERR;
 }

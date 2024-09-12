@@ -12,7 +12,7 @@ from yangcli import yangcli
 def generate_data():
 	#generate image.jpg.b64
 	os.system("octave-cli generate-chirp.m")
-	res = subprocess.check_output(["base64", "--wrap=0", "chirp.wav"])
+	res = subprocess.check_output(["base64", "--wrap=0", "signal-out.wav"])
 	return res
 
 
@@ -36,10 +36,16 @@ yconns = tntapi.network_connect_yangrpc(network)
 yangcli(yconns["generator0"],"""delete /channels""")
 tntapi.network_commit(conns)
 
+sample_rate=48000;
+gain=2;
+offset=0;
+
+ok=yangcli(yconns["generator0"],"""create /channels/channel[name='default']/arbitrary-waveform -- sample-rate=%f gain=%f offset=%f """%(sample_rate,gain,offset)).xpath('./ok')
+assert(len(ok)==1)
+
 data_b64 = generate_data()
 print("""data=%s"""%(data_b64.decode('ascii')))
-#ok=yangcli(yconns["generator0"],"""create /channels/channel[name='default']/arbitrary-waveform -- data=%s"""%(data_b64.decode('ascii'))).xpath('./ok')
-#assert(len(ok)==1)
+
 edit_config_rpc = """<edit-config>
    <target>
      <candidate/>
