@@ -198,6 +198,10 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         trigger_slope_val = val_find_child(trigger_val,
                        SCOPE_MOD,
                        "slope");
+    } else {
+        trigger_level_val = NULL;
+        trigger_source_val = NULL;
+        trigger_slope_val = NULL;
     }
 
     channels_val = val_find_child(acquisition_val,
@@ -271,7 +275,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
            free(range_str);
         }
 
-        sprintf(rm_cmd_buf, "rm /tmp/%s-signal.wav", VAL_STRING(name_val));
+        sprintf(rm_cmd_buf, "rm /tmp/lsi-ivi-scope-%s-signal.wav", VAL_STRING(name_val));
         system(rm_cmd_buf);
     }
 

@@ -1,3 +1,11 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-13) bookworm; urgency=medium
+
+  * Scope implementation for yokogawa dl1540l now working for full 2M samples recording
+  * Fixed uninitialized pointer access when no trigger data is specified
+  * Added more parameters to example/test-w-generator.py
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sat, 14 Sep 2024 00:00:06 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-12) bookworm; urgency=medium
 
   * Fixed bug with reordered sample-rate and samples parameters in ALSA acquisition script

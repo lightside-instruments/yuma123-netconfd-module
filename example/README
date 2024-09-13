@@ -17,10 +17,10 @@ netconfd --module=lsi-ivi-scope --module=lsi-ivi-function-generator --no-startup
 Depending on the ../lsi-ivi-scope-acquisition-start the implementation can need a scope-parameter:
 
 ALSA:
-python3 test-w-generator.py --config=networks-lab.xml --scope-channel="hw:U18dB,0" --scope-parameters="-c 2 -r 48000 -f S24_3LE" --generator-channel="hw:CODEC,0"
+python3 test-w-generator.py --config=networks.xml --scope-name=scope0 --generator-name=generator0 --scope-channel-name="hw:CODEC,0" --scope-channel-range=4.0 --scope-channel-parameters="-c 2 -r 48000 -f S16_LE" --generator-channel-name="hw:CODEC,0" --generator-channel-sample-rate=48000.0 --samples=480000 --sample-rate=48000 --scope-trigger-source=ch3 --scope-trigger-level=0.4 --scope-trigger-slope=positive
 
 Yokogawa scope:
-python3 test-w-generator.py --config=networks-lab.xml --scope-channel="default" --scope-parameters="1ms" --generator-channel="default"
+python3 test-w-generator.py --config=networks.xml --scope-name=scope-yokogawa --generator-name=generator0 --scope-channel-name="ch1" --scope-channel-range=8.0 --scope-channel-parameters="-c 2 -r 48000 -f S16_LE" --generator-channel-name="hw:CODEC,0" --generator-channel-sample-rate=48000.0 --samples=2000000 --sample-rate=200000 --scope-trigger-source=ch1 --scope-trigger-level=0.4 --scope-trigger-slope=positive
 
 # 10 second 1550-1700 Hz linear chirp is played on the "hw:CODEC,0" ALSA device with aplay
 # Products:

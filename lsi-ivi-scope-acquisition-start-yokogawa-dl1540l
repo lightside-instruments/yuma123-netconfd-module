@@ -10,12 +10,12 @@ import os
 import datetime
 import vxi11
 
-import numpy as np
+import numpy
 import scipy.io.wavfile as wf
 
 # Usage: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
 
-# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l 1000 100000 ch1 positive 0.0 ch1 10 - ch2 1 -
+# Example: ./lsi-ivi-scope-acquisition-start-yokogawa-dl1540l 200000.000000000 2000000 ch1 positive 0.400000000 ch1 8.000000000 0.0
 
 
 instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,1::INSTR")
@@ -115,7 +115,8 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
             if(type=="BYTE"):
                 reply=""
                 for byte in c[10:-1]:
-                    val = float(vdiv)*(float(byte)-128)*1.0/25;
+                    val = float(byte)
+                    #val = float(vdiv)*(float(byte)-127)*1.0/25; 
                     if(reply==""):
                         reply = str(val)
                     else:
@@ -138,8 +139,7 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
                 print("Read %d bytes in %lf seconds" %(len(c), (end - start)))
                 #print(c)
 
-
-            float_array.append([float(i) for i in reply.split(',')])
+            float_array.extend( [float(i) for i in reply.split(',')])
 
         print("signal%d=%s"%(trace,str(float_array)))
         return(float_array)
@@ -271,8 +271,11 @@ for i in range(0,channels_num):
     voltage_range=float(sys.argv[6+i*3+1])
     params=sys.argv[6+i*3+2]
 
-    signal = read_waveform(int(name[2:]), type="ASCII")
-    wf.write("/tmp/%s-signal.wav"%(name), int(sample_rate), np.array([signal]))
+    signal = read_waveform(int(name[2:]), type="BYTE")
+    data = numpy.array([signal])
+    print(data.dtype)
+    #data.dump("data.numpy")
+    wf.write("/tmp/lsi-ivi-scope-%s-signal.wav"%(name), int(sample_rate), data.astype(numpy.int8).flatten())
 
 sys.exit(0)
 
@@ -296,5 +299,5 @@ signal4 = read_waveform(4, type="ASCII")
 RATE = 48000
 #... your code that puts an array of floats into data ...
 
-wf.write("/tmp/%s-signal.wav"%(sys.argv[1]), RATE, np.array([np.transpose(np.array([signal1])), np.transpose(np.array([signal2])), np.transpose(np.array([signal3])), np.transpose(np.array([signal4]))]))
+wf.write("/tmp/%s-signal.wav"%(sys.argv[1]), RATE, numpy.array([numpy.transpose(numpy.array([signal1])), numpy.transpose(numpy.array([signal2])), numpy.transpose(numpy.array([signal3])), numpy.transpose(numpy.array([signal4]))]))
 sys.exit(0)

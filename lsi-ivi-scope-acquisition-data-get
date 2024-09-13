@@ -2,6 +2,6 @@
 
 
 #echo -n '<data xmlns="urn:lsi:params:xml:ns:yang:ivi-scope">'
-cat /tmp/${1}-signal.wav | base64 --wrap=0
+cat /tmp/lsi-ivi-scope-${1}-signal.wav | base64 --wrap=0
 #echo -n '</data>'
 
