@@ -5,4 +5,4 @@
 
 
 rm -f /tmp/lsi-ivi-scope-${1}-signal.wav
-echo "-D $6 -r ${1%.*} -s ${2%.*} $8 /tmp/lsi-ivi-scope-$6-signal.wav" | xargs arecord &
+echo "-D $6 -r ${1%.*} -s ${2%.*} $8 /tmp/lsi-ivi-scope-$6-signal.wav" | xargs arecord

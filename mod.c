@@ -31,7 +31,7 @@
 #include "val_set_cplxval_obj.h"
 
 
-#define BUFSIZE 4000000
+#define BUFSIZE 10000
 
 #define SCOPE_MOD "lsi-ivi-scope"
 static obj_template_t* acquisition_complete_obj;
@@ -46,31 +46,41 @@ static status_t
     status_t res;
     char* ptr;
     val_value_t* name_val;
+    val_value_t* samples_val;
     res = NO_ERR;
 
-
-    char buf[BUFSIZE];
+    char cmd_buf[BUFSIZE];
+    char* buf;
     FILE *fp;
     size_t read_bytes;
-
+    uint64_t buf_size;
 
     name_val = val_find_child(vir_val->parent,
                               SCOPE_MOD,
                               "name");
     assert(name_val);
 
-    sprintf(buf, "lsi-ivi-scope-acquisition-data-get %s", VAL_STRING(name_val));
+    sprintf(cmd_buf, "lsi-ivi-scope-acquisition-data-get %s", VAL_STRING(name_val));
+
+    samples_val = val_find_child(vir_val->parent->parent->parent,
+                              SCOPE_MOD,
+                              "samples");
+    assert(samples_val);
+
+    buf_size=1024+8*VAL_UINT64(samples_val);
+    buf = malloc(buf_size);
 
 
     printf("Calling: %s\n", buf);
 
-    if ((fp = popen(buf, "r")) == NULL) {
+    if ((fp = popen(cmd_buf, "r")) == NULL) {
         printf("Error opening pipe!\n");
         assert(0);
     }
 
-    read_bytes = fread(buf, 1, BUFSIZE-1, fp);
+    read_bytes = fread(buf, 1, buf_size-1, fp);
     if(read_bytes<=0) {
+        free(buf);
     	return ERR_NCX_SKIPPED;
     }
 
@@ -87,7 +97,7 @@ static status_t
 
     /* disable cache */
     vir_val->cachetime = 0;
-
+    free(buf);
     return res;
 }
 

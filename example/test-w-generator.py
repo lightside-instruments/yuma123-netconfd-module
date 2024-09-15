@@ -119,7 +119,7 @@ edit_config_rpc = """<edit-config>
 </config>
 </edit-config>"""%(generator_channel_name, data_b64.decode('ascii'))
 
-result = conns['generator0'].rpc(edit_config_rpc)
+result = conns[args.generator_name].rpc(edit_config_rpc)
 print(etree.tostring(result))
 rpc_error = result.xpath('rpc-error')
 assert(len(rpc_error)==0)
