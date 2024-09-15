@@ -54,8 +54,28 @@ scope_trigger_slope=args.scope_trigger_slope
 tree=etree.parse(args.config)
 network = tree.xpath('/nc:config/nd:networks/nd:network', namespaces=namespaces)[0]
 
-conns = tntapi.network_connect(network)
+conns = tntapi.network_connect(network, timeout=10000)
 yconns = tntapi.network_connect_yangrpc(network)
+
+
+filter="""
+<filter xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0" xmlns:netconf="urn:ietf:params:xml:ns:netconf:base:1.0" netconf:type="subtree">
+ <acquisition-complete xmlns="urn:lsi:params:xml:ns:yang:ivi-scope"/>
+</filter>"""
+
+rpc_xml_str="""
+<create-subscription xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">
+%(filter)s
+</create-subscription>
+"""
+
+print(rpc_xml_str%{'filter':filter})
+
+result = conns[args.scope_name].rpc(rpc_xml_str%{'filter':filter})
+print(etree.tostring(result))
+rpc_error = result.xpath('rpc-error')
+assert(len(rpc_error)==0)
+
 
 yangcli(yconns[args.scope_name],"""delete /acquisition""")
 yangcli(yconns[args.generator_name],"""delete /channels""")
@@ -63,6 +83,20 @@ tntapi.network_commit(conns)
 
 data_b64 = generate_data()
 print("""data=%s"""%(data_b64.decode('ascii')))
+
+ok=yangcli(yconns[args.scope_name],"""create /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
+assert(len(ok)==1)
+
+ok=yangcli(yconns[args.scope_name],"""merge /acquisition/trigger -- source=%s level=%f slope=%s"""%(scope_trigger_source, scope_trigger_level, scope_trigger_slope)).xpath('./ok')
+assert(len(ok)==1)
+
+ok=yangcli(yconns[args.scope_name],"""merge /acquisition/channels/channel[name='%s'] -- range=%f parameters='%s'"""%(scope_channel_name, scope_channel_range, scope_channel_parameters)).xpath('./ok')
+assert(len(ok)==1)
+
+
+tntapi.network_commit(conns)
+
+
 # ok=yangcli(yconns[args.generator_name],"""create /channels/channel[name='%s'] -- data=%s"""%(generator_channel_name, data_b64.decode('ascii'))).xpath('./ok')
 ok=yangcli(yconns[args.generator_name],"""create /channels/channel[name='%s']/arbitrary-waveform -- sample-rate=%f"""%(generator_channel_name, generator_channel_sample_rate)).xpath('./ok')
 assert(len(ok)==1)
@@ -90,26 +124,22 @@ print(etree.tostring(result))
 rpc_error = result.xpath('rpc-error')
 assert(len(rpc_error)==0)
 
-ok=yangcli(yconns[args.scope_name],"""create /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
-assert(len(ok)==1)
-
-ok=yangcli(yconns[args.scope_name],"""merge /acquisition/trigger -- source=%s level=%f slope=%s"""%(scope_trigger_source, scope_trigger_level, scope_trigger_slope)).xpath('./ok')
-assert(len(ok)==1)
-
-ok=yangcli(yconns[args.scope_name],"""merge /acquisition/channels/channel[name='%s'] -- range=%f parameters='%s'"""%(scope_channel_name, scope_channel_range, scope_channel_parameters)).xpath('./ok')
-assert(len(ok)==1)
-
-
 tntapi.network_commit(conns)
 
+print("waiting for acquisition to complete ...")
+time.sleep(10)
 
-print("waiting 10")
+while(1):
+    (notification_xml,ret)=conns[args.scope_name].receive()
+    if(ret!=1): #timeout
+        break;
+    printf("Timeout. Retrying.")
+if notification_xml == None:
+    print("[FAILED] Receiving <acquisition-complete> notification")
+    sys.exit(-1)
 
-time.sleep(10+30)
-
-print("deleting")
-
-time.sleep(480000/48000 + 2)
+print(etree.tostring(notification_xml))
+print("Acquisition complete.")
 
 result=yangcli(yconns[args.scope_name],"""xget /acquisition/channels/channel[name='%s']"""%(scope_channel_name))
 

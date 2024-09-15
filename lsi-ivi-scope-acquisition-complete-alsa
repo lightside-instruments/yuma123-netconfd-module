@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Usage: ./lsi-ivi-scope-acquisition-complete-alsa <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
+# Example: ./lsi-ivi-scope-acquisition-complete-alsa 48000 480000 - - - "hw:CODEC,0" 4 "-c 2 -f S16_LE"
+
+
+rm -f /tmp/lsi-ivi-scope-${1}-signal.wav
+echo "-D $6 -r ${1%.*} -s ${2%.*} $8 /tmp/lsi-ivi-scope-$6-signal.wav" | xargs arecord &

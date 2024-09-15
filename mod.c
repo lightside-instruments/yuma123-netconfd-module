@@ -141,8 +141,9 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     unsigned int i;
     FILE* f;
-    char cmd_buf[BUFSIZE];
-    char rm_cmd_buf[BUFSIZE];
+    static char cmd_buf[BUFSIZE];
+    static char params_buf[BUFSIZE-1000];
+    static char rm_cmd_buf[BUFSIZE];
     char* ptr;
 
     if(config_new_val == NULL) {
@@ -215,7 +216,7 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
         trigger_level_str = val_make_sprintf_string(trigger_level_val);
 
     }
-    sprintf(cmd_buf, "lsi-ivi-scope-acquisition-start %s %" PRIu64 " %s %s %s", sample_rate_str, VAL_UINT64(samples_val), trigger_source_val?VAL_STRING(trigger_source_val):"-",trigger_slope_val?VAL_STRING(trigger_slope_val):"-",trigger_level_val?trigger_level_str:"0.0");
+    sprintf(params_buf, "%s %" PRIu64 " %s %s %s", sample_rate_str, VAL_UINT64(samples_val), trigger_source_val?VAL_STRING(trigger_source_val):"-",trigger_slope_val?VAL_STRING(trigger_slope_val):"-",trigger_level_val?trigger_level_str:"0.0");
     free(sample_rate_str);
 
     if(trigger_val) {
@@ -269,20 +270,23 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
             range_str = val_make_sprintf_string(range_val);
         }
 
-        sprintf(cmd_buf+strlen(cmd_buf), " %s %s \"%s\"", VAL_STRING(name_val), range_str, parameters_val?VAL_STRING(parameters_val):"\" \"");
+        sprintf(params_buf+strlen(params_buf), " %s %s \"%s\"", VAL_STRING(name_val), range_str, parameters_val?VAL_STRING(parameters_val):"\" \"");
 
         if(range_val) {
            free(range_str);
         }
 
         sprintf(rm_cmd_buf, "rm /tmp/lsi-ivi-scope-%s-signal.wav", VAL_STRING(name_val));
+        printf("Calling %s\n",rm_cmd_buf);
         system(rm_cmd_buf);
     }
 
-//    sprintf(cmd_buf+strlen(cmd_buf), " &");
+    sprintf(cmd_buf, "%s %s", "lsi-ivi-scope-acquisition-start", params_buf);
+    printf("Calling: %s\n", cmd_buf);
+    system(cmd_buf);
+    sprintf(cmd_buf, "%s %s 1>/tmp/acquisition.stdout 2>/tmp/acquisition.stderr", "lsi-ivi-scope-acquisition-complete", params_buf);
     printf("Calling: %s\n", cmd_buf);
 
-//    system(cmd_buf);
     {
         int     fd_in[2];
         int     fd_out[2];

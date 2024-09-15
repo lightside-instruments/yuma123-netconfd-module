@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-14) bookworm; urgency=medium
+
+  * Split of the acquisition-start script to -start and -complete scripts where the -complete waits for trigger condition
+  * Added <acquisition-complete/> subscription to example/test-w-generator.py instead of sleep
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 15 Sep 2024 19:13:01 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-13) bookworm; urgency=medium
 
   * Scope implementation for yokogawa dl1540l now working for full 2M samples recording
