@@ -1,10 +1,16 @@
-yuma123-netconfd-module-lsi-ivi-scope-test (1.5-15) UNRELEASED; urgency=medium
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-16) bookworm; urgency=medium
+
+  * Enhanced find-resonance.m to use dotproduct based detection filter with the chirp signal
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 16 Sep 2024 11:09:00 +0200
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-15) bookworm; urgency=medium
 
   * Replaced static data buffer with dynamic allocation in acquisiton get_data callback
   * Fixed bug in _complete_alsa implementation that was returning immediately
   * Fixed bug in example/test-w-generator.py usign hardcoded generator0 name instead of command line generator-name parameter
 
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 15 Sep 2024 22:37:33 +0200
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 16 Sep 2024 11:08:33 +0200
 
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-14) bookworm; urgency=medium
 

@@ -12,7 +12,7 @@ from yangcli import yangcli
 
 def generate_data():
 	#generate image.jpg.b64
-	os.system("octave-cli generate-chirp.m")
+	os.system("octave-cli generate_chirp.m")
 	res = subprocess.check_output(["base64", "--wrap=0", "signal-out.wav"])
 	return res
 

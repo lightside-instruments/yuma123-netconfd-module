@@ -1,1 +1,0 @@
-../../yuma123-netconfd-module-lsi-ivi-function-generator/example/generate-chirp.m
