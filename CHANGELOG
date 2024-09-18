@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-17) bookworm; urgency=medium
+
+  * Added improved filtering of the resturn signal for better system characterization
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 18 Sep 2024 15:09:53 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-16) bookworm; urgency=medium
 
   * Enhanced find-resonance.m to use dotproduct based detection filter with the chirp signal
