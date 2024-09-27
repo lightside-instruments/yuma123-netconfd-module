@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-18) bookworm; urgency=medium
+
+  * Added run.sh in example to automate creation of timestamped reports
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 27 Sep 2024 16:57:52 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-17) bookworm; urgency=medium
 
   * Added improved filtering of the resturn signal for better system characterization
