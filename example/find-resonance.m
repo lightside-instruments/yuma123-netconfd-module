@@ -30,16 +30,16 @@ for i = 1:length(offset)
 end
 
 signal = signal_wo_delay-mean(signal_wo_delay);
-chirp_cos = chirp1;
-chirp_sin = [chirp1(1+8:end); zeros(8,1)];
+chirp_cos = chirp1_cos;
+chirp_sin = chirp1_sin;
 delta=1000
 
-offset = [0:delta:length(signal)-1]
+offset = [0:delta:length(signal)-1];
 for i = 1:length(offset)
   dotproduct_chirp_cos(i)=dot(signal(1+offset(i):offset(i)+delta),chirp_cos(1+offset(i):offset(i)+delta));                                                                                   
   dotproduct_chirp_sin(i)=dot(signal(1+offset(i):offset(i)+delta),chirp_sin(1+offset(i):offset(i)+delta));
 end
-result=complex(dotproduct_chirp_cos,dotproduct_chirp_sin)
+result=complex(dotproduct_chirp_cos,dotproduct_chirp_sin);
 
 figure(1)
 magnitude = abs(result);
