@@ -14,7 +14,7 @@ import os
 import datetime
 import vxi11
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,1::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.153::gpib,1::INSTR")
 
 # Communication interface User's Manual https://cdn.tmi.yokogawa.com/IM701530-11E.pdf
 
@@ -103,18 +103,20 @@ print (reply)
 reply=cmd(con, 'TRIGger?\n')
 print (reply)
 
-con.write('TRIGger:MODE SINGLE\n')
-#con.write('TRIGger:POSITION 0\n')
-if (trigger_slope=='negative'):
-    slope_str="FALL"
-else:
-    slope_str="RISE"
-con.write('TRIGGER:SIMPLE:EDGE:SOURCE %d\n'%(int(trigger_source[2:])))
-con.write('TRIGGER:EDGE:SLOPE %s\n'%(slope_str))
-con.write('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
-print('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
-con.write('TRIGger:SOURce:COUPling DC\n')
-con.write('TRIGger:POSITION -5\n')
+if(trigger_source != "-"):
+
+    con.write('TRIGger:MODE SINGLE\n')
+    #con.write('TRIGger:POSITION 0\n')
+    if (trigger_slope=='negative'):
+        slope_str="FALL"
+    else:
+        slope_str="RISE"
+    con.write('TRIGGER:SIMPLE:EDGE:SOURCE %d\n'%(int(trigger_source[2:])))
+    con.write('TRIGGER:EDGE:SLOPE %s\n'%(slope_str))
+    con.write('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
+    print('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
+    con.write('TRIGger:SOURce:COUPling DC\n')
+    con.write('TRIGger:POSITION -5\n')
 
 #reply=cmd(con, 'TRIGger?\n')
 #print (reply)
