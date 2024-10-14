@@ -115,7 +115,8 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
             if(type=="BYTE"):
                 reply=""
                 for byte in c[10:-1]:
-                    val = float(byte)
+                    #val = float(byte)
+                    val = float(byte)-127
                     #val = float(vdiv)*(float(byte)-127)*1.0/25; 
                     if(reply==""):
                         reply = str(val)
