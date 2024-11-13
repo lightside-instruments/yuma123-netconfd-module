@@ -7,16 +7,22 @@ import sys
 import time
 import vxi11
 
-# Usage: ./lsi-ivi-function-generator-set-hp-33120a <on|off> <waveform-type> <frequency> <amplitude> <dc-offset> <duty-cycle>
+# Usage: ./lsi-ivi-function-generator-set-hp-33120a <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
 
-# Example: ./lsi-ivi-function-generator-set-hp-33120a on square 1634.45 5 2.5 50
+# Example: ./lsi-ivi-function-generator-set-hp-33120a on sine 1634.45 5 2.5 - 1800.00 10.00
 
 print("Starting: %s" %(sys.argv))
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.195::gpib,4::INSTR")
+start_frequency = sys.argv[3]
+stop_frequency = sys.argv[7]
+sweep_time = sys.argv[8]
+
+instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.28::gpib,4::INSTR")
+
 
 if(sys.argv[1]=="off"):
     instr.write("APPL:DC 1000 Hz, 1.0 VPP, 0.0 V")
+    instr.write("SWEep:STATe OFF")
     sys.exit(0)
 
 
@@ -28,3 +34,14 @@ elif(sys.argv[2]=="dc"):
     instr.write("APPL:DC %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
 else:
     print("Unsupported waveform-type: %s"%(sys.argv[2]))
+
+if(stop_frequency != "-"):
+
+    instr.write("FREQuency:STARt %s"%(start_frequency))
+    instr.write("FREQuency:STOP %s"%(stop_frequency))
+    instr.write("SWEEP:TIME %s"%(sweep_time))
+    instr.write("SWEep:SPACing LINear")
+    instr.write("TRIGger:SOURce IMMediate") #|EXTernal|BUS}
+    #instr.write("TRIGger:SOURce EXTernal") #|EXTernal|BUS}
+    #instr.write("TRIGger:SOURce BUS") #|EXTernal|BUS}
+    instr.write("SWEep:STATe ON")

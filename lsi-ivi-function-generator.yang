@@ -9,7 +9,7 @@ module lsi-ivi-function-generator {
     "Function generator management module designed
      after the IVI Fgen Class.";
 
-  revision 2024-08-15 {
+  revision 2024-11-13 {
     description
       "Initial.";
   }
@@ -59,12 +59,45 @@ module lsi-ivi-function-generator {
               default "0.00";
             }
 
-            leaf frequency {
-              description
-                "Specifies the frequency at which the function generator produces its waveform.";
-              units "Samples per second";
-              type decimal64 {
-                fraction-digits 9;
+            choice frequency-choice {
+              case default-case {
+                leaf frequency {
+                  description
+                    "Specifies the frequency at which the function generator produces its waveform.";
+                  units "Samples per second";
+                  type decimal64 {
+                    fraction-digits 9;
+                  }
+                }
+              }
+              case sweep-case {
+                leaf start-frequency {
+                  description
+                    "Specifies the start frequency of the sweep at which the function generator
+                     produces its waveform.";
+                  units "Samples per second";
+                  type decimal64 {
+                    fraction-digits 9;
+                  }
+                }
+                leaf stop-frequency {
+                  description
+                    "Specifies the stop frequency at which the function generator
+                     produces its waveform ../sweep-time seconds after starting the sweep.";
+                  units "Samples per second";
+                  type decimal64 {
+                    fraction-digits 9;
+                  }
+                }
+                leaf sweep-time {
+                  description
+                    "Specifies the sweep time or duration of the sweep
+                     from start to stop frequency.";
+                  units "seconds";
+                  type decimal64 {
+                    fraction-digits 9;
+                  }
+                }
               }
             }
             leaf duty-cycle-high {
@@ -114,6 +147,54 @@ module lsi-ivi-function-generator {
               description
                 "Specifies the sample rate of the arbitrary waveforms the function generator produces.";
               units "Samples per second";
+              type decimal64 {
+                fraction-digits 9;
+              }
+            }
+          }
+        }
+        case frequency-sweep-case {
+            container frequency-sweep {
+            leaf amplitude {
+              description
+                "Specifies the amplitude of the standard waveform the function generator produces. When the
+                 Waveform attribute is set to Waveform DC, this attribute does not affect signal output. The units
+                 are volts.";
+              units "Volt";
+              type decimal64 {
+                fraction-digits 9;
+              }
+              default "1.00";
+            }
+            leaf dc-offset {
+              description
+                "Specifies the offset of the arbitrary waveform the function generator produces.";
+              units "Volt";
+              type decimal64 {
+                fraction-digits 9;
+              }
+              default "0.00";
+            }
+            leaf start-frequency {
+              description
+                "Specifies the start frequency.";
+              units "Hertz";
+              type decimal64 {
+                fraction-digits 9;
+              }
+            }
+            leaf duration {
+              description
+                "Specifies the time from start to end.";
+              units "Seconds";
+              type decimal64 {
+                fraction-digits 9;
+              }
+            }
+            leaf stop-frequency {
+              description
+                "Specifies the stop frequency.";
+              units "Hertz";
               type decimal64 {
                 fraction-digits 9;
               }

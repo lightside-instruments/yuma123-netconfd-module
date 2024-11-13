@@ -114,6 +114,12 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
     val_value_t *amplitude_val;
     val_value_t *dc_offset_val;
     val_value_t *duty_cycle_val;
+
+    // frequency sweep mode
+    val_value_t *frequency_start_val;
+    val_value_t *frequency_stop_val;
+    val_value_t *sweep_time_val;
+
     char buf[BUFSIZE];
     char* ptr;
 
@@ -133,6 +139,17 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
     frequency_val = val_find_child(standard_function_val,
                                       FUNCTION_GENERATOR_MOD,
                                       "frequency");
+    if(frequency_val == NULL) {
+        frequency_start_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "frequency-start");
+        frequency_stop_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "frequency-stop");
+        sweep_time_val = val_find_child(standard_function_val,
+                                      FUNCTION_GENERATOR_MOD,
+                                      "sweep-time");
+    }
 
     duty_cycle_val = val_find_child(standard_function_val,
                                       FUNCTION_GENERATOR_MOD,
@@ -144,8 +161,21 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
         char* dc_offset_str;
         char* duty_cycle_str;
 
+        char* frequency_stop_str = "-";
+        char* sweep_time_str = "-";
+
         if(frequency_val) {
             frequency_str = val_make_sprintf_string(frequency_val);
+        } else {
+            if(frequency_start_val) {
+                frequency_str = val_make_sprintf_string(frequency_start_val);
+            }
+            if(frequency_stop_val) {
+                frequency_stop_str = val_make_sprintf_string(frequency_stop_val);
+            }
+            if(sweep_time_val) {
+                sweep_time_str = val_make_sprintf_string(sweep_time_val);
+            }
         }
         if(amplitude_val) {
             amplitude_str = val_make_sprintf_string(amplitude_val);
@@ -159,15 +189,17 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
             if(duty_cycle_val) {
                 duty_cycle_str = val_make_sprintf_string(duty_cycle_val);
     	    }
-            sprintf(buf, "lsi-ivi-function-generator-set on square %s %s %s %s", frequency_str, amplitude_str, dc_offset_str, duty_cycle_val?duty_cycle_str:"50");
+            sprintf(buf, "lsi-ivi-function-generator-set on square %s %s %s %s %s %s", frequency_str, amplitude_str, dc_offset_str, duty_cycle_val?duty_cycle_str:"50", frequency_stop_str, sweep_time_str);
             if(duty_cycle_val) {
                 free(duty_cycle_str);
             }
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"sine")) {
             assert(frequency_val);
-            sprintf(buf, "lsi-ivi-function-generator-set on sine %s %s %s", frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0");
+            sprintf(buf, "lsi-ivi-function-generator-set on sine %s %s %s - %s %s", frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0", frequency_stop_str, sweep_time_str);
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"dc")) {
             sprintf(buf, "lsi-ivi-function-generator-set on dc %s %s %s", frequency_val?frequency_str:0, amplitude_val?amplitude_str:0, dc_offset_val?dc_offset_str:"0");
+        } else {
+            assert(0);
         }
 
         if(frequency_val) {
@@ -178,6 +210,12 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
 
         if(dc_offset_val) {
             free(dc_offset_str);
+        }
+        if(frequency_stop_val) {
+            free(frequency_stop_str);
+        }
+        if(sweep_time_val) {
+            free(sweep_time_str);
         }
 
         printf("Calling: %s\n", buf);
