@@ -1,3 +1,16 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.7) bookworm; urgency=medium
+
+  * Fixed bugs from this release causing runtime assert in most of standard-function configurations
+  * Removed unused configuration case in the module
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 14 Nov 2024 16:57:46 +0100
+
+yuma123-netconfd-module-lsi-ivi-function-generator (2.6) bookworm; urgency=medium
+
+  * Added support for frequency sweep
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 13 Nov 2024 16:15:29 +0100
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.5) bookworm; urgency=medium
 
   * Added gain, offset and sampling-rate to the arbitrary-waveform configuration model
