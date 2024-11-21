@@ -15,8 +15,8 @@ generate_chirp
 
 [chirp1_stereo,Fs] = audioread('signal-out.wav');
 chirp1=chirp1_stereo(:,1);
-[signal1_stereo,Fs] = audioread('signal.wav');
-signal1=signal1_stereo(:,2);
+[signal1,Fs] = audioread('signal.wav');
+%signal1=signal1_stereo(:,2);
 my_xcorr = xcorr(signal1-mean(signal1),chirp1-mean(chirp1));
 %my_xcorr_positive_lags = my_xcorr((end+1)/2:end);
 [correlation_max,correlation_max_index]=max(abs(my_xcorr))

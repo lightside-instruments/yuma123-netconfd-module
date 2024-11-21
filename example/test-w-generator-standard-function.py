@@ -12,8 +12,8 @@ from yangcli import yangcli
 
 def generate_data():
 	#generate image.jpg.b64
-	os.system("octave-cli generate-chirp.m")
-	res = subprocess.check_output(["base64", "--wrap=0", "chirp.wav"])
+	os.system("octave-cli generate_chirp.m")
+	res = subprocess.check_output(["base64", "--wrap=0", "signal-out.wav"])
 	return res
 
 
@@ -86,9 +86,9 @@ assert(len(ok)==1)
 tntapi.network_commit(conns)
 
 
-print("waiting 2 sec +  %u sec"%(samples/sample_rate))
+print("waiting 10 sec +  %u sec"%(samples/sample_rate))
 
-time.sleep(480000/48000 + 2)
+time.sleep(480000/48000 + 10)
 
 result=yangcli(yconns["scope0"],"""xget /acquisition/channels/channel[name='%s']"""%(scope_channel_name))
 

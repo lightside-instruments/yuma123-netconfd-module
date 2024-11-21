@@ -14,7 +14,7 @@ import os
 import datetime
 import vxi11
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.153::gpib,1::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.28::gpib,1::INSTR")
 
 # Communication interface User's Manual https://cdn.tmi.yokogawa.com/IM701530-11E.pdf
 
@@ -75,7 +75,11 @@ print(date_string)
 print(time_string)
 con.write('SYSTem:CLOCk:TIME "%s"\n'%(time_string))
 
+print(':TIM:TDIV %f\n'%((float(samples)/10)/sample_rate))
 con.write(':TIM:TDIV %f\n'%((float(samples)/10)/sample_rate))
+
+reply2=cmd(con, ":TIM:SRATe?\n")
+print(reply2)
 
 reply2=cmd(con, "WAVeform:LENGth?\n")
 print(reply2)
