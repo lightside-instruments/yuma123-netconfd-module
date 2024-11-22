@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.8) bookworm; urgency=medium
+
+  * Implementation for utg932e
+
+ -- Joar Heimonen <joar@lightside-instruments.com>  Fri, 22 Nov 2024 02:27:55 +0100
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.7) bookworm; urgency=medium
 
   * Fixed bugs from this release causing runtime assert in most of standard-function configurations

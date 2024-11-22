@@ -1,0 +1,70 @@
+#!/usr/bin/python3
+
+global args
+args=None
+
+import sys
+import time
+import pyvisa
+
+
+# Usage: ./lsi-ivi-function-generator-set-utg932e <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
+
+# Example: ./lsi-ivi-function-generator-set-utg932e on sine 1634.45 5 2.5 - 1800.00 10.00
+
+print("Starting: %s" %(sys.argv))
+
+
+start_frequency = sys.argv[3]
+stop_frequency = sys.argv[7]
+sweep_time = sys.argv[8]
+
+addr_generator = "USB0::26198::2100::AWG1224040218::0::INSTR"
+
+rm = pyvisa.ResourceManager()
+#print(rm.list_resources())
+
+instr=rm.open_resource(addr_generator)
+reply=instr.query('*IDN?')
+print(reply)
+
+if(sys.argv[1]=="off"):
+    instr.write('CHANnel1:OUTPut OFF')
+
+start_frequency=sys.argv[3]
+amplitude=sys.argv[4]
+dc_offset=sys.argv[5]
+duty_cycle=sys.argv[6]
+stop_frequency=sys.argv[7]
+sweep_time=sys.argv[8]
+
+if(sys.argv[2]=="square"):
+    instr.write('CHANnel1:MODe CONTinue')
+    instr.write('CHANnel1:BASE:WAVe SQUare')
+    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
+    instr.write('CHANnel1:BASE:AMPlitude %f'%(float(amplitude)))
+    instr.write('CHANnel1:BASE:OFFset %f'%(float(dc_offset)))
+    instr.write('CHANnel1:BASE:PHAse 0')
+    instr.write('CHANnel1:BASE:DUTY %f'%(float(duty_cycle)))
+elif(sys.argv[2]=="sine"):
+    instr.write('CHANnel1:MODe CONTinue')
+    instr.write('CHANnel1:BASE:WAVe SINe')
+    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
+    instr.write('CHANnel1:BASE:HIGH %f'%(float(dc_offset) + float(amplitude)/2))
+    instr.write('CHANnel1:BASE:LOW %f'%(float(dc_offset) - float(amplitude)/2))
+    instr.write('CHANnel1:BASE:PHAse 0')
+elif(sys.argv[2]=="dc"):
+    instr.write('CHANnel1:MODe CONTinue')
+    instr.write('CHANnel1:BASE:WAVe DC')
+    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
+    instr.write('CHANnel1:BASE:OFFset %f'%(float(dc_offset)))
+    instr.write('CHANnel1:BASE:PHAse 0')
+else:
+    print("Unsupported waveform-type: %s"%(sys.argv[2]))
+if(stop_frequency != "-"):
+    instr.write('CHANnel1:MODe Line')
+    instr.write("CHANnel1:SWEep:FREQuency:STARt %f"%(float(start_frequency)))
+    instr.write("CHANnel1:SWEep:FREQuency:STOP %f"%(float(stop_frequency)))
+    instr.write("CHANnel1:SWEEP:TIME %f"%(float(sweep_time)))
+instr.write('CHANnel1:OUTPut:SYNC ON')
+instr.write('CHANnel1:OUTPut ON')
