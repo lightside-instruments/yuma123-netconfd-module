@@ -1,0 +1,146 @@
+#!/usr/bin/python3
+
+# Usage: ./lsi-ivi-scope-acquisition-complete-utd2102cex <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
+
+# Example: ./lsi-ivi-scope-acquisition-complete-utd2102cex 200000.000000000 2000000 ch1 positive 0.400000000 ch1 8.000000000 0.0
+
+
+global args
+args=None
+
+import sys
+import time
+import sys
+import os
+import datetime
+
+import numpy
+import scipy.io.wavfile as wf
+
+import pyvisa
+
+addr = "USB0::22102::2098::ADO2723360227::0::INSTR"
+
+rm = pyvisa.ResourceManager()
+print(rm.list_resources())
+
+instr=rm.open_resource(addr)
+reply=instr.query('*IDN?')
+print(reply)
+
+samples=2000000
+
+sample_rate=float(sys.argv[1])
+samples=int(sys.argv[2])
+trigger_source=sys.argv[3]
+trigger_slope=sys.argv[4]
+trigger_level=float(sys.argv[5])
+
+con = instr
+
+def cmd_binary(instr, cmd):
+        instr.write(cmd)
+#        c = instr.read_bytes(instr.bytes_in_buffer)
+        c = instr.read_raw()
+        return c
+
+def cmd(instr, cmd):
+        result = ""
+        instr.write(cmd)
+#        c = instr.read_bytes(instr.bytes_in_buffer)
+        c = instr.read_raw()
+        result=c
+        result=c.decode("utf-8")
+        return result
+
+def read_waveform(trace, type="ASCII", vdiv=1) :
+
+        con.write(':WAVeform:SOURce CHAN%d'%(trace))
+        con.write(':WAVeform:MODE RAW')
+        con.write(':WAVeform:FORMat %s'%(type))
+        con.write(':WAVeform:POINts %d'%(samples))
+        float_array = []
+        block_size_max=1000
+
+        for offset in range(0,samples,block_size_max):
+            con.write('WAVeform:START ' + str(offset) + '\n')
+            if((offset+block_size_max) > samples):
+                block_size=samples-offset
+            else:
+                block_size=block_size_max
+            con.write('WAVeform:STOP '+ str(offset+block_size) + '\n')
+
+            reply=cmd(con, "WAVeform:START?\n")
+            print(reply)
+            reply=cmd(con, "WAVeform:STOP?\n")
+            print(reply)
+
+            start = time.time()
+
+
+            if(type=="ASCII"):
+                reply=cmd(con, "WAVeform:DATA?\n")
+            else:
+                c=cmd_binary(con, "WAVeform:DATA?\n")
+
+            end = time.time()
+
+            if(type=="BYTE"):
+                reply=""
+                assert(chr(c[0])=='#')
+                header_len = c[1]-ord('0')
+                data = c[2+header_len:2+header_len+block_size]
+                for byte in data:
+                    val = float(byte)
+                    if(reply==""):
+                        reply = str(val)
+                    else:
+                        reply = reply + "," + str(val)
+            elif(type=="WORD"):
+                reply=""
+                for i in range(10,(len(c)-1),2):
+                    num=int.from_bytes(c[i:i+2], byteorder='big', signed=True)
+
+                    val = float(vdiv)*(num)*1.0/3200
+                    if(reply==""):
+                        reply = str(val);
+                    else:
+                        reply = reply + "," + str(val)
+
+            if(type=="ASCII"):
+                print("Read ASCII %d bytes in %lf seconds" %(len(reply), (end - start)))
+                print(reply)
+                reply = reply[11:].strip()
+                reply = reply.rstrip(',')
+                reply = reply.rstrip(' ')
+            else:
+                print("Read %d bytes in %lf seconds" %(len(c), (end - start)))
+            float_array.extend( [float(i) for i in reply.split(',')])
+
+#        print("signal%d=%s"%(trace,str(float_array)))
+        return(float_array)
+
+if(trigger_source != "-"):
+    print("Waiting for trigger ...")
+
+    while (1):
+        reply=cmd(con, ':TRIGger:STATus?')
+        print(reply)
+        if(str(reply).strip()=="STOP"):
+            break
+        time.sleep(1)
+
+
+channels_num = int((len(sys.argv)-6)/3)
+print (channels_num)
+for i in range(0,channels_num):
+    name=sys.argv[6+i*3]
+    voltage_range=float(sys.argv[6+i*3+1])
+    params=sys.argv[6+i*3+2]
+
+    signal = read_waveform(int(name[2:]), type="BYTE")
+    data = numpy.array([signal])
+    #print(data.dtype)
+    #data.dump("data.numpy")
+    wf.write("/tmp/lsi-ivi-scope-%s-signal.wav"%(name), int(sample_rate), data.astype(numpy.int8).flatten())
+sys.exit(0)

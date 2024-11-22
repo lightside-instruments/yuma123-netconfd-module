@@ -1,0 +1,149 @@
+#!/usr/bin/python3
+
+# Usage: ./lsi-ivi-scope-acquisition-start-utd2102cex <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
+
+# Example: ./lsi-ivi-scope-acquisition-start-utd2102cex 200000.000000000 2000000 ch1 positive 0.400000000 ch1 8.000000000 0.0
+
+global args
+args=None
+
+import sys
+import time
+import sys
+import os
+import datetime
+import pyvisa
+
+addr = "USB0::22102::2098::ADO2723360227::0::INSTR"
+
+rm = pyvisa.ResourceManager()
+print(rm.list_resources())
+
+instr=rm.open_resource(addr)
+reply=instr.query('*IDN?')
+print(reply)
+
+
+samples=2000000
+
+sample_rate=float(sys.argv[1])
+samples=int(sys.argv[2])
+trigger_source=sys.argv[3]
+trigger_slope=sys.argv[4]
+trigger_level=float(sys.argv[5])
+
+#print(instr.read())
+
+con = instr
+
+def cmd_binary(instr, cmd):
+        instr.write(cmd)
+#        c = instr.read_bytes(instr.bytes_in_buffer)
+        c = instr.read_raw()
+        return c
+
+def cmd(instr, cmd):
+        result = ""
+        instr.write(cmd)
+#        c = instr.read_bytes(instr.bytes_in_buffer)
+        c = instr.read_raw()
+        result=c
+        result=c.decode("utf-8")
+        return result
+
+def setup_channel(channel, voltage_range):
+        con.write('::CHAN%d:DISP ON\n'%(channel))
+        con.write(':CHAN%d:OFFS 0V\n'%(channel))
+        con.write(':CHAN%d:COUP DC\n'%(channel))
+        con.write(':CHAN%d:PROB 1X\n'%(channel))
+        con.write(':CHAN%d:SCAL %fV\n'%(channel,voltage_range/8))
+
+def disable_channel(channel):
+        con.write('::CHAN%d:DISP OFF\n'%(channel))
+
+
+con.write('*RST\n')
+reply=cmd(con, '*IDN?\n')
+print (reply)
+
+# datetime object containing current date and time
+now = datetime.datetime.now()
+date_string = now.strftime("%Y/%m/%d")
+time_string = now.strftime("%H:%M:%S")
+
+print(date_string)
+print(time_string)
+
+#con.write('SYSTem:CLOCk:TIME "%s"\n'%(time_string))
+
+print(':TIM:SCAL %f\n'%((float(samples)/16)/sample_rate))
+con.write(':TIM:SCAL %f\n'%((float(samples)/16)/sample_rate))
+
+
+disable_channel(1)
+disable_channel(2)
+
+channels_num = int((len(sys.argv)-6)/3)
+print (channels_num)
+for i in range(0,channels_num):
+    name=sys.argv[6+i*3]
+    voltage_range=float(sys.argv[6+i*3+1])
+    params=sys.argv[6+i*3+2]
+
+    setup_channel(int(name[2:]),voltage_range)
+
+
+
+#reply=cmd(con, 'ACQuire:RECordlength?\n')
+#print (reply)
+
+
+#reply=cmd(con, 'TRIGger?\n')
+#print (reply)
+
+if(trigger_source != "-"):
+    con.write(':TRIGger:SWEep SINGle\n')
+    con.write(':TRIGger:SOUR CHAN%d\n'%(int(trigger_source[2:])))
+    con.write(':TRIGger:COUPling DC\n')
+
+    con.write(':TRIGger:MODE EDGE\n')
+    if (trigger_slope=='negative'):
+        slope_str="NEG"
+        con.write(':TRIGger:EDGE:SLOP %s\n'%(slope_str))
+        con.write(':TRIGger:LEVel:LOW %f\n'%(trigger_level))
+    else:
+        slope_str="POS"
+        con.write(':TRIGger:EDGE:SLOP %s\n'%(slope_str))
+        con.write(':TRIGger:LEVel:HIGH %f\n'%(trigger_level))
+    con.write(':TRIGger:LEVel %f\n'%(trigger_level))
+
+
+sys.exit(0)
+
+
+con.write('ACQuire:RECordlength %d\n'%(samples))
+
+
+#con.write('*WAI\n')
+#print (reply)
+#time.sleep(4)
+
+#reply=cmd(con, "TIMebase:SRATe?\n")
+#print(reply)
+
+reply=cmd(con, 'ACQuire:RECordlength?\n')
+print (reply)
+
+
+#reply=cmd(con, 'ACQuire:RECordlength?\n')
+#print (reply)
+
+#reply=cmd(con, "ACQuire?\n")
+#print(reply)
+
+#con.write('WAVEFORM:DATASELECT ACQDATA\n')
+#con.write('TRIGger:ACTion:STARt\n')
+
+con.write('START\n')
+
+print("Started ...")

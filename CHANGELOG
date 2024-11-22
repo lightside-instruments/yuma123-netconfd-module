@@ -1,3 +1,15 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-23) bookworm; urgency=medium
+
+  * Implementation for utd2102cex
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 22 Nov 2024 23:18:55 +0100
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-22) bookworm; urgency=medium
+
+  * Implemented test with standard function sweep in addition to arbitrary waveform
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 19 Nov 2024 16:57:55 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-21) bookworm; urgency=medium
 
   * Fixed bug in yokogawa 8-bit acquisition data that needed -127 offset
