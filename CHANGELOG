@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-24) bookworm; urgency=medium
+
+  * Added sweep-time start-frequency and stop-frequency as parameters to test script
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 28 Nov 2024 15:11:02 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-23) bookworm; urgency=medium
 
   * Implementation for utd2102cex

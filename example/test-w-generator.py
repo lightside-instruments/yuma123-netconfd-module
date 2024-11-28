@@ -56,6 +56,9 @@ parser.add_argument("--sample-rate", help="Sample rate for acquisition e.g. 4800
 parser.add_argument("--scope-trigger-level", help="Scope trigger level in volts e.g. '1.0'")
 parser.add_argument("--scope-trigger-source", help="Scope trigger source e.g. 'ch1'")
 parser.add_argument("--scope-trigger-slope", help="Scope trigger slope e.g. 'positive' or 'negative'")
+parser.add_argument("--start-frequency", help="Start frequency for the linear sweep - e.g. 1595.00")
+parser.add_argument("--stop-frequency", help="Stop frequency for the linear sweep - e.g. 1610.00")
+parser.add_argument("--sweep-time", help="Sweep time - e.g. 10.00")
 args = parser.parse_args()
 
 scope_channel_name=args.scope_channel_name
@@ -71,9 +74,9 @@ scope_trigger_level=float(args.scope_trigger_level)
 scope_trigger_slope=args.scope_trigger_slope
 generator_amplitude=float(args.generator_amplitude)
 
-start_frequency=1595.00
-stop_frequency=1610.00
-sweep_time=10.00
+start_frequency=float(args.start_frequency)
+stop_frequency=float(args.stop_frequency)
+sweep_time=float(args.sweep_time)
 
 data_b64 = generate_data(sample_rate, start_frequency, stop_frequency, sweep_time, amplitude=1.00)
 print("""data=%s"""%(data_b64.decode('ascii')))
