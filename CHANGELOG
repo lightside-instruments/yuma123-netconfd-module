@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-26) bookworm; urgency=medium
+
+  * Restored logging and made batch mode with report generation default
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 02 Dec 2024 17:49:02 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-25) bookworm; urgency=medium
 
   * Fixed edge trigger for negative/positive slope cases by reordering commands
