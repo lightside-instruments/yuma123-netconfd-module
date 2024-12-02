@@ -102,20 +102,21 @@ for i in range(0,channels_num):
 #print (reply)
 
 if(trigger_source != "-"):
-    con.write(':TRIGger:SWEep SINGle\n')
-    con.write(':TRIGger:SOUR CHAN%d\n'%(int(trigger_source[2:])))
-    con.write(':TRIGger:COUPling DC\n')
 
     con.write(':TRIGger:MODE EDGE\n')
+    con.write(':TRIGger:LEVel %f\n'%(trigger_level))
     if (trigger_slope=='negative'):
         slope_str="NEG"
         con.write(':TRIGger:EDGE:SLOP %s\n'%(slope_str))
-        con.write(':TRIGger:LEVel:LOW %f\n'%(trigger_level))
+#        con.write(':TRIGger:LEVel:LOW %f\n'%(trigger_level))
     else:
         slope_str="POS"
         con.write(':TRIGger:EDGE:SLOP %s\n'%(slope_str))
-        con.write(':TRIGger:LEVel:HIGH %f\n'%(trigger_level))
-    con.write(':TRIGger:LEVel %f\n'%(trigger_level))
+#        con.write(':TRIGger:LEVel:HIGH %f\n'%(trigger_level))
+
+    con.write(':TRIGger:SOUR CHAN%d\n'%(int(trigger_source[2:])))
+    con.write(':TRIGger:COUPling DC\n')
+    con.write(':TRIGger:SWEep SINGle\n')
 
 
 sys.exit(0)
