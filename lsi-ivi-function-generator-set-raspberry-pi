@@ -1,0 +1,36 @@
+#!/usr/bin/python3
+
+global args
+args=None
+
+import sys
+import os 
+import time
+
+# Usage: ./lsi-ivi-function-generator-set-raspberry-pi <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
+
+# Example: ./lsi-ivi-function-generator-set-raspberry-pi on dc - - 3.3 - - -  
+
+print("Starting: %s" %(sys.argv))
+
+if(sys.argv[1]=="off"):
+    os.system("gpioget `gpiofind GPIO27`")
+    os.system("gpioset `gpiofind GPIO5`=0")
+    sys.exit(0)
+
+if(sys.argv[2]!="dc"):
+    print("Unsupported waveform-type: %s"%(sys.argv[2]))
+    sys.exit(-1)
+
+dc_offset = float(sys.argv[5])
+
+if(dc_offset==3.3):
+    os.system("gpioset `gpiofind GPIO5`=1")
+    os.system("gpioset `gpiofind GPIO27`=1")
+elif(dc_offset==0):
+    os.system("gpioset `gpiofind GPIO5`=1")
+    os.system("gpioset `gpiofind GPIO27`=0")
+else:
+   print("Unsupported dc-offset: %s"%(dc_offset))      
+   sys.exit(-1)
+

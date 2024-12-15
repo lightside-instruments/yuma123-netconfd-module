@@ -14,11 +14,6 @@ import pyvisa
 
 print("Starting: %s" %(sys.argv))
 
-
-start_frequency = sys.argv[3]
-stop_frequency = sys.argv[7]
-sweep_time = sys.argv[8]
-
 addr_generator = "USB0::26198::2100::AWG1224040218::0::INSTR"
 
 rm = pyvisa.ResourceManager()
@@ -30,8 +25,9 @@ print(reply)
 
 if(sys.argv[1]=="off"):
     instr.write('CHANnel1:OUTPut OFF')
+    sys.exit(0)
 
-start_frequency=sys.argv[3]
+start_frequency = sys.argv[3]
 amplitude=sys.argv[4]
 dc_offset=sys.argv[5]
 duty_cycle=sys.argv[6]

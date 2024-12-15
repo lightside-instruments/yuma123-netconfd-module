@@ -13,30 +13,41 @@ import vxi11
 
 print("Starting: %s" %(sys.argv))
 
-start_frequency = sys.argv[3]
+instr = vxi11.vxi11.Instrument("TCPIP::localhost::gpib,4::INSTR")
+
+
+instr.write("OUTPut:SYNC OFF")
+
+if(sys.argv[1]=="off"):
+    instr.write("APPL:DC 0.0001 Hz, 1.0 VPP, 0.0 V")
+    instr.write("SWEep:STATe OFF")
+    instr.write("OUTPut:SYNC OFF")
+    sys.exit(0)
+
+frequency = sys.argv[3]
+amplitude = sys.argv[4]
+dc_offset = sys.argv[5]
+duty_cycle = sys.argv[6]
+start_frequency = frequency
 stop_frequency = sys.argv[7]
 sweep_time = sys.argv[8]
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.28::gpib,4::INSTR")
-
-
-if(sys.argv[1]=="off"):
-    instr.write("APPL:DC 1000 Hz, 1.0 VPP, 0.0 V")
-    instr.write("SWEep:STATe OFF")
-    sys.exit(0)
-
+instr.write("OUTPut:SYNC OFF")
+instr.write("SWEep:STATe OFF")
 
 if(sys.argv[2]=="square"):
-    instr.write("APPL:SQUare %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
+    instr.write("FUNCtion:SHAPe SQUare")
 elif(sys.argv[2]=="sine"):
-    instr.write("APPL:SINusoid %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
+    instr.write("FUNCtion:SHAPe SINusoid")
 elif(sys.argv[2]=="dc"):
-    instr.write("APPL:DC %s Hz, %s VPP, %s V"%(sys.argv[3], sys.argv[4], sys.argv[5]))
+    instr.write("FUNCtion:SHAPe DC")
 else:
     print("Unsupported waveform-type: %s"%(sys.argv[2]))
+    sys.exit(-1)
+
+
 
 if(stop_frequency != "-"):
-
     instr.write("FREQuency:STARt %s"%(start_frequency))
     instr.write("FREQuency:STOP %s"%(stop_frequency))
     instr.write("SWEEP:TIME %s"%(sweep_time))
@@ -44,4 +55,21 @@ if(stop_frequency != "-"):
     instr.write("TRIGger:SOURce IMMediate") #|EXTernal|BUS}
     #instr.write("TRIGger:SOURce EXTernal") #|EXTernal|BUS}
     #instr.write("TRIGger:SOURce BUS") #|EXTernal|BUS}
+else:
+    instr.write("FREQuency %s"%(frequency))
+
+
+if(sys.argv[2]=="square"):
+    instr.write("PULSe:DCYCle %s"%(duty_cycle))
+
+instr.write("VOLTage:UNIT VPP")
+instr.write("VOLTage %s"%(amplitude))
+instr.write("VOLTage:OFFSet %s"%(dc_offset))
+
+if(stop_frequency != "-"):
     instr.write("SWEep:STATe ON")
+
+# Bug alert - after this command the sync signal will generate several pulses with the frequency
+# of the current frequency of the progressing sweep instead of the period of the sweep.
+# After circa 1/10 second it will work as expected in sync with 1/seep_time frequency
+instr.write("OUTPut:SYNC ON")

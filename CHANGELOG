@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.9) bookworm; urgency=medium
+
+  * Implementation for Raspberry Pi GPIO - only for gpio27 and only DC 0 and 3.3V
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 15 Dec 2024 18:30:23 +0100
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.8) bookworm; urgency=medium
 
   * Implementation for utg932e
