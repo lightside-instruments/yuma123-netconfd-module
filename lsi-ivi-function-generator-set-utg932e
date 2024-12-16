@@ -8,9 +8,9 @@ import time
 import pyvisa
 
 
-# Usage: ./lsi-ivi-function-generator-set-utg932e <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
+# Usage: ./lsi-ivi-function-generator-set-utg932e <channel-num> <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
 
-# Example: ./lsi-ivi-function-generator-set-utg932e on sine 1634.45 5 2.5 - 1800.00 10.00
+# Example: ./lsi-ivi-function-generator-set-utg932e 1 on sine 1634.45 5 2.5 - 1800.00 10.00
 
 print("Starting: %s" %(sys.argv))
 
@@ -23,46 +23,50 @@ instr=rm.open_resource(addr_generator)
 reply=instr.query('*IDN?')
 print(reply)
 
-if(sys.argv[1]=="off"):
-    instr.write('CHANnel1:OUTPut OFF')
+channel_num=int(sys.argv[1])
+
+print(channel_num)
+
+if(sys.argv[2]=="off"):
+    instr.write('CHANnel%d:OUTPut OFF'%(channel_num))
     sys.exit(0)
 
-start_frequency = sys.argv[3]
-amplitude=sys.argv[4]
-dc_offset=sys.argv[5]
-duty_cycle=sys.argv[6]
-stop_frequency=sys.argv[7]
-sweep_time=sys.argv[8]
+start_frequency = sys.argv[4]
+amplitude=sys.argv[5]
+dc_offset=sys.argv[6]
+duty_cycle=sys.argv[7]
+stop_frequency=sys.argv[8]
+sweep_time=sys.argv[9]
 
-instr.write(':CHANnel1:LOAD 50')
+instr.write(':CHANnel%d:LOAD 50'%(channel_num))
 
-if(sys.argv[2]=="square"):
-    instr.write('CHANnel1:MODe CONTinue')
-    instr.write('CHANnel1:BASE:WAVe SQUare')
-    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
-    instr.write('CHANnel1:BASE:AMPlitude %f'%(float(amplitude)))
-    instr.write('CHANnel1:BASE:OFFset %f'%(float(dc_offset)))
-    instr.write('CHANnel1:BASE:PHAse 0')
-    instr.write('CHANnel1:BASE:DUTY %f'%(float(duty_cycle)))
-elif(sys.argv[2]=="sine"):
-    instr.write('CHANnel1:MODe CONTinue')
-    instr.write('CHANnel1:BASE:WAVe SINe')
-    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
-    instr.write('CHANnel1:BASE:HIGH %f'%(float(dc_offset) + float(amplitude)/2))
-    instr.write('CHANnel1:BASE:LOW %f'%(float(dc_offset) - float(amplitude)/2))
-    instr.write('CHANnel1:BASE:PHAse 0')
-elif(sys.argv[2]=="dc"):
-    instr.write('CHANnel1:MODe CONTinue')
-    instr.write('CHANnel1:BASE:WAVe DC')
-#    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
-    instr.write('CHANnel1:BASE:OFFset %f'%(float(dc_offset)))
-    instr.write('CHANnel1:BASE:PHAse 0')
+if(sys.argv[3]=="square"):
+    instr.write('CHANnel%d:MODe CONTinue'%(channel_num))
+    instr.write('CHANnel%d:BASE:WAVe SQUare'%(channel_num))
+    instr.write('CHANnel%d:BASE:FREQuency %f'%(channel_num, float(start_frequency)))
+    instr.write('CHANnel%d:BASE:AMPlitude %f'%(channel_num, float(amplitude)))
+    instr.write('CHANnel%d:BASE:OFFset %f'%(channel_num, float(dc_offset)))
+    instr.write('CHANnel%d:BASE:PHAse 0'%(channel_num))
+    instr.write('CHANnel%d:BASE:DUTY %f'%(channel_num,float(duty_cycle)))
+elif(sys.argv[3]=="sine"):
+    instr.write('CHANnel%d:MODe CONTinue')
+    instr.write('CHANnel%d:BASE:WAVe SINe')
+    instr.write('CHANnel%d:BASE:FREQuency %f'%(channel_num, float(start_frequency)))
+    instr.write('CHANnel%d:BASE:HIGH %f'%(channel_num, float(dc_offset) + float(amplitude)/2))
+    instr.write('CHANnel%d:BASE:LOW %f'%(channel_num, float(dc_offset) - float(amplitude)/2))
+    instr.write('CHANnel%d:BASE:PHAse 0')
+elif(sys.argv[3]=="dc"):
+    instr.write('CHANnel%d:MODe CONTinue')
+    instr.write('CHANnel%d:BASE:WAVe DC')
+#    instr.write('Channel%d:BASE:FREQuency %f'%(channel_num, float(start_frequency)))
+    instr.write('Channel%d:BASE:OFFset %f'%(channel_num, float(dc_offset)))
+    instr.write('Channel%d:BASE:PHAse 0')
 else:
-    print("Unsupported waveform-type: %s"%(sys.argv[2]))
+    print("Unsupported waveform-type: %s"%(sys.argv[3]))
 if(stop_frequency != "-"):
-    instr.write('CHANnel1:MODe Line')
-    instr.write("CHANnel1:SWEep:FREQuency:STARt %f"%(float(start_frequency)))
-    instr.write("CHANnel1:SWEep:FREQuency:STOP %f"%(float(stop_frequency)))
-    instr.write("CHANnel1:SWEEP:TIME %f"%(float(sweep_time)))
-instr.write('CHANnel1:OUTPut:SYNC ON')
-instr.write('CHANnel1:OUTPut ON')
+    instr.write('Channel%d:MODe Line')
+    instr.write("Channel%d:SWEep:FREQuency:STARt %f"%(channel_num, float(start_frequency)))
+    instr.write("Channel%d:SWEep:FREQuency:STOP %f"%(float(channel_num, stop_frequency)))
+    instr.write("Channel%d:SWEEP:TIME %f"%(channel_num, float(sweep_time)))
+instr.write('Channel%d:OUTPut:SYNC ON'%(channel_num))
+instr.write('Channel%d:OUTPut ON'%(channel_num))

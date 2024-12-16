@@ -7,42 +7,45 @@ import sys
 import time
 import vxi11
 
-# Usage: ./lsi-ivi-function-generator-set-hp-33120a <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
+# Usage: ./lsi-ivi-function-generator-set-hp-33120a <channel-num> <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
 
-# Example: ./lsi-ivi-function-generator-set-hp-33120a on sine 1634.45 5 2.5 - 1800.00 10.00
+# Example: ./lsi-ivi-function-generator-set-hp-33120a 1 on sine 1634.45 5 2.5 - 1800.00 10.00
 
 print("Starting: %s" %(sys.argv))
 
 instr = vxi11.vxi11.Instrument("TCPIP::localhost::gpib,4::INSTR")
 
 
+channel_num = sys.argv[1]
+assert(channel_num=="1")
+
 instr.write("OUTPut:SYNC OFF")
 
-if(sys.argv[1]=="off"):
+if(sys.argv[2]=="off"):
     instr.write("APPL:DC 0.0001 Hz, 1.0 VPP, 0.0 V")
     instr.write("SWEep:STATe OFF")
     instr.write("OUTPut:SYNC OFF")
     sys.exit(0)
 
-frequency = sys.argv[3]
-amplitude = sys.argv[4]
-dc_offset = sys.argv[5]
-duty_cycle = sys.argv[6]
+frequency = sys.argv[4]
+amplitude = sys.argv[5]
+dc_offset = sys.argv[6]
+duty_cycle = sys.argv[7]
 start_frequency = frequency
-stop_frequency = sys.argv[7]
-sweep_time = sys.argv[8]
+stop_frequency = sys.argv[8]
+sweep_time = sys.argv[9]
 
 instr.write("OUTPut:SYNC OFF")
 instr.write("SWEep:STATe OFF")
 
-if(sys.argv[2]=="square"):
+if(sys.argv[3]=="square"):
     instr.write("FUNCtion:SHAPe SQUare")
-elif(sys.argv[2]=="sine"):
+elif(sys.argv[3]=="sine"):
     instr.write("FUNCtion:SHAPe SINusoid")
-elif(sys.argv[2]=="dc"):
+elif(sys.argv[3]=="dc"):
     instr.write("FUNCtion:SHAPe DC")
 else:
-    print("Unsupported waveform-type: %s"%(sys.argv[2]))
+    print("Unsupported waveform-type: %s"%(sys.argv[3]))
     sys.exit(-1)
 
 
@@ -55,17 +58,19 @@ if(stop_frequency != "-"):
     instr.write("TRIGger:SOURce IMMediate") #|EXTernal|BUS}
     #instr.write("TRIGger:SOURce EXTernal") #|EXTernal|BUS}
     #instr.write("TRIGger:SOURce BUS") #|EXTernal|BUS}
-elif(sys.argv[2]=="dc"):
+elif(sys.argv[3]=="dc"):
     pass
 else:
     instr.write("FREQuency %s"%(frequency))
 
 
-if(sys.argv[2]=="square"):
+if(sys.argv[3]=="square"):
     instr.write("PULSe:DCYCle %s"%(duty_cycle))
 
-instr.write("VOLTage:UNIT VPP")
-instr.write("VOLTage %s"%(amplitude))
+if(sys.argv[3]!="dc"):
+    instr.write("VOLTage:UNIT VPP")
+    instr.write("VOLTage %s"%(amplitude))
+
 instr.write("VOLTage:OFFSet %s"%(dc_offset))
 
 if(stop_frequency != "-"):

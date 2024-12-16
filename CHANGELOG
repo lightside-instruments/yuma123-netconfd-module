@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.11) bookworm; urgency=medium
+
+  * Implemented support for multiple function generator channels
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 16 Dec 2024 23:07:30 +0100
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.10) bookworm; urgency=medium
 
   * Fixes for DC 50 ohm 1.65V mode for all 3 supported target devices

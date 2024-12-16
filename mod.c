@@ -155,7 +155,10 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
                                       FUNCTION_GENERATOR_MOD,
                                       "duty-cycle");
 
-    if(0==strcmp("default",VAL_STRING(name_val))) {
+    if((strlen(VAL_STRING(name_val)) > strlen("ch")) &&
+       (0==memcmp("ch", VAL_STRING(name_val), strlen("ch"))) &&
+       atoi(VAL_STRING(name_val)+strlen("ch"))
+       ) {
         char* frequency_str = "0.0";
         char* amplitude_str = "1.0";
         char* dc_offset_str = "0.0";
@@ -163,6 +166,9 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
 
         char* stop_frequency_str = "-";
         char* sweep_time_str = "-";
+        int channel_num;
+
+        channel_num = atoi(VAL_STRING(name_val)+strlen("ch"));
 
         if(frequency_val) {
             frequency_str = val_make_sprintf_string(frequency_val);
@@ -189,14 +195,14 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
             if(duty_cycle_val) {
                 duty_cycle_str = val_make_sprintf_string(duty_cycle_val);
     	    }
-            sprintf(buf, "lsi-ivi-function-generator-set on square %s %s %s %s %s %s", frequency_str, amplitude_str, dc_offset_str, duty_cycle_val?duty_cycle_str:"50", stop_frequency_str, sweep_time_str);
+            sprintf(buf, "lsi-ivi-function-generator-set %d on square %s %s %s %s %s %s", channel_num, frequency_str, amplitude_str, dc_offset_str, duty_cycle_val?duty_cycle_str:"50", stop_frequency_str, sweep_time_str);
             if(duty_cycle_val) {
                 free(duty_cycle_str);
             }
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"sine")) {
-            sprintf(buf, "lsi-ivi-function-generator-set on sine %s %s %s - %s %s", frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0", stop_frequency_str, sweep_time_str);
+            sprintf(buf, "lsi-ivi-function-generator-set %d on sine %s %s %s - %s %s", channel_num, frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0", stop_frequency_str, sweep_time_str);
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"dc")) {
-            sprintf(buf, "lsi-ivi-function-generator-set on dc %s %s %s - - -", frequency_val?frequency_str:0, amplitude_val?amplitude_str:0, dc_offset_val?dc_offset_str:"0");
+            sprintf(buf, "lsi-ivi-function-generator-set %d on dc %s %s %s - - -", channel_num, frequency_val?frequency_str:0, amplitude_val?amplitude_str:0, dc_offset_val?dc_offset_str:"0");
         } else {
             assert(0);
         }

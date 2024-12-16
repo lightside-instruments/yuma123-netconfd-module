@@ -7,29 +7,35 @@ import sys
 import os 
 import time
 
-# Usage: ./lsi-ivi-function-generator-set-raspberry-pi <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
+# Usage: ./lsi-ivi-function-generator-set-raspberry-pi <channel-num> <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
 
-# Example: ./lsi-ivi-function-generator-set-raspberry-pi on dc - - 1.65 - - -
+# Example: ./lsi-ivi-function-generator-set-raspberry-pi 1 on dc - - 1.65 - - -
 
 print("Starting: %s" %(sys.argv))
 
-if(sys.argv[1]=="off"):
-    os.system("gpioget `gpiofind GPIO27`")
-    os.system("gpioset `gpiofind GPIO5`=0")
+#according to spark4pi-digital-io mapping
+gpio_level=[17,27,23,22,16,26]
+gpio_enable=[18,5,6,12,13,19]
+
+channel_index=int(sys.argv[1])
+
+if(sys.argv[2]=="off"):
+    os.system("gpioget `gpiofind GPIO%d`"%(gpio_level[channel_index-1]))
+    os.system("gpioset `gpiofind GPIO%d`=0"%(gpio_enable[channel_index-1]))
     sys.exit(0)
 
-if(sys.argv[2]!="dc"):
-    print("Unsupported waveform-type: %s"%(sys.argv[2]))
+if(sys.argv[3]!="dc"):
+    print("Unsupported waveform-type: %s"%(sys.argv[3]))
     sys.exit(-1)
 
-dc_offset = float(sys.argv[5])
+dc_offset = float(sys.argv[6])
 
 if(dc_offset==1.65):
-    os.system("gpioset `gpiofind GPIO5`=1")
-    os.system("gpioset `gpiofind GPIO27`=1")
+    os.system("gpioset `gpiofind GPIO%d`=1"%(gpio_enable[channel_index-1]))
+    os.system("gpioset `gpiofind GPIO%d`=1"%(gpio_level[channel_index-1]))
 elif(dc_offset==0):
-    os.system("gpioset `gpiofind GPIO5`=1")
-    os.system("gpioset `gpiofind GPIO27`=0")
+    os.system("gpioset `gpiofind GPIO%d`=1"%(gpio_enable[channel_index-1]))
+    os.system("gpioset `gpiofind GPIO%d`=0"%(gpio_level[channel_index-1]))
 else:
-   print("Unsupported dc-offset: %s"%(dc_offset))      
+   print("Unsupported dc-offset: %s"%(dc_offset))
    sys.exit(-1)
