@@ -9,7 +9,7 @@ import time
 
 # Usage: ./lsi-ivi-function-generator-set-raspberry-pi <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
 
-# Example: ./lsi-ivi-function-generator-set-raspberry-pi on dc - - 3.3 - - -  
+# Example: ./lsi-ivi-function-generator-set-raspberry-pi on dc - - 1.65 - - -
 
 print("Starting: %s" %(sys.argv))
 
@@ -24,7 +24,7 @@ if(sys.argv[2]!="dc"):
 
 dc_offset = float(sys.argv[5])
 
-if(dc_offset==3.3):
+if(dc_offset==1.65):
     os.system("gpioset `gpiofind GPIO5`=1")
     os.system("gpioset `gpiofind GPIO27`=1")
 elif(dc_offset==0):
@@ -33,4 +33,3 @@ elif(dc_offset==0):
 else:
    print("Unsupported dc-offset: %s"%(dc_offset))      
    sys.exit(-1)
-

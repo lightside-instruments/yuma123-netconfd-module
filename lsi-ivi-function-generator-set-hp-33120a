@@ -55,6 +55,8 @@ if(stop_frequency != "-"):
     instr.write("TRIGger:SOURce IMMediate") #|EXTernal|BUS}
     #instr.write("TRIGger:SOURce EXTernal") #|EXTernal|BUS}
     #instr.write("TRIGger:SOURce BUS") #|EXTernal|BUS}
+elif(sys.argv[2]=="dc"):
+    pass
 else:
     instr.write("FREQuency %s"%(frequency))
 

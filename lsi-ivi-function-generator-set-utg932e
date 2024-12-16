@@ -34,6 +34,8 @@ duty_cycle=sys.argv[6]
 stop_frequency=sys.argv[7]
 sweep_time=sys.argv[8]
 
+instr.write(':CHANnel1:LOAD 50')
+
 if(sys.argv[2]=="square"):
     instr.write('CHANnel1:MODe CONTinue')
     instr.write('CHANnel1:BASE:WAVe SQUare')
@@ -52,7 +54,7 @@ elif(sys.argv[2]=="sine"):
 elif(sys.argv[2]=="dc"):
     instr.write('CHANnel1:MODe CONTinue')
     instr.write('CHANnel1:BASE:WAVe DC')
-    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
+#    instr.write('CHANnel1:BASE:FREQuency %f'%(float(start_frequency)))
     instr.write('CHANnel1:BASE:OFFset %f'%(float(dc_offset)))
     instr.write('CHANnel1:BASE:PHAse 0')
 else:
