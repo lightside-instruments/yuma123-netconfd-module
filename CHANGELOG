@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.12) bookworm; urgency=medium
+
+  * Fixed bugs causing null pointer strings to be passed to sprintf
+  * Fixed bugs introduced in utg932e multi channel support update 
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 17 Dec 2024 03:32:56 +0100
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.11) bookworm; urgency=medium
 
   * Implemented support for multiple function generator channels

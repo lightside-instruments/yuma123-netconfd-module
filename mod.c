@@ -160,7 +160,7 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
        atoi(VAL_STRING(name_val)+strlen("ch"))
        ) {
         char* frequency_str = "0.0";
-        char* amplitude_str = "1.0";
+        char* amplitude_str = "0.0";
         char* dc_offset_str = "0.0";
         char* duty_cycle_str = "50.0";
 
@@ -202,7 +202,7 @@ int run_standard_function(val_value_t* name_val, val_value_t* standard_function_
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"sine")) {
             sprintf(buf, "lsi-ivi-function-generator-set %d on sine %s %s %s - %s %s", channel_num, frequency_str, amplitude_str, dc_offset_val?dc_offset_str:"0", stop_frequency_str, sweep_time_str);
         } else if(0==strcmp(VAL_STRING(waveform_type_val),"dc")) {
-            sprintf(buf, "lsi-ivi-function-generator-set %d on dc %s %s %s - - -", channel_num, frequency_val?frequency_str:0, amplitude_val?amplitude_str:0, dc_offset_val?dc_offset_str:"0");
+            sprintf(buf, "lsi-ivi-function-generator-set %d on dc %s %s %s - - -", channel_num, frequency_str, amplitude_str, dc_offset_str);
         } else {
             assert(0);
         }
