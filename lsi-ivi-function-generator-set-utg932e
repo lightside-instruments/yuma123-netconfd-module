@@ -67,7 +67,7 @@ else:
 if(stop_frequency != "-"):
     instr.write('Channel%d:MODe Line'%(channel_num))
     instr.write("Channel%d:SWEep:FREQuency:STARt %f"%(channel_num, float(start_frequency)))
-    instr.write("Channel%d:SWEep:FREQuency:STOP %f"%(float(channel_num, stop_frequency)))
+    instr.write("Channel%d:SWEep:FREQuency:STOP %f"%(channel_num, float(stop_frequency)))
     instr.write("Channel%d:SWEEP:TIME %f"%(channel_num, float(sweep_time)))
 instr.write('Channel%d:OUTPut:SYNC ON'%(channel_num))
 instr.write('Channel%d:OUTPut ON'%(channel_num))

@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.13) bookworm; urgency=medium
+
+  * Added loop calling "*-set <channel-index> off" for each deleted channel
+  * Fixed bug in sweep implementation for utg932e
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 18 Dec 2024 22:35:36 +0100
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.12) bookworm; urgency=medium
 
   * Fixed bugs causing null pointer strings to be passed to sprintf

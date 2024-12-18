@@ -235,33 +235,73 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
 
     status_t res;
 
-    val_value_t *channels_val;
-    val_value_t *channel_val;
+    val_value_t *channels_new_val;
+    val_value_t *channel_new_val;
+    val_value_t *channels_cur_val;
+    val_value_t *channel_cur_val;
     val_value_t *name_val;
     val_value_t *arbitrary_waveform_val;
     val_value_t *data_val=NULL;
     val_value_t *standard_function_val;
-    val_value_t *channels_cur_val;
 
     unsigned int i;
 
     if(config_new_val == NULL) {
-        channels_val = NULL;
+        channels_new_val = NULL;
     } else {
-        channels_val = val_find_child(config_new_val,
+        channels_new_val = val_find_child(config_new_val,
                                FUNCTION_GENERATOR_MOD,
                                "channels");
     }
 
-    if(channels_val!=NULL) {
-        for (channel_val = val_get_first_child(channels_val);
-             channel_val != NULL;
-             channel_val = val_get_next_child(channel_val)) {
-            name_val = val_find_child(channel_val,
+    if(config_cur_val == NULL) {
+        channels_cur_val = NULL;
+    } else {
+        channels_cur_val = val_find_child(config_cur_val,
+                           FUNCTION_GENERATOR_MOD,
+                           "channels");
+    }
+
+    if(channels_cur_val!=NULL) {
+        for (channel_cur_val = val_get_first_child(channels_cur_val);
+             channel_cur_val != NULL;
+             channel_cur_val = val_get_next_child(channel_cur_val)) {
+           int channel_num;
+            name_val = val_find_child(channel_cur_val,
+                               FUNCTION_GENERATOR_MOD,
+                               "name");
+            channel_new_val = val123_find_match(config_new_val, channel_cur_val);
+
+            if((strlen(VAL_STRING(name_val)) > strlen("ch")) &&
+               (0==memcmp("ch", VAL_STRING(name_val), strlen("ch"))) &&
+               atoi(VAL_STRING(name_val)+strlen("ch"))
+              ) {
+
+                channel_num = atoi(VAL_STRING(name_val)+strlen("ch"));
+
+            } else {
+                continue;
+            }
+
+            if(channel_new_val==NULL) { // || 0!=val_compare_ex(channel_cur_val,channel_new_val,TRUE)
+                char* buf;
+                buf = malloc(strlen("lsi-ivi-function-generator-set 123456789 off"));
+                sprintf(buf, "lsi-ivi-function-generator-set %d off", channel_num);
+                system(buf);
+                free(buf);
+            }
+        }
+    }
+
+    if(channels_new_val!=NULL) {
+        for (channel_new_val = val_get_first_child(channels_new_val);
+             channel_new_val != NULL;
+             channel_new_val = val_get_next_child(channel_new_val)) {
+            name_val = val_find_child(channel_new_val,
                                FUNCTION_GENERATOR_MOD,
                                "name");
 
-            standard_function_val = val_find_child(channel_val,
+            standard_function_val = val_find_child(channel_new_val,
                                FUNCTION_GENERATOR_MOD,
                                "standard-function");
 
@@ -269,27 +309,16 @@ static int update_config(val_value_t* config_cur_val, val_value_t* config_new_va
                 return run_standard_function(name_val, standard_function_val);
             }
 
-            arbitrary_waveform_val = val_find_child(channel_val,
+            arbitrary_waveform_val = val_find_child(channel_new_val,
                                FUNCTION_GENERATOR_MOD,
                                "arbitrary-waveform");
 
             if(arbitrary_waveform_val!=NULL) {
                 return run_arbitrary_waveform(name_val, arbitrary_waveform_val);
             }
-            
-        }
-    } else {
-        if(config_cur_val == NULL) {
-            channels_cur_val = NULL;
-        } else {
-            channels_cur_val = val_find_child(config_cur_val,
-                               FUNCTION_GENERATOR_MOD,
-                               "channels");
-        }
-        if(channels_val==NULL && channels_cur_val!=NULL) {
-            system("lsi-ivi-function-generator-set off");
         }
     }
+
     return NO_ERR;
 }
 
