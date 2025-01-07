@@ -28,7 +28,7 @@ for mydata in data:
 	scope_name = mydata.getparent().getparent().getparent().getparent().getparent().xpath("nd:node-id", namespaces=namespaces)[0].text 
 	channel_name = mydata.getparent().xpath("scope:name", namespaces=namespaces)[0].text 
 
-	data_b64 = data[0].text
+	data_b64 = mydata.text
 
 	print("Writing signal_%s_%s.wav"%(scope_name,channel_name))
 	f = open("signal_%s_%s.wav"%(scope_name,channel_name), "wb")

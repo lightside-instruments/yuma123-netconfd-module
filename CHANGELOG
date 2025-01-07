@@ -1,3 +1,11 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-30) bookworm; urgency=medium
+
+  * Fixed trigger offset for yokogawa-dl1540l -5 -> 0
+  * Fixed conversion from byte read to signed byte for yokogawa-dl1540l
+  * Fixed bug in example/get-acquisition-waveforms.py
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 08 Jan 2025 00:17:04 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-29) bookworm; urgency=medium
 
   * Added forgotten lsi-ivi-scope-acquisition-data-get with /tmp -> ./tmp correction

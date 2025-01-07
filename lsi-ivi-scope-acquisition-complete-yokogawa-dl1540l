@@ -18,7 +18,7 @@ import vxi11
 import numpy
 import scipy.io.wavfile as wf
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.153::gpib,1::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.28::gpib,1::INSTR")
 
 # Communication interface User's Manual https://cdn.tmi.yokogawa.com/IM701530-11E.pdf
 
@@ -62,6 +62,9 @@ def disable_channel(channel):
         reply=cmd(con, ':CHANnel'+str(channel)+'?\n')
         print (reply)
         con.write(':CHAN'+str(channel)+':MODE OFF\n')
+
+def signed_byte(b):
+        return b - 256 if b >= 128 else b
 
 def read_waveform(trace, type="ASCII", vdiv=1) :
         con.write('WAVeform:TRACE '+ str(trace) + '\n')
@@ -115,9 +118,8 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
             if(type=="BYTE"):
                 reply=""
                 for byte in c[10:-1]:
-                    #val = float(byte)
-                    val = float(byte)-127
-                    #val = float(vdiv)*(float(byte)-127)*1.0/25; 
+                    val = float(signed_byte(byte))
+                    #val = float(vdiv)*(float(byte)-127)*1.0/25;
                     if(reply==""):
                         reply = str(val)
                     else:

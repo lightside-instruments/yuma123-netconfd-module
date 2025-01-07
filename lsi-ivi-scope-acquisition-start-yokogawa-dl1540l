@@ -120,7 +120,7 @@ if(trigger_source != "-"):
     con.write('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
     print('TRIGger:SOURce:CHANnel%d:LEVel %fV\n'%(int(trigger_source[2:]), trigger_level))
     con.write('TRIGger:SOURce:COUPling DC\n')
-    con.write('TRIGger:POSITION -5\n')
+    con.write('TRIGger:POSITION 0\n')
 
 #reply=cmd(con, 'TRIGger?\n')
 #print (reply)
