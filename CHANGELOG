@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-29) bookworm; urgency=medium
+
+  * Added forgotten lsi-ivi-scope-acquisition-data-get with /tmp -> ./tmp correction
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 07 Jan 2025 13:14:08 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-28) bookworm; urgency=medium
 
   * Changed behavior acquisition WAV files are now stored in ./tmp instead of /tmp to accomodate multiple netconfd instances
