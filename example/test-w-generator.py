@@ -10,7 +10,7 @@ import tntapi
 import yangrpc
 from yangcli import yangcli
 
-def generate_data(sample_rate=48000, start_frequency=1000, stop_frequency=10000, sweep_time=10.00, amplitude=1.00):
+def generate_data(sample_rate=48000, start_frequency=1000, stop_frequency=10000, sweep_time=10.00, generator_amplitude=2.00, scope_channel_range=2.00):
 	#generate image.jpg.b64
 	f = open("generate_chirp.m", "w")
 	f.write("""
@@ -19,14 +19,15 @@ sample_rate=%f
 start_freq=%f
 stop_freq=%f
 sweep_time=%f
-gain=%f
 samples=sweep_time*sample_rate
 
 chirp1_cos = chirp([0:1/sample_rate:sweep_time-1/sample_rate],start_freq,sweep_time,stop_freq,'linear');
 chirp1_sin = chirp([0:1/sample_rate:sweep_time-1/sample_rate],start_freq,sweep_time,stop_freq,'linear',-90);
 chirp1=chirp1_cos;
-audiowrite('signal-out.wav',[gain*chirp1',zeros(1,samples)'],sample_rate);
-"""%(sample_rate, start_frequency, stop_frequency, sweep_time, amplitude))
+audiowrite('signal-out.wav',[chirp1',zeros(1,samples)'],sample_rate);
+generator_amplitude=%f
+scope_channel_range=%f
+"""%(sample_rate, start_frequency, stop_frequency, sweep_time, generator_amplitude, scope_channel_range))
 	f.close()
 
 	os.system("octave-cli generate_chirp.m")
@@ -78,7 +79,7 @@ start_frequency=float(args.start_frequency)
 stop_frequency=float(args.stop_frequency)
 sweep_time=float(args.sweep_time)
 
-data_b64 = generate_data(sample_rate, start_frequency, stop_frequency, sweep_time, amplitude=1.00)
+data_b64 = generate_data(sample_rate, start_frequency, stop_frequency, sweep_time, generator_amplitude, scope_channel_range)
 print("""data=%s"""%(data_b64.decode('ascii')))
 
 
@@ -125,6 +126,9 @@ assert(len(ok)==1)
 
 tntapi.network_commit(conns)
 
+print("waiting for acquisition to start ...")
+time.sleep(1)
+
 
 # ok=yangcli(yconns[args.generator_name],"""create /channels/channel[name='%s'] -- data=%s"""%(generator_channel_name, data_b64.decode('ascii'))).xpath('./ok')
 
@@ -164,7 +168,7 @@ else:
 tntapi.network_commit(conns)
 
 print("waiting for acquisition to complete ...")
-time.sleep(10)
+time.sleep(5)
 
 while(1):
     (notification_xml,ret)=conns_notification[args.scope_name].receive()

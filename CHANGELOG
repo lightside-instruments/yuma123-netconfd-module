@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-27) bookworm; urgency=medium
+
+  * Added get-acquisition-waveform.m and show-acquisition-waveform.m scripts to extract waveforms as WAV files and display in matlab/octave plot
+  * Exported generator_amplitude and scope_channel_range parameters to the generated matlab/octave script
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 07 Jan 2025 03:45:31 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-26) bookworm; urgency=medium
 
   * Restored logging and made batch mode with report generation default
