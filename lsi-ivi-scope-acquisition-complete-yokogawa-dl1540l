@@ -181,7 +181,7 @@ for i in range(0,channels_num):
     data = numpy.array([signal])
     print(data.dtype)
     #data.dump("data.numpy")
-    wf.write("/tmp/lsi-ivi-scope-%s-signal.wav"%(name), int(sample_rate), data.astype(numpy.int8).flatten())
+    wf.write("tmp/lsi-ivi-scope-%s-signal.wav"%(name), int(sample_rate), data.astype(numpy.int8).flatten())
     print("done %d"%(i))
 sys.exit(0)
 
@@ -205,5 +205,5 @@ signal4 = read_waveform(4, type="ASCII")
 RATE = 48000
 #... your code that puts an array of floats into data ...
 
-wf.write("/tmp/%s-signal.wav"%(sys.argv[1]), RATE, numpy.array([numpy.transpose(numpy.array([signal1])), numpy.transpose(numpy.array([signal2])), numpy.transpose(numpy.array([signal3])), numpy.transpose(numpy.array([signal4]))]))
+wf.write("tmp/%s-signal.wav"%(sys.argv[1]), RATE, numpy.array([numpy.transpose(numpy.array([signal1])), numpy.transpose(numpy.array([signal2])), numpy.transpose(numpy.array([signal3])), numpy.transpose(numpy.array([signal4]))]))
 sys.exit(0)

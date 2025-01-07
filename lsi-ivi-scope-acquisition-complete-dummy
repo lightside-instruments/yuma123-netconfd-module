@@ -36,7 +36,7 @@ for i in range(0,channels_num):
     #signal *= (voltage_range/2)
     signal *= 32767
     print(len(signal))
-    wf.write("/tmp/%s-signal.wav"%(name), int(sample_rate), np.int16(signal))
+    wf.write("tmp/%s-signal.wav"%(name), int(sample_rate), np.int16(signal))
 
 time.sleep(samples/sample_rate)
 

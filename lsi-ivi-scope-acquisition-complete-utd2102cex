@@ -142,5 +142,5 @@ for i in range(0,channels_num):
     data = numpy.array([signal])
     #print(data.dtype)
     #data.dump("data.numpy")
-    wf.write("/tmp/lsi-ivi-scope-%s-signal.wav"%(name), int(sample_rate), data.astype(numpy.int8).flatten())
+    wf.write("tmp/lsi-ivi-scope-%s-signal.wav"%(name), int(sample_rate), data.astype(numpy.int8).flatten())
 sys.exit(0)

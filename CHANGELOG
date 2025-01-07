@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-28) bookworm; urgency=medium
+
+  * Changed behavior acquisition WAV files are now stored in ./tmp instead of /tmp to accomodate multiple netconfd instances
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 07 Jan 2025 12:20:16 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-27) bookworm; urgency=medium
 
   * Added get-acquisition-waveform.m and show-acquisition-waveform.m scripts to extract waveforms as WAV files and display in matlab/octave plot
