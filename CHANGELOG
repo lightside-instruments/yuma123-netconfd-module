@@ -1,3 +1,11 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-31) bookworm; urgency=medium
+
+  * Added /acquisition/channels/channel/range-used leaf to the model
+  * Fixed conversion from byte read to signed byte for yokogawa-dl1540l. Range is not 8 volts but 127/12.5 = 10.16 volts
+  * Restored lsi-ivi-scope-acquisition-complete -> alsa
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 15 Jan 2025 01:35:17 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-30) bookworm; urgency=medium
 
   * Fixed trigger offset for yokogawa-dl1540l -5 -> 0

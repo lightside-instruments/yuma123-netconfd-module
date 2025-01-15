@@ -9,9 +9,9 @@ module lsi-ivi-scope {
     "Scope management module designed
      after the IVI Scope.";
 
-  revision 2024-09-07 {
+  revision 2025-01-15 {
     description
-      "Added acquisition-complete notification.";
+      "Added /acquisition/channels/channel/range-used.";
   }
 
   feature measurement;
@@ -52,6 +52,17 @@ module lsi-ivi-scope {
              between -1.00 and +1.00.
 
              Double-precision floating point formated data according to IEEE 754.";
+        }
+        leaf range-used {
+          config false;
+          description
+            "Specifies the actual adjusted channel range used
+             during acquisition. It can be bigger then the
+             configured range, but not smaller.";
+          units "Volt";
+          type decimal64 {
+            fraction-digits 9;
+          }
         }
       }
     }
