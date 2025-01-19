@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-32) bookworm; urgency=medium
+
+  * Yet another revert of the yokogawa-dl1540l conversion from byte read to signed byte logic
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 20 Jan 2025 00:39:09 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-31) bookworm; urgency=medium
 
   * Added /acquisition/channels/channel/range-used leaf to the model

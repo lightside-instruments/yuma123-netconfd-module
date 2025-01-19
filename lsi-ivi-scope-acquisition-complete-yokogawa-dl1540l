@@ -63,6 +63,9 @@ def disable_channel(channel):
         print (reply)
         con.write(':CHAN'+str(channel)+':MODE OFF\n')
 
+def signed_byte(b):
+        return b - 256 if b >= 128 else b
+
 def read_waveform(trace, type="ASCII", vdiv=1) :
         con.write('WAVeform:TRACE '+ str(trace) + '\n')
 
@@ -115,7 +118,8 @@ def read_waveform(trace, type="ASCII", vdiv=1) :
             if(type=="BYTE"):
                 reply=""
                 for byte in c[10:-1]:
-                    val = float(byte)-127
+                    val = float(signed_byte(byte))
+                    #val = float(byte)-127
                     #val = float(vdiv)*(float(byte)-127)/(12.5)
                     if(reply==""):
                         reply = str(val)
