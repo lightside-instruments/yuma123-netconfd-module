@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-33) bookworm; urgency=medium
+
+  * Added support for Rhode&Schwarz MXO4
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 10 Feb 2025 10:50:17 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-32) bookworm; urgency=medium
 
   * Yet another revert of the yokogawa-dl1540l conversion from byte read to signed byte logic
