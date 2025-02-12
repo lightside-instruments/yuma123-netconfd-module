@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-function-generator (2.14) bookworm; urgency=medium
+
+  * * Added support for Rhode&Schwarz MXO4
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 12 Feb 2025 17:48:08 +0100
+
 yuma123-netconfd-module-lsi-ivi-function-generator (2.13) bookworm; urgency=medium
 
   * Added loop calling "*-set <channel-index> off" for each deleted channel

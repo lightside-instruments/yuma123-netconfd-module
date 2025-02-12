@@ -1,0 +1,86 @@
+#!/usr/bin/python3
+
+global args
+args=None
+
+import sys
+import time
+import vxi11
+
+# Usage: ./lsi-ivi-function-generator-set-rs-mxo4 <channel-num> <on|off> <waveform-type> <frequency|start-frequency> <amplitude> <dc-offset> <duty-cycle> <stop-frequency> <sweep-time>
+
+# Example: ./lsi-ivi-function-generator-set-rs-mxo4 1 on sine 1634.45 5 2.5 - 1800.00 10.00
+
+# Communication interface User's Manual https://scdn.rohde-schwarz.com/ur/pws/dl_downloads/pdm/cl_manuals/user_manual/1335_5337_01/MXO4_UserManual_en_11.pdf
+
+print("Starting: %s" %(sys.argv))
+
+instr = vxi11.vxi11.Instrument("TCPIP::10.0.0.3::inst0::INSTR")
+
+
+channel_num = int(sys.argv[1])
+
+if(sys.argv[2]=="off"):
+    instr.write("WGENerator%d:ENABle OFF"%(channel_num))
+    sys.exit(0)
+
+frequency = float(sys.argv[4])
+amplitude = float(sys.argv[5])
+dc_offset = float(sys.argv[6])
+duty_cycle_str = sys.argv[7]
+if(sys.argv[7] != '-'):
+    duty_cycle = float(sys.argv[7])
+start_frequency = float(frequency)
+
+stop_frequency_str = sys.argv[8]
+if(stop_frequency_str != '-'):
+    stop_frequency = float(sys.argv[8])
+sweep_time = float(sys.argv[9])
+
+#instr.write("OUTPut:SYNC OFF")
+#instr.write("SWEep:STATe OFF")
+
+if(sys.argv[3]=="square"):
+    instr.write("WGENerator%d:FUNCtion:SELect  SQUare"%(channel_num))
+elif(sys.argv[3]=="sine"):
+    instr.write("WGENerator%d:FUNCtion:SELect SINusoid"%(channel_num))
+elif(sys.argv[3]=="dc"):
+    instr.write("WGENerator%d:FUNCtion:SELect DC"%(channel_num))
+else:
+    print("Unsupported waveform-type: %s"%(sys.argv[3]))
+    sys.exit(-1)
+
+
+
+if(sys.argv[3]=="square"):
+    instr.write("WGENerator%d:FUNCtion:SQUare:DCYCle %f"%(channel_num, duty_cycle))
+
+if(sys.argv[3]!="dc"):
+    instr.write("WGENerator%d:VOLTage:VPP %.2f"%(channel_num, amplitude))
+    instr.write("WGENerator%d:VOLTage:HIGH %.2f"%(channel_num, dc_offset+amplitude/2))
+    instr.write("WGENerator%d:VOLTage:LOW %.2f"%(channel_num, dc_offset-amplitude/2))
+    instr.write("WGENerator%d:VOLTage:OFFSet %f"%(channel_num, dc_offset))
+else:
+    instr.write("WGENerator%d:VOLTage:DCLevel %f"%(channel_num, dc_offset))
+
+instr.write("WGENerator%d:OUTPut FIFTy"%(channel_num))
+
+if(stop_frequency_str != "-"):
+    assert(sys.argv[3]=="sine")
+    instr.write("WGENerator%d:SWEep:FSTart %.3f"%(channel_num, start_frequency))
+    instr.write("WGENerator%d:SWEep:FEND %.3f"%(channel_num, stop_frequency))
+    instr.write("WGENerator%d:SWEep:TIME %f"%(channel_num, sweep_time))
+
+    #instr.write("TRIGger:SOURce IMMediate") #|EXTernal|BUS}
+elif(sys.argv[3]=="dc"):
+    pass
+else:
+    instr.write("WGENerator%d:FREQuency %f"%(channel_num, start_frequency))
+
+if(stop_frequency_str != "-"):
+    print("WGENerator%d:SWEep:STATe ON"%(channel_num))
+    instr.write("WGENerator%d:SWEep:STATe ON"%(channel_num))
+
+#instr.write("OUTPut:SYNC ON")
+instr.write("WGENerator%d:ENABle ON"%(channel_num))
+
