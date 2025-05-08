@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-37) bookworm; urgency=medium
+
+  * Added example test script for rigol since it only supports 12M,6M,600K, ... x/2 memory depth acquisitions
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 08 May 2025 14:52:07 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-36) bookworm; urgency=medium
 
   * Fixed bug in rigol ds1054 acquisition complete script not waiting for the trigger processing to complete
