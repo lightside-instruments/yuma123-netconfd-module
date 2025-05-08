@@ -101,7 +101,8 @@ if(trigger_source != "-"):
         slope_str='NEGative'
     else:
         slope_str='POSitive'
-        con.write(':TRIGger:EDGe:SLOPe %s\n'%(slope_str))
+
+    con.write(':TRIGger:EDGe:SLOPe %s\n'%(slope_str))
 
 con.write(':ACQuire:MDEPth %d\n'%(samples))
 

@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-36) bookworm; urgency=medium
+
+  * Fixed bug in rigol ds1054 acquisition complete script not waiting for the trigger processing to complete
+  * Fixed bug in rigol ds1054 acquisition start script not configuring negative edge. Still does not work with negative edge.
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 08 May 2025 11:46:48 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-35) bookworm; urgency=medium
 
   * Support for rigol ds1054

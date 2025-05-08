@@ -46,6 +46,7 @@ def cmd(instr, cmd):
 def copy_waveform_to_file(trace, filename) :
         type="BYTE"
 
+        con.write(':STOP\n')
         con.write(':WAV:SOUR CHAN%d\n'%(trace))
         con.write(':WAV:MODE RAW\n')
         con.write(':WAV:FORM %s\n'%(type))
@@ -98,7 +99,7 @@ if(trigger_source != "-"):
     while (1):
         reply=cmd(con, ':TRIGger:STATus?\n')
         print (reply)
-        if(int(reply.strip()!="TD")):
+        if(int(reply.strip()=="STOP")):
             break
         time.sleep(1)
 
