@@ -26,6 +26,8 @@ args=None
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="Path to the netconf configuration *.xml file defining the configuration according to ietf-networks, ietf-networks-topology and netconf-node models e.g. ../networks.xml")
+parser.add_argument("--generator-name", help="Name of generator node e.g. 'generator0'")
+parser.add_argument("--scope-name", help="Name of scope node e.g. 'scope0'")
 parser.add_argument("--generator-channel", help="Name of generator channel e.g. 'default' or 'hw:1,0'")
 parser.add_argument("--generator-waveform-type", help="Type of generated waveform e.g. 'sine', 'square' or 'dc'")
 parser.add_argument("--generator-frequency", help="Frequency generated in Hz e.g. '1352.3'")
@@ -42,9 +44,12 @@ parser.add_argument("--sample-rate", help="Sample rate for acquisition e.g. 4800
 args = parser.parse_args()
 
 generator_frequency="1000"
-scope_channel_name=args.scope_channel_name
-scope_channel_range=float(args.scope_channel_range)
-scope_channel_parameters=args.scope_channel_parameters
+scope_channel_name = []
+scope_channel_range = []
+scope_channel_parameters = []
+scope_channel_name = args.scope_channel_name.split(',')
+scope_channel_range=args.scope_channel_range.split(',')
+scope_channel_parameters=args.scope_channel_parameters.split(',')
 scope_trigger_source=args.scope_trigger_source
 scope_trigger_level=float(args.scope_trigger_level)
 scope_trigger_slope=args.scope_trigger_slope
@@ -60,54 +65,88 @@ sample_rate = int(args.sample_rate)
 tree=etree.parse(args.config)
 network = tree.xpath('/nc:config/nd:networks/nd:network', namespaces=namespaces)[0]
 
-conns = tntapi.network_connect(network)
+conns = tntapi.network_connect(network, timeout=10000)
+conns_notification = tntapi.network_connect(network, timeout=10000)
 yconns = tntapi.network_connect_yangrpc(network)
 
-yangcli(yconns["scope0"],"""delete /acquisition""")
-yangcli(yconns["generator0"],"""delete /channels""")
-tntapi.network_commit(conns)
+filter="""
+<filter xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0" xmlns:netconf="urn:ietf:params:xml:ns:netconf:base:1.0" netconf:type="subtree">
+ <acquisition-complete xmlns="urn:lsi:params:xml:ns:yang:ivi-scope"/>
+</filter>"""
 
-ok=yangcli(yconns["generator0"],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=%s amplitude=%f dc-offset=%f"""%("default", generator_waveform_type, generator_frequency, generator_amplitude, generator_dc_offset)).xpath('./ok')
-assert(len(ok)==1)
+rpc_xml_str="""
+<create-subscription xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">
+%(filter)s
+</create-subscription>
+"""
 
-tntapi.network_commit(conns)
+print(rpc_xml_str%{'filter':filter})
 
-ok=yangcli(yconns["scope0"],"""replace /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
-assert(len(ok)==1)
-
-ok=yangcli(yconns["scope0"],"""merge /acquisition/trigger -- source=%s level=%f slope=%s"""%(scope_trigger_source, scope_trigger_level, scope_trigger_slope)).xpath('./ok')
-assert(len(ok)==1)
-
-
-ok=yangcli(yconns["scope0"],"""merge /acquisition/channels/channel[name='%s'] -- range=%f parameters='%s'"""%(scope_channel_name, scope_channel_range, scope_channel_parameters)).xpath('./ok')
-assert(len(ok)==1)
-
-
-tntapi.network_commit(conns)
-
-
-print("waiting 10 sec +  %u sec"%(samples/sample_rate))
-
-time.sleep(480000/48000 + 10)
-
-result=yangcli(yconns["scope0"],"""xget /acquisition/channels/channel[name='%s']"""%(scope_channel_name))
-
+result = conns_notification[args.scope_name].rpc(rpc_xml_str%{'filter':filter})
 print(etree.tostring(result))
-data=result.xpath('./data/acquisition/channels/channel/data')
+rpc_error = result.xpath('rpc-error')
+assert(len(rpc_error)==0)
+
+
+yangcli(yconns[args.scope_name],"""delete /acquisition""")
+yangcli(yconns[args.generator_name],"""delete /channels""")
+tntapi.network_commit(conns)
+
+ok=yangcli(yconns[args.scope_name],"""replace /acquisition -- samples=%d sample-rate=%d"""%(samples, sample_rate)).xpath('./ok')
+assert(len(ok)==1)
+
+ok=yangcli(yconns[args.scope_name],"""merge /acquisition/trigger -- source=%s level=%f slope=%s"""%(scope_trigger_source, scope_trigger_level, scope_trigger_slope)).xpath('./ok')
+assert(len(ok)==1)
+
+for i in range(0,len(scope_channel_name)):
+    ok=yangcli(yconns[args.scope_name],"""merge /acquisition/channels/channel[name='%s'] -- range=%f parameters='%s'"""%(scope_channel_name[i], float(scope_channel_range[i]), scope_channel_parameters[i])).xpath('./ok')
+    assert(len(ok)==1)
+
+
+tntapi.network_commit(conns)
+
+ok=yangcli(yconns[args.generator_name],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=%s amplitude=%f dc-offset=%f"""%(args.generator_channel, generator_waveform_type, generator_frequency, generator_amplitude, generator_dc_offset)).xpath('./ok')
+assert(len(ok)==1)
+
+tntapi.network_commit(conns)
+
+print("Pre-sleep 5 ...")
+time.sleep(5)
+print("Wait ...")
+
+while(1):
+    (notification_xml,ret)=conns_notification[args.scope_name].receive()
+    if(ret!=1): #timeout
+        break;
+    printf("Timeout. Retrying.")
+if notification_xml == None:
+    print("[FAILED] Receiving <acquisition-complete> notification")
+    sys.exit(-1)
+
+print("Wake ...")
+
+# Stop generator
+ok=yangcli(yconns[args.generator_name],"""delete /channels""").xpath('./ok')
+assert(len(ok)==1)
+tntapi.network_commit(conns)
+
+for i in range(0,len(scope_channel_name)):
+    result=yangcli(yconns[args.scope_name],"""xget /acquisition/channels/channel[name='%s']"""%(scope_channel_name[i]))
+
+    print(etree.tostring(result))
+    data=result.xpath('./data/acquisition/channels/channel/data')
 #print(len(data))
 #print(etree.tostring(data[0]))
-print(len(data))
-assert(len(data)==1)
+    print(len(data))
+    assert(len(data)==1)
 
-data_b64 = data[0].text
+    data_b64 = data[0].text
 
-f = open("signal.wav", "wb")
-f.write(base64.b64decode(data_b64))
-f.close()
+    f = open("""signal-%s.wav"""%(scope_channel_name[i]), "wb")
+    f.write(base64.b64decode(data_b64))
+    f.close()
 
-ok=yangcli(yconns["scope0"],"""delete /acquisition""").xpath('./ok')
-assert(len(ok)==1)
-ok=yangcli(yconns["generator0"],"""delete /channels""").xpath('./ok')
+ok=yangcli(yconns[args.scope_name],"""delete /acquisition""").xpath('./ok')
 assert(len(ok)==1)
 
 tntapi.network_commit(conns)

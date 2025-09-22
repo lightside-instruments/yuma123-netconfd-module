@@ -1,3 +1,11 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-38) bookworm; urgency=medium
+
+  * Updated test-w-generator-standard-function.py:
+    * Added --scope-channel-name and --generator-channel-name params
+    * Added support for multiple comma separated --scope-channel-{name,range,parameters} values
+ 
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 22 Sep 2025 15:03:41 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-37) bookworm; urgency=medium
 
   * Added example test script for rigol since it only supports 12M,6M,600K, ... x/2 memory depth acquisitions
