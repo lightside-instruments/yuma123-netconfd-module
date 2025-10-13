@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-39) bookworm; urgency=medium
+
+  * Added compute-impedance.m to compute and plot the impedance chart after run-freqs.sh acquisition
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 13 Oct 2025 15:09:58 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-38) bookworm; urgency=medium
 
   * Updated test-w-generator-standard-function.py:
