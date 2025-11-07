@@ -1,3 +1,10 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-40) bookworm; urgency=medium
+
+  * Initial support for Tektronix 11801B Digital Sampling Scope with SD-24 sampling head
+  * Added working implementation for example/run-freqs.sh doing multiple impedance measurement acuisitions for array of frequencies 
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 04 Nov 2025 12:42:21 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-39) bookworm; urgency=medium
 
   * Added compute-impedance.m to compute and plot the impedance chart after run-freqs.sh acquisition
