@@ -105,13 +105,14 @@ for i in range(0,len(scope_channel_name)):
 
 tntapi.network_commit(conns)
 
+print("Pre-sleep 5 ...")
+time.sleep(5)
+
 ok=yangcli(yconns[args.generator_name],"""replace /channels/channel[name='%s']/standard-function -- waveform-type=%s frequency=%s amplitude=%f dc-offset=%f"""%(args.generator_channel, generator_waveform_type, generator_frequency, generator_amplitude, generator_dc_offset)).xpath('./ok')
 assert(len(ok)==1)
 
 tntapi.network_commit(conns)
 
-print("Pre-sleep 5 ...")
-time.sleep(5)
 print("Wait ...")
 
 while(1):

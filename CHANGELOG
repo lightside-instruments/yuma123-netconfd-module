@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-41) bookworm; urgency=medium
+
+  * Moved delay in example/test-w-generator-standard-function.py so scope has zeroed buffer before trigger
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 07 Nov 2025 18:03:44 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-40) bookworm; urgency=medium
 
   * Initial support for Tektronix 11801B Digital Sampling Scope with SD-24 sampling head
