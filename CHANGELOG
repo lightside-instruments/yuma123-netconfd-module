@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-42) bookworm; urgency=medium
+
+  * Progress with Tektronix 11801B Digital Sampling Scope with SD-24 sampling head implementation
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 10 Nov 2025 00:09:55 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-41) bookworm; urgency=medium
 
   * Moved delay in example/test-w-generator-standard-function.py so scope has zeroed buffer before trigger
