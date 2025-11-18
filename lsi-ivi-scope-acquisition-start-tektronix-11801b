@@ -15,7 +15,7 @@ import datetime
 import vxi11
 import struct
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.132::gpib,12::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::10.0.0.5::gpib,12::INSTR")
 
 # Tektronix 11801B Digital Sampling Oscilloscope 070-8783-01
 
@@ -68,7 +68,10 @@ reply=cmd(con, 'TRIGGER?\n')
 print (reply)
 con.write('SEL TRA1')
 
-con.write("TRACE1 DESCR:'M1-M2'\n")
+con.write("TRACE1 DESCR:'M1'\n")
+con.write("TRACE2 DESCR:'M2'\n")
+
+#con.write("TRACE1 DESCR:'M1-M2'\n")
 #con.write("TRIGGER SOURCE:EXTERNAL,LEVEL:0.4\n")
 con.write("TRIGGER MODE:NORMAL,STATUS:TRG,ATTENUATION:X1,SOURCE:EXTERNAL,LEVEL:4.7E-2,EXTCOUPLING:AC,HIFREQ:OFF,ENHANCED:OFF,HOLDOFF:5.0E-6,HMODE:AUTO,SLOPE:PLUS\n")
 

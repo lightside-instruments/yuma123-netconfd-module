@@ -15,7 +15,7 @@ import datetime
 import vxi11
 import struct
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.13.37.132::gpib,12::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::10.0.0.5::gpib,12::INSTR")
 
 # Tektronix 11801B Digital Sampling Oscilloscope 070-8783-01
 
@@ -59,19 +59,24 @@ def copy_waveform_to_file(trace, filename) :
         else:
             sample_rate_workaround = sample_rate
 
-        f = open(filename, "wb")
-        f.write(bytes([ord('R'), ord('I'), ord('F'), ord('F')]))
-        f.write(struct.pack("<I", samples*2+44))
-        f.write(bytes([ord('W'),ord('A'),ord('V'),ord('E'),ord('f'),ord('m'),ord('t'),ord(' ')]))
-        f.write(struct.pack("<I", 16))
-        f.write(struct.pack("<H", 1)) #type 1=PCM
-        f.write(struct.pack("<H", 1)) #channels
-        f.write(struct.pack("<I", int(sample_rate_workaround)))
-        f.write(struct.pack("<I", int(sample_rate_workaround*16*1/8))) #(Sample Rate * BitsPerSample * Channels) / 8
-        f.write(struct.pack("<H", 2)) #(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
-        f.write(struct.pack("<H", 16)) #Bits per sample
-        f.write(bytes([ord('d'),ord('a'),ord('t'),ord('a')]))
-        f.write(struct.pack("<I", samples*2))
+        f1 = open("tmp/lsi-ivi-scope-ch1-signal.wav", "wb")
+        f2 = open("tmp/lsi-ivi-scope-ch2-signal.wav", "wb")
+        for f in [f1, f2]:
+            f.write(bytes([ord('R'), ord('I'), ord('F'), ord('F')]))
+            f.write(struct.pack("<I", samples*2+44))
+            f.write(bytes([ord('W'),ord('A'),ord('V'),ord('E'),ord('f'),ord('m'),ord('t'),ord(' ')]))
+            f.write(struct.pack("<I", 16))
+            f.write(struct.pack("<H", 1)) #type 1=PCM
+            f.write(struct.pack("<H", 1)) #channels
+            f.write(struct.pack("<I", int(sample_rate_workaround)))
+            f.write(struct.pack("<I", int(sample_rate_workaround*16*1/8))) #(Sample Rate * BitsPerSample * Channels) / 8
+            f.write(struct.pack("<H", 2)) #(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
+            f.write(struct.pack("<H", 16)) #Bits per sample
+            f.write(bytes([ord('d'),ord('a'),ord('t'),ord('a')]))
+            f.write(struct.pack("<I", samples*2))
+
+        con.write("OUT TRA1TOTRA2\n")
+
         i=0
         for offset in range(0,samples,block_size_max):
             if((offset+block_size_max) > samples):
@@ -81,9 +86,9 @@ def copy_waveform_to_file(trace, filename) :
 
             start = time.time()
             con.write("ACQuisition STOP\n");
-            c=cmd_binary(con, "CURVE?\n");
-            print(len(c))
 
+            ch=cmd_binary(con, "CURVE?\n");
+            print(len(ch))
 
             end = time.time()
             i=i+1
@@ -93,10 +98,15 @@ def copy_waveform_to_file(trace, filename) :
             con.write("CONDACQ TYPE:WAVfrm,WAIT\n");
             time.sleep(1)
 
-            assert(chr(c[19])=='%')
-            print(len(c[21:-2]))
-            f.write(c[21:21+2*block_size])
-        f.close()
+            assert(chr(ch[19])=='%')
+            print(len(ch[21:-2]))
+            f1.write(ch[21:21+2*block_size])
+            assert(chr(ch[21+2*block_size+70])=='%')
+            f2.write(ch[21+2*block_size+72:21+2*block_size+72+2*block_size])
+
+
+        for f in [f1, f2]:
+            f.close()
 
 
 

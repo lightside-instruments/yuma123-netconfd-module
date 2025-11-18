@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-43) trixie; urgency=medium
+
+  * Added dual channel acquisition for tektronix-11801b instead of M1-M2
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 18 Nov 2025 16:22:55 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-42) bookworm; urgency=medium
 
   * Progress with Tektronix 11801B Digital Sampling Scope with SD-24 sampling head implementation
