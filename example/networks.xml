@@ -5,22 +5,45 @@
       <network-id>lsi</network-id>
       <node>
         <node-id>scope0</node-id>
-        <description>Scope with channel named 'default' </description>
+        <description>Scope with channel named ch1-ch4 </description>
         <netconf-connect-params xmlns="urn:tntapi:netconf-node">
           <user>pi</user>
           <server>localhost</server>
-<!--          <password>raspberry</password> -->
-          <ncport>830</ncport>
+          <password>raspberry</password>
+          <ncport>10831</ncport>
         </netconf-connect-params>
       </node>
       <node>
-        <node-id>generator0</node-id>
-        <description>Scope with channel named 'default' </description>
+        <node-id>scope-rigol</node-id>
+        <description>Scope with channel named ch1-ch4 </description>
         <netconf-connect-params xmlns="urn:tntapi:netconf-node">
-          <user>y123</user>
+          <user>pi</user>
           <server>localhost</server>
-<!--          <password>raspberry</password> -->
+          <password>raspberry</password>
+          <ncport>30831</ncport>
+        </netconf-connect-params>
+      </node>
+<!--
+      <node>
+        <node-id>scope1</node-id>
+        <description>Yokogawa DL1540L Scope with channel named 'ch1' - 'ch4' </description>
+        <netconf-connect-params xmlns="urn:tntapi:netconf-node">
+          <user>pi</user>
+          <server>localhost</server>
+          <password>raspberry</password>
           <ncport>830</ncport>
+        </netconf-connect-params>
+        <netconf-node:config xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" xmlns:nt="urn:ietf:params:xml:ns:yang:ietf-network-topology" xmlns:netconf-node="urn:tntapi:netconf-node"/>
+      </node>
+-->
+      <node>
+        <node-id>generator0</node-id>
+        <description>Scope with channel named ch1-ch2 </description>
+        <netconf-connect-params xmlns="urn:tntapi:netconf-node">
+          <user>pi</user>
+          <server>localhost</server>
+          <password>raspberry</password>
+          <ncport>10830</ncport>
         </netconf-connect-params>
       </node>
     </network>

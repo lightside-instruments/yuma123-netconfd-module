@@ -1,3 +1,61 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-43) trixie; urgency=medium
+
+  * Added dual channel acquisition for tektronix-11801b instead of M1-M2
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 18 Nov 2025 16:22:55 +0100
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-42) bookworm; urgency=medium
+
+  * Progress with Tektronix 11801B Digital Sampling Scope with SD-24 sampling head implementation
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 10 Nov 2025 00:09:55 +0100
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-41) bookworm; urgency=medium
+
+  * Moved delay in example/test-w-generator-standard-function.py so scope has zeroed buffer before trigger
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 07 Nov 2025 18:03:44 +0100
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-40) bookworm; urgency=medium
+
+  * Initial support for Tektronix 11801B Digital Sampling Scope with SD-24 sampling head
+  * Added working implementation for example/run-freqs.sh doing multiple impedance measurement acuisitions for array of frequencies 
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Tue, 04 Nov 2025 12:42:21 +0100
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-39) bookworm; urgency=medium
+
+  * Added compute-impedance.m to compute and plot the impedance chart after run-freqs.sh acquisition
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 13 Oct 2025 15:09:58 +0200
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-38) bookworm; urgency=medium
+
+  * Updated test-w-generator-standard-function.py:
+    * Added --scope-channel-name and --generator-channel-name params
+    * Added support for multiple comma separated --scope-channel-{name,range,parameters} values
+ 
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 22 Sep 2025 15:03:41 +0200
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-37) bookworm; urgency=medium
+
+  * Added example test script for rigol since it only supports 12M,6M,600K, ... x/2 memory depth acquisitions
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 08 May 2025 14:52:07 +0200
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-36) bookworm; urgency=medium
+
+  * Fixed bug in rigol ds1054 acquisition complete script not waiting for the trigger processing to complete
+  * Fixed bug in rigol ds1054 acquisition start script not configuring negative edge. Still does not work with negative edge.
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 08 May 2025 11:46:48 +0200
+
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-35) bookworm; urgency=medium
+
+  * Support for rigol ds1054
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 16 Apr 2025 14:11:47 +0200
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-34) bookworm; urgency=medium
 
   * Fixed bug changed packaged structure members from signed to unsigned integers.

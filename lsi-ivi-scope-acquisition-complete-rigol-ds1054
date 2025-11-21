@@ -1,0 +1,115 @@
+#!/usr/bin/python3
+
+# Usage: ./lsi-ivi-scope-acquisition-complete-rigol-ds1054 <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
+
+# Example: ./lsi-ivi-scope-acquisition-complete-rigol-ds1054 1000000000.000000000 6000000 ch1 positive 0.600000000 ch1 4.000000000 0.0
+
+global args
+args=None
+
+import sys
+import time
+import sys
+import os
+import datetime
+import struct
+import vxi11
+
+instr = vxi11.vxi11.Instrument("TCPIP::10.0.0.3::inst0::INSTR")
+
+# https://tw.rigol.com/tw/Images/DS1000ZEProgrammingGuideEN_tcm17-2850.pdf
+
+use_copy_waveform_to_file=True
+samples=2000000
+
+sample_rate=float(sys.argv[1])
+samples=int(sys.argv[2])
+trigger_source=sys.argv[3]
+trigger_slope=sys.argv[4]
+trigger_level=float(sys.argv[5])
+
+con = instr
+
+def cmd_binary(instr, cmd):
+        instr.write(cmd)
+        c = instr.read_raw(10*100*1024*1024)
+        return c
+
+def cmd(instr, cmd):
+        result = ""
+        instr.write(cmd)
+        c = instr.read(10*100*1024*1024)
+        result=c
+        #result=c.decode("utf-8")
+        return result
+
+def copy_waveform_to_file(trace, filename) :
+        type="BYTE"
+
+        con.write(':STOP\n')
+        con.write(':WAV:SOUR CHAN%d\n'%(trace))
+        con.write(':WAV:MODE RAW\n')
+        con.write(':WAV:FORM %s\n'%(type))
+        block_size_max=250000
+
+        if(sample_rate > 4294967295/2):
+            sample_rate_workaround = sample_rate/1000000000
+        else:
+            sample_rate_workaround = sample_rate
+
+        f = open(filename, "wb")
+        f.write(bytes([ord('R'), ord('I'), ord('F'), ord('F')]))
+        f.write(struct.pack("<I", samples*2+44))
+        f.write(bytes([ord('W'),ord('A'),ord('V'),ord('E'),ord('f'),ord('m'),ord('t'),ord(' ')]))
+        f.write(struct.pack("<I", 16))
+        f.write(struct.pack("<H", 1)) #type 1=PCM
+        f.write(struct.pack("<H", 1)) #channels
+        f.write(struct.pack("<I", int(sample_rate_workaround)))
+        f.write(struct.pack("<I", int(sample_rate_workaround*16*1/8))) #(Sample Rate * BitsPerSample * Channels) / 8
+        f.write(struct.pack("<H", 1)) #(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
+        f.write(struct.pack("<H", 8)) #Bits per sample
+        f.write(bytes([ord('d'),ord('a'),ord('t'),ord('a')]))
+        f.write(struct.pack("<I", samples*1))
+
+        for offset in range(0,samples,block_size_max):
+            if((offset+block_size_max) > samples):
+                block_size=samples-offset
+            else:
+                block_size=block_size_max
+
+            start = time.time()
+            c=con.write(':WAV:STAR %d\n'%(offset+1))
+            c=con.write(':WAV:STOP %d\n'%(offset+block_size))
+            print("reading %d %d"%(offset+1,offset+block_size))
+            c=cmd_binary(con,':WAV:DATA?\n')
+            print(len(c))
+            print(c)
+            print("done")
+            end = time.time()
+
+            assert(chr(c[0])=='#')
+            f.write(c[2+int(chr(c[1])):-1])
+
+        f.close()
+
+
+if(trigger_source != "-"):
+    print("Waiting for trigger ...")
+
+    while (1):
+        reply=cmd(con, ':TRIGger:STATus?\n')
+        print (reply)
+        if(int(reply.strip()=="STOP")):
+            break
+        time.sleep(1)
+
+channels_num = int((len(sys.argv)-6)/3)
+print (channels_num)
+for i in range(0,channels_num):
+    name=sys.argv[6+i*3]
+    voltage_range=float(sys.argv[6+i*3+1])
+    params=sys.argv[6+i*3+2]
+    filename = "tmp/lsi-ivi-scope-%s-signal.wav"%(name)
+    copy_waveform_to_file(int(name[2:]), filename)
+
+sys.exit(0)
