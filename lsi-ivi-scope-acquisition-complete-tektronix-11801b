@@ -92,8 +92,8 @@ def copy_waveform_to_file(trace, filename) :
 
             end = time.time()
             i=i+1
-            print("MAINPOS %fE-8\n"%(2.260+0.1*i))
-            con.write("MAINPOS %fE-8\n"%(2.260+0.1*i))
+            print("MAINPOS %fE-7\n"%(2.260+0.1*i))
+            con.write("MAINPOS %fE-7\n"%(2.260+0.1*i))
             con.write("ACQuisition RUN\n");
             con.write("CONDACQ TYPE:WAVfrm,WAIT\n");
             time.sleep(1)
