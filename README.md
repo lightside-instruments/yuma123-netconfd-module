@@ -10,6 +10,11 @@ Installed netconfd and yangcli
 ```
 apt-get install netconfd yangcli
 ```
+Misc
+
+```
+apt-get install python3-numpy
+```
 
 # Supported devices
 * ALSA arecord where the channel name is the same as the device name e.g. "default" or "hw:0,1"
