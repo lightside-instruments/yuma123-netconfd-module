@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-ivi-scope-test (1.5-44) noble; urgency=medium
+
+  * Added support for R&S MXO5 external source trigger
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sat, 14 Feb 2026 17:39:23 +0100
+
 yuma123-netconfd-module-lsi-ivi-scope-test (1.5-43) trixie; urgency=medium
 
   * Added dual channel acquisition for tektronix-11801b instead of M1-M2

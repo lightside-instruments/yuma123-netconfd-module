@@ -3,7 +3,7 @@
 # Usage: ./lsi-ivi-scope-acquisition-complete-rs-mxo4 <sample-rate> <samples> <trigger-source> <trigger-slope> <trigger-level> <ch1-name> <ch1-range> <ch1-params> ... <chN-name> <chN-range> <chN-params>
 
 # Example: ./lsi-ivi-scope-acquisition-complete-rs-mxo4 5000000000.000000000 800000000 ch1 positive 0.400000000 ch1 4.000000000 0.0
-
+# Example: ./lsi-ivi-scope-acquisition-start-rs-mxo5 5000000000.000000000 1000000 ext0 positive 0.4000000 ch1 2.0 0.0 ch2 2.0 0.0
 
 global args
 args=None
@@ -16,7 +16,7 @@ import datetime
 import struct
 import vxi11
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.0.0.3::inst0::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::192.168.4.10::inst0::INSTR")
 
 # Communication interface User's Manual https://scdn.rohde-schwarz.com/ur/pws/dl_downloads/pdm/cl_manuals/user_manual/1335_5337_01/MXO4_UserManual_en_11.pdf
 
