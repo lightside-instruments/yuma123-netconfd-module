@@ -14,7 +14,7 @@ import os
 import datetime
 import vxi11
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.0.0.3::inst0::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::192.168.4.10::inst0::INSTR")
 
 # Communication interface User's Manual https://scdn.rohde-schwarz.com/ur/pws/dl_downloads/pdm/cl_manuals/user_manual/1335_5337_01/MXO4_UserManual_en_11.pdf
 
@@ -95,8 +95,14 @@ for i in range(0,channels_num):
 
 
 if(trigger_source != "-"):
-    con.write('TRIGger:EVENt:SOURce C%d\n'%(int(trigger_source[2:])))
-    con.write('TRIGger:EVENt:LEVel%d:VALue %f\n'%(int(trigger_source[2:]), trigger_level))
+    print(str(trigger_source[0:2]))
+    if(str(trigger_source[0:2])=='ch'):
+        con.write('TRIGger:EVENt:SOURce C%d\n'%(int(trigger_source[2:])))
+        con.write('TRIGger:EVENt:LEVel%d:VALue %f\n'%(int(trigger_source[2:]), trigger_level))
+    else:
+        con.write('TRIGger:EVENt:SOURce EXT\n')
+        con.write('TRIGger:ANEDge:LEVel %f\n'%(trigger_level))
+        con.write('TRIGger:ANEDge:COUPling DC\n')
 
 
     if (trigger_slope=='negative'):
