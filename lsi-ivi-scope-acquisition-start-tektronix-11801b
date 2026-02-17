@@ -15,7 +15,7 @@ import datetime
 import vxi11
 import struct
 
-instr = vxi11.vxi11.Instrument("TCPIP::10.0.0.5::gpib,12::INSTR")
+instr = vxi11.vxi11.Instrument("TCPIP::192.168.4.11::gpib,12::INSTR")
 
 # Tektronix 11801B Digital Sampling Oscilloscope 070-8783-01
 
