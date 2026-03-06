@@ -78,8 +78,10 @@ def copy_waveform_to_file(trace, filename) :
             start = time.time()
 
 
-            print('CHANnel%d:DATA:VALues? %d,%d\n'%(trace,offset,block_size))
-            c=cmd_binary(con, 'CHANnel%d:DATA:VALues? %d,%d\n'%(trace,offset,block_size))
+#            cmd='CHANnel%d:DATA:VALues? %d,%d\n'%(trace,offset,block_size)
+            cmd='CHANnel%d:DATA:VALues?\n'%(trace)
+            print(cmd);
+            c=cmd_binary(con, cmd)
 
             end = time.time()
 
@@ -99,13 +101,13 @@ if(trigger_source != "-"):
             break
         time.sleep(1)
 
-con.write('STOP\n')
-print("STOP.")
+#con.write('STOP\n')
+#print("STOP.")
 
 reply=cmd(con, 'ACQuire:AVAilable?\n')
 print (reply)
-reply=cmd(con, 'CHANnel1:DATA:HEADer?\n')
-print (reply)
+#reply=cmd(con, 'CHANnel1:DATA:HEADer?\n')
+#print (reply)
 
 channels_num = int((len(sys.argv)-6)/3)
 print (channels_num)

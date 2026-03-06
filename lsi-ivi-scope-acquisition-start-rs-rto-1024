@@ -39,14 +39,17 @@ def cmd_binary(instr, cmd):
         return c
 
 def cmd(instr, cmd):
+        print(cmd)
         result = ""
         instr.write(cmd)
         c = instr.read(4*1024*1024)
         result=c
         #result=c.decode("utf-8")
+        print(result)
         return result
 
 def setup_channel(channel, voltage_range):
+        print("setup_chanel")
         reply=cmd(con, ':CHANnel'+str(channel)+'?\n')
         print (reply)
         con.write('CHAN'+str(channel)+':RANGe %f\n'%(voltage_range))
@@ -121,6 +124,7 @@ print (reply)
 
 #starts acquisition of a single waveform
 con.write('ACQuire:COUNt 1\n')
+con.write('RUNSingle\n')
 
 print("Started ...")
 
