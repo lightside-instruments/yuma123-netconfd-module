@@ -42,3 +42,32 @@ hold on
 plot(signal_mxo5_50k(end-2000+838+1:end-1000+838))
 print("-dpng", "200ns-1000samples-last.png");
 ```
+
+Sidequest1: Calculating the relevant clock deviation in PPM
+
+```
+function [ppm] = clock_diff_ppm(signal, period_len)
+    total_periods = floor(length(signal)/ period_len)
+    [a,b]=xcorr(signal(0*period_len+1:0*period_len+period_len),signal((total_periods-1)*period_len+1:total_periods*period_len));
+    [v,i]=max(a)
+    ppm = (1000000*(i-period_len))/(total_periods*period_len);
+end
+
+period_len=2560*5*1;
+signal=signal_mxo5;
+ppm_mxo5=clock_diff_ppm(signal,period_len)
+%ppm_mxo5 = -41.06570512820513
+
+period_len=2560*5*2;
+signal=signal_rto_1024;
+ppm_rto_1024=clock_diff_ppm(signal,period_len)
+%ppm_rto_1024 = -41.06570512820513
+
+period_len=2560*5*20;
+signal=signal_11801b_19;
+ppm_11801b_19=clock_diff_ppm(signal,period_len)
+%ppm_11801b_19 = -40.36458333333334
+
+Meaning the 3 scopes (the 2 R&S scopes clocks indistinguishable with the 1 million samples long signal acquisition) are all within 1 ppm of each other and the signal generator has 40-41 ppm slower clock then the scopes.
+
+
