@@ -15,6 +15,9 @@ instr.write('CURRENT %.09f'%(float(sys.argv[4])))
 instr.write('OUTPUT %s'%(sys.argv[2]))
 
 #E3647A has a single output command. Not 2 separate based on select for each output as one would expect
-instr.write('OUTPUT ON')
+if float(sys.argv[3]) == 0:
+    instr.write('OUTPUT OFF')
+else:
+    instr.write('OUTPUT ON')
 
 
