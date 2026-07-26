@@ -12,7 +12,9 @@ Installed netconfd and yangcli
  make install
 
 # Testing installation
-
+ echo "Port 830" >> /etc/ssh/sshd_config
+ echo "/usr/sbin/netconf-subsystem" >> /etc/ssh/sshd_config
+ /etc/init.d/ssh restart
  netconfd --module=lsi-thermometers  --no-startup --superuser=$USER
 
 Other terminal:

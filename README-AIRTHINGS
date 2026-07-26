@@ -1,8 +1,12 @@
 == Web based implementation: View Plus==
+python3 -m venv penv
+sudo su
+source ./penv/bin/activate
+pip install requsets
 export AIRTHINGS_CLIENT_ID="aaaaaaaa-77a2-4f98-a1d0-1a9c20a66666"
 export AIRTHINGS_CLIENT_SECRET="43b7e7e4-c0d3-4e7e-af50-7e583bbbbbbb"
 export AIRTHINGS_DEVICE_ID="9876543210"
-python3 thermometers-get-airthings-web
+python3 ./thermometers-get-airthings-web
 #{'data': {'time': 1784070851, 'battery': 100, 'co2': 452.0, 'humidity': 40.0, 'pm1': 17.0, 'pm25': 17.0, 'pressure': 1024.0, 'radonShortTermAvg': 0.0, 'relayDeviceType': 'hub', 'rssi': 0, 'temp': 26.9, 'voc': 200.0}}
 #<thermometers xmlns="urn:lsi:params:xml:ns:yang:thermometers"><thermometer><name>th0</name><value>10000</value></thermometer></thermometers>
 
@@ -11,9 +15,65 @@ python3 thermometers-get-airthings-web
 python3 -m venv penv
 sudo su
 apt-get install libglib2.0-dev
+source ./penv/bin/activate
 pip install bluepy tableprint
 source ./penv/bin/activate
 export AIRTHINGS_DEVICE_ID="0123456789"
 python3 ./thermometers-get-airthings-ble-wave-plus
+
+
+==Starting multiple netconfd server instances on different ports on startup==
+# Have users netconf-superuser and netconf-user created
+# Recommended password: netconf
+
+(penv) root@raspberrypi:/home/pi/netconfd-10831# cat thermometers-get
+#!/usr/bin/bash
+python3 ./thermometers-get-airthings-ble-wave-plus
+
+(penv) root@raspberrypi:/home/pi/netconfd-10831# cat /etc/rc.local 
+#!/bin/sh -e
+export USER=root
+export HOME=/root
+
+export PATH=.:$PATH
+
+cd /home/pi/netconfd-830
+export AIRTHINGS_DEVICE_ID="9876543210"
+export AIRTHINGS_CLIENT_ID="aa54bf61-77a2-4f98-a1d0-1a9c20a66666"
+export AIRTHINGS_CLIENT_SECRET="43b7e7e4-c0d3-4e7e-af50-7e583bbbbbbb"
+source ./penv/bin/activate
+export PATH=.:$PATH
+netconfd --no-startup --module=lsi-thermometers --superuser=netconf-superuser 1>netconfd.log 2>netconfd.stderr.log &
+
+cd /home/pi/netconfd-10831
+mkdir /tmp/netconfd-10831
+rm tmp || true
+ln -s /tmp/netconfd-10831 tmp
+export AIRTHINGS_DEVICE_ID="0123456789"
+source ./penv/bin/activate
+export PATH=.:$PATH
+netconfd --no-startup --module=lsi-thermometers --superuser=netconf-superuser --port=10831 --ncxserver-sockname=/tmp/ncxserver-10831.sock 1>netconfd.log 2>netconfd.stderr.log &
+
+
+(penv) root@raspberrypi:/home/pi/netconfd-10831# tail -n 16 /etc/ssh/sshd_config
+Port 830
+Port 10830
+Port 10831
+Subsystem netconf /usr/sbin/netconf-subsystem --ncxserver-sockname=830@/tmp/ncxserver.sock --ncxserver-sockname=10830@/tmp/ncxserver-10830.sock --ncxserver-sockname=10831@/tmp/ncxserver-10831.sock
+
+Match User netconf-superuser
+       X11Forwarding no
+       AllowTcpForwarding no
+       PermitTTY no
+       ForceCommand /usr/sbin/netconf-subsystem --ncxserver-sockname=830@/tmp/ncxserver.sock --ncxserver-sockname=10830@/tmp/ncxserver-10830.sock --ncxserver-sockname=10831@/tmp/ncxserver-10831.sock
+
+Match User netconf-user
+       X11Forwarding no
+       AllowTcpForwarding no
+       PermitTTY no
+       ForceCommand /usr/sbin/netconf-subsystem --ncxserver-sockname=830@/tmp/ncxserver.sock --ncxserver-sockname=10830@/tmp/ncxserver-10830.sock --ncxserver-sockname=10831@/tmp/ncxserver-10831.sock
+(penv) root@raspberrypi:/home/pi/netconfd-10831#
+
+
 
 #TODO

@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-thermometers (1.3-4) trixie; urgency=medium
+
+  * Added instructions for starting multiple servers for different sensors
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 27 Jul 2026 01:02:34 +0200
+
 yuma123-netconfd-module-lsi-thermometers (1.3-3) trixie; urgency=medium
 
   * Airthings support now complete
