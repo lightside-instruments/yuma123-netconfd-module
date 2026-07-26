@@ -1,0 +1,18 @@
+== Web based implementation: View Plus==
+export AIRTHINGS_CLIENT_ID="aaaaaaaa-77a2-4f98-a1d0-1a9c20a66666"
+export AIRTHINGS_CLIENT_SECRET="43b7e7e4-c0d3-4e7e-af50-7e583bbbbbbb"
+export AIRTHINGS_DEVICE_ID="9876543210"
+python3 thermometers-get-airthings-web
+#{'data': {'time': 1784070851, 'battery': 100, 'co2': 452.0, 'humidity': 40.0, 'pm1': 17.0, 'pm25': 17.0, 'pressure': 1024.0, 'radonShortTermAvg': 0.0, 'relayDeviceType': 'hub', 'rssi': 0, 'temp': 26.9, 'voc': 200.0}}
+#<thermometers xmlns="urn:lsi:params:xml:ns:yang:thermometers"><thermometer><name>th0</name><value>10000</value></thermometer></thermometers>
+
+
+==BLE based implementation: Plus==
+python3 -m venv penv
+pip install bluepy tableprint
+sudo su
+source ./penv/bin/activate
+export AIRTHINGS_DEVICE_ID="0123456789"
+python3 ./thermometers-get-airthings-ble-wave-plus
+
+#TODO
