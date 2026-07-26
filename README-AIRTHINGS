@@ -9,8 +9,9 @@ python3 thermometers-get-airthings-web
 
 ==BLE based implementation: Plus==
 python3 -m venv penv
-pip install bluepy tableprint
 sudo su
+apt-get install libglib2.0-dev
+pip install bluepy tableprint
 source ./penv/bin/activate
 export AIRTHINGS_DEVICE_ID="0123456789"
 python3 ./thermometers-get-airthings-ble-wave-plus

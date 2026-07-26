@@ -7,7 +7,7 @@ import time
 import struct
 import tableprint
 
-DEVICE_ID = os.getenv("AIRTHINGS_DEVICE_ID", "your_device_serial_number")
+DEVICE_ID = int(os.getenv("AIRTHINGS_DEVICE_ID", "your_device_serial_number"))
 
 def parseDEVICE_ID(ManuDataHexStr):
     if (ManuDataHexStr == None or ManuDataHexStr == "None"):
@@ -124,6 +124,7 @@ class Sensors():
 
 try:
     #---- Initialize ----#
+#    print("Connecting to %s"%(DEVICE_ID))
     waveplus = WavePlus(DEVICE_ID)
     
     header = ['Humidity', 'Radon ST avg', 'Radon LT avg', 'Temperature', 'Pressure', 'CO2 level', 'VOC level']
@@ -131,7 +132,7 @@ try:
     while True:
         
         waveplus.connect()
-        
+
         # read values
         sensors = waveplus.read()
         
@@ -146,13 +147,13 @@ try:
         
         # Print data
         data = [humidity, radon_st_avg, radon_lt_avg, temperature, pressure, CO2_lvl, VOC_lvl]
+#        Mode="terminal"
+#        if (Mode=='terminal'):
+#            print(tableprint.row(data, width=12))
+#        elif (Mode=='pipe'):
+#            print(data)
         
-        if (Mode=='terminal'):
-            print(tableprint.row(data, width=12))
-        elif (Mode=='pipe'):
-            print(data)
-        
-        value=1000
+        value=int(100*float(temperature.split(" ")[0]))
         print('<thermometers xmlns="urn:lsi:params:xml:ns:yang:thermometers"><thermometer><name>th0</name><value>%d</value></thermometer></thermometers>'%(value))
 
         waveplus.disconnect()
