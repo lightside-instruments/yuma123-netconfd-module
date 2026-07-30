@@ -65,7 +65,9 @@ static status_t
     }
 
     ptr = fgets(buf, BUFSIZE, fp);
-    assert(ptr!=NULL);
+    if(ptr==NULL) {
+        return ERR_NCX_SKIPPED;
+    }
 
     printf("thermometers-get: %s", buf);
 

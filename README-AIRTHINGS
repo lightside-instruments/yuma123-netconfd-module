@@ -75,5 +75,13 @@ Match User netconf-user
 (penv) root@raspberrypi:/home/pi/netconfd-10831#
 
 
+==Data Collection==
+root@raspberrypi:~# cat capture_net0.sh
+#!/usr/bin/bash
+FILEPATH="/var/www/html/data/`date -u '+%Y/%m/%d/%H/%M'`"
+mkdir -p $FILEPATH
+export GET_NET_SKIP_UNREACHABLE=1
+/usr/local/bin/get-net /var/www/html/data/networks.xml ${FILEPATH}/data.xml
+chmod -R ugo+xr /var/www/html/data
 
 #TODO
