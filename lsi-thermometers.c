@@ -65,18 +65,17 @@ static status_t
     }
 
     ptr = fgets(buf, BUFSIZE, fp);
-    if(ptr==NULL) {
+
+    if(pclose(fp))  {
+        printf("Command not found or exited with error status\n");
+        ptr = NULL;
+    }
+
+    if(ptr==NULL || 0==strlen(buf)) {
         return ERR_NCX_SKIPPED;
     }
 
     printf("thermometers-get: %s", buf);
-
-    assert(strlen(buf));
-
-    if(pclose(fp))  {
-        printf("Command not found or exited with error status\n");
-        assert(0);
-    }
 
     res = val_set_cplxval_obj(dst_val,
                               vir_val->obj,
