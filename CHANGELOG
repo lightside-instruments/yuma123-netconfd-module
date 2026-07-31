@@ -1,48 +1,5 @@
-yuma123-netconfd-module-lsi-thermometers (1.3-6) trixie; urgency=medium
+yuma123-netconfd-module-ietf-hardware-state (1.0) trixie; urgency=medium
 
-  * Removed more asserts and replaced with invalid error 
+  * Initial implementation with dummy and airthings view plus supported
 
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 31 Jul 2026 15:32:41 +0200
-
-yuma123-netconfd-module-lsi-thermometers (1.3-5) trixie; urgency=medium
-
-  * Replaced assert with invalid error and missing value when thermometers-get imlpementation crashes
-  * Added data collection example based on get-net from litenc/tntapi
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 31 Jul 2026 00:01:21 +0200
-
-yuma123-netconfd-module-lsi-thermometers (1.3-4) trixie; urgency=medium
-
-  * Added instructions for starting multiple servers for different sensors
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 27 Jul 2026 01:02:34 +0200
-
-yuma123-netconfd-module-lsi-thermometers (1.3-3) trixie; urgency=medium
-
-  * Airthings support now complete
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 26 Jul 2026 23:26:16 +0200
-
-yuma123-netconfd-module-lsi-thermometers (1.3-2) trixie; urgency=medium
-
-   * Work in progress support for Airthings Wave Plus (BLE) and View (Web)
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sun, 26 Jul 2026 13:53:13 +0200
-
-yuma123-netconfd-module-lsi-thermometers (1.3-1) bookworm; urgency=medium
-
-   * Added support for raspberry-pi-i2c-sts3x
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 26 Feb 2025 14:57:38 +0100
-
-yuma123-netconfd-module-lsi-thermometers (1.3) bookworm; urgency=medium
-
-  * Added pcsensor-temper implementation
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 16 Aug 2024 00:09:09 +0200
-
-yuma123-netconfd-module-lsi-thermometers (1.2) bookworm; urgency=medium
-
-  * Improved README and model description statements
-
- -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Sat, 10 Aug 2024 21:10:23 +0200
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 31 Jul 2026 21:18:04 +0200

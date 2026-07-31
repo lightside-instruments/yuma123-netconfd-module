@@ -1,5 +1,5 @@
 /*
-    module lsi-thermometers
+    module ietf-hardware-state
  */
 
 #define _DEFAULT_SOURCE
@@ -35,15 +35,15 @@
 #include "val_set_cplxval_obj.h"
 
 /* module static variables */
-static ncx_module_t *lsi_thermometers_mod;
-static obj_template_t* thermometers_obj;
+static ncx_module_t *ietf_hardware_state_mod;
+static obj_template_t* hardware_obj;
 
-#define BUFSIZE 1024
+#define BUFSIZE 10*1024
 
 /* Registered callback functions */
 
 static status_t
-    get_thermometers(ses_cb_t *scb,
+    get_hardware(ses_cb_t *scb,
                      getcb_mode_t cbmode,
                      val_value_t *vir_val,
                      val_value_t *dst_val)
@@ -52,9 +52,9 @@ static status_t
     char* ptr;
     res = NO_ERR;
 
-    /* /thermometers */
+    /* /hardware */
 
-    char *cmd = "thermometers-get";
+    char *cmd = "hardware-state-get";
 
     char buf[BUFSIZE];
     FILE *fp;
@@ -75,7 +75,7 @@ static status_t
         return ERR_NCX_SKIPPED;
     }
 
-    printf("thermometers-get: %s", buf);
+    printf("hardware-state-get: %s", buf);
 
     res = val_set_cplxval_obj(dst_val,
                               vir_val->obj,
@@ -86,10 +86,10 @@ static status_t
     return res;
 }
 
-/* The 3 mandatory callback functions: y_lsi_thermometers_init, y_lsi_thermometers_init2, y_lsi_thermometers_cleanup */
+/* The 3 mandatory callback functions: y_ietf_hardware_state_init, y_ietf_hardware_state_init2, y_ietf_hardware_state_cleanup */
 
 status_t
-    y_lsi_thermometers_init (
+    y_ietf_hardware_state_init (
         const xmlChar *modname,
         const xmlChar *revision)
 {
@@ -99,29 +99,29 @@ status_t
     agt_profile = agt_get_profile();
 
     res = ncxmod_load_module(
-        "lsi-thermometers",
+        "ietf-hardware-state",
         NULL,
         &agt_profile->agt_savedevQ,
-        &lsi_thermometers_mod);
+        &ietf_hardware_state_mod);
     if (res != NO_ERR) {
         return res;
     }
 
-    thermometers_obj = ncx_find_object(
-        lsi_thermometers_mod,
-        "thermometers");
-    if (thermometers_obj == NULL) {
+    hardware_obj = ncx_find_object(
+        ietf_hardware_state_mod,
+        "hardware");
+    if (hardware_obj == NULL) {
         return SET_ERROR(ERR_NCX_DEF_NOT_FOUND);
     }
 
     return res;
 }
 
-status_t y_lsi_thermometers_init2(void)
+status_t y_ietf_hardware_state_init2(void)
 {
     status_t res;
     cfg_template_t* runningcfg;
-    val_value_t* thermometers_val;
+    val_value_t* hardware_val;
 
     res = NO_ERR;
 
@@ -130,19 +130,19 @@ status_t y_lsi_thermometers_init2(void)
         return SET_ERROR(ERR_INTERNAL_VAL);
     }
 
-    thermometers_val = val_new_value();
-    assert(thermometers_val != NULL);
+    hardware_val = val_new_value();
+    assert(hardware_val != NULL);
 
-    val_init_virtual(thermometers_val,
-                     get_thermometers,
-                     thermometers_obj);
+    val_init_virtual(hardware_val,
+                     get_hardware,
+                     hardware_obj);
 
-    val_add_child(thermometers_val, runningcfg->root);
+    val_add_child(hardware_val, runningcfg->root);
 
 
     return res;
 }
 
-void y_lsi_thermometers_cleanup (void)
+void y_ietf_hardware_state_cleanup (void)
 {
 }

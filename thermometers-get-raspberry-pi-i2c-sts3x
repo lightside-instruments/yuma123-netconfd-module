@@ -1,5 +1,0 @@
-#!/bin/bash
-# https://github.com/lightside-instruments/raspberry-pi-i2c-sts3x/tree/master/example-usage-one-value-centigrade
-
-value="`sts3x_i2c_example_usage`"
-echo -n '<thermometers xmlns="urn:lsi:params:xml:ns:yang:thermometers"><thermometer><name>th0</name><value>'${value}'</value></thermometer></thermometers>'

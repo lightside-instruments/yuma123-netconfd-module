@@ -1,9 +1,9 @@
 # Overview
-Thermometer module for netconfd.
+ietf-hardware-state module for netconfd.
 
 # Dependencies
 Installed netconfd and yangcli
- apt-get install netconfd yangcli lm-sensors bc jq
+ apt-get install netconfd yangcli
 
 # Installation
  autoreconf -i -f
@@ -15,21 +15,133 @@ Installed netconfd and yangcli
  echo "Port 830" >> /etc/ssh/sshd_config
  echo "/usr/sbin/netconf-subsystem" >> /etc/ssh/sshd_config
  /etc/init.d/ssh restart
- netconfd --module=lsi-thermometers  --no-startup --superuser=$USER
+ netconfd --module=ietf-hardware-state  --no-startup --superuser=$USER
 
 Other terminal:
  yangcli --server=localhost --user=$USER
 
 
-yangcli vladimir@localhost> xget /thermometers
+yangcli vladimir@localhost> xget /hardware
 ...
-<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-  <data>
-    <thermometers xmlns="urn:lsi:params:xml:ns:yang:thermometers">
-      <thermometer>
-        <name>th0</name>
-        <value>-25100</value>
-      </thermometer>
-    </thermometers>
-  </data>
-</rpc-reply>
+
+  data {
+    hardware {
+      last-change 2026-07-31T12:00:00Z
+      component airthings {
+        name airthings
+        class ianahw:container
+        serial-num 0123456789
+        mfg-name Airthings
+        model-name 'View Plus'
+      }
+      component temperature {
+        name temperature
+        parent airthings
+        sensor-data {
+          value 23000
+          value-type celsius
+          value-scale milli
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'milli degrees'
+        }
+      }
+      component co2 {
+        name co2
+        class ianahw:sensor
+        parent airthings
+        sensor-data {
+          value 480
+          value-type other
+          value-scale units
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'CO2 level'
+        }
+      }
+      component humidity {
+        name humidity
+        class ianahw:sensor
+        parent airthings
+        sensor-data {
+          value 48
+          value-type percent-RH
+          value-scale units
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'relative humidity level in percent'
+        }
+      }
+      component pm1 {
+        name pm1
+        class ianahw:sensor
+        parent airthings
+        sensor-data {
+          value 3000
+          value-type other
+          value-scale milli
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'PM1 particles'
+        }
+      }
+      component pm25 {
+        name pm25
+        class ianahw:sensor
+        parent airthings
+        sensor-data {
+          value 1000
+          value-type other
+          value-scale milli
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'PM25 particles'
+        }
+      }
+      component voc {
+        name voc
+        class ianahw:sensor
+        parent airthings
+        sensor-data {
+          value 393
+          value-type other
+          value-scale units
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'VOC particles'
+        }
+      }
+      component pressure {
+        name pressure
+        class ianahw:sensor
+        parent airthings
+        sensor-data {
+          value 994
+          value-type other
+          value-scale units
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'air pressure'
+        }
+        name radon
+        class ianahw:sensor
+        parent airthings
+        sensor-data {
+          value 20
+          value-type other
+          value-scale units
+          value-precision 2
+          value-timestamp 2026-07-31T12:00:00.00Z
+          value-update-rate 60000
+          units-display 'Radon short term average'
+        }
+      }
+    }
+  }

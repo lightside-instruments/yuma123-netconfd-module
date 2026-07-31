@@ -1,4 +1,4 @@
-AC_INIT([yuma123-netconfd-module-lsi-foo], [1.0], [vladimir@lightside-instruments.com])
+AC_INIT([yuma123-netconfd-module-ietf-hardware-state], [1.0], [vladimir@lightside-instruments.com])
 
 AC_CANONICAL_SYSTEM
 
