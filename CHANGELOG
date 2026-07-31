@@ -1,3 +1,9 @@
+yuma123-netconfd-module-ietf-hardware-state (1.1) trixie; urgency=medium
+
+  * Fixed bug in hardware-state-get-airthings-web
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Fri, 31 Jul 2026 23:20:25 +0200
+
 yuma123-netconfd-module-ietf-hardware-state (1.0) trixie; urgency=medium
 
   * Initial implementation with dummy and airthings view plus supported

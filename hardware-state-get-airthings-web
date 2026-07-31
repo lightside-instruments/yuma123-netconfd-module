@@ -166,7 +166,7 @@ template_str = '''<hardware xmlns="urn:ietf:params:xml:ns:yang:ietf-hardware-sta
 '''
 
 json_data_str="{'data': {'time': 1785099863, 'battery': 97, 'co2': 778.0, 'humidity': 42.0, 'pm1': 3.0, 'pm25': 3.0, 'pressure': 994.0, 'radonShortTermAvg': 20.0, 'relayDeviceType': 'hub', 'rssi': 0, 'temp': 24.4, 'voc': 393.0}}"
-data = json.loads(json_data_str.replace("'", '"'))
+#data = json.loads(json_data_str.replace("'", '"'))
 
 value_temperature=int(100*float((data['data']['temp'])))
 value_co2=int(1*float((data['data']['co2'])))
