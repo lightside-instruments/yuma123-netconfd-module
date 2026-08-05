@@ -1,3 +1,10 @@
+yuma123-netconfd-module-ietf-hardware-state (1.2) trixie; urgency=medium
+
+  * Added hardware-state-get-airthings-ble-wave-plus
+  * Added actual serial number to hardware-state-get-airthings-web
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Wed, 05 Aug 2026 16:33:03 +0200
+
 yuma123-netconfd-module-ietf-hardware-state (1.1) trixie; urgency=medium
 
   * Fixed bug in hardware-state-get-airthings-web

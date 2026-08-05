@@ -49,7 +49,7 @@ template_str = '''<hardware xmlns="urn:ietf:params:xml:ns:yang:ietf-hardware-sta
   <component>
     <name>airthings</name>
     <class>ianahw:container</class>
-    <serial-num>0123456789</serial-num>
+    <serial-num>%s</serial-num>
     <mfg-name>Airthings</mfg-name>
     <model-name>View Plus</model-name>
   </component>
@@ -182,7 +182,7 @@ epoch_time=int(data['data']['time'])
 dt_object = datetime.fromtimestamp(epoch_time, tz=timezone.utc)
 timestamp_str = dt_object.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-str=template_str%(timestamp_str, value_temperature, timestamp_str, value_co2, timestamp_str, value_humidity, timestamp_str, value_pm1, timestamp_str, value_pm25, timestamp_str, value_voc, timestamp_str, value_pressure, timestamp_str, value_radon_short_term_average, timestamp_str)
+str=template_str%(timestamp_str, DEVICE_ID, value_temperature, timestamp_str, value_co2, timestamp_str, value_humidity, timestamp_str, value_pm1, timestamp_str, value_pm25, timestamp_str, value_voc, timestamp_str, value_pressure, timestamp_str, value_radon_short_term_average, timestamp_str)
 
 print(str.replace("\n", ""))
 
