@@ -164,6 +164,7 @@ try:
   </component>
   <component>
     <name>temperature</name>
+    <class>ianahw:sensor</class>
     <parent>airthings</parent>
     <sensor-data>
         <value>%d</value>

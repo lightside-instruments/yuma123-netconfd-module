@@ -1,3 +1,9 @@
+yuma123-netconfd-module-ietf-hardware-state (1.3) trixie; urgency=medium
+
+  * Fixed airthings web implementation temperature sensor value not having <class> and multiplied with 1000 instead of 100
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 06 Aug 2026 21:16:54 +0200
+
 yuma123-netconfd-module-ietf-hardware-state (1.2) trixie; urgency=medium
 
   * Added hardware-state-get-airthings-ble-wave-plus
