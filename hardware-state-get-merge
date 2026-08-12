@@ -4,6 +4,7 @@
 
 import subprocess
 import sys
+from datetime import datetime
 from xml.etree import ElementTree as ET
 
 
@@ -26,6 +27,11 @@ def run_producer(path):
     return ET.fromstring(output)
 
 
+def parse_timestamp(value):
+    """Parse an RFC 3339/YANG date-and-time value for comparison."""
+    return datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+
+
 def merge_outputs(producers):
     roots = [run_producer(producer) for producer in producers]
 
@@ -34,9 +40,19 @@ def merge_outputs(producers):
     # cannot infer namespace declarations used only inside text values.
     merged.set("xmlns:ianahw", IANAHW_NS)
 
-    first_last_change = roots[0].find(f"{{{HW_NS}}}last-change")
-    if first_last_change is not None:
-        merged.append(first_last_change)
+    last_changes = (
+        element
+        for root in roots
+        if (element := root.find(f"{{{HW_NS}}}last-change")) is not None
+        and element.text
+    )
+    latest_last_change = max(
+        last_changes,
+        key=lambda element: parse_timestamp(element.text),
+        default=None,
+    )
+    if latest_last_change is not None:
+        merged.append(latest_last_change)
 
     for root in roots:
         for component in root.findall(f"{{{HW_NS}}}component"):
@@ -54,7 +70,7 @@ if __name__ == "__main__":
         raise SystemExit(2)
 
     try:
-        print(merge_outputs(sys.argv[1:]))
+        print(merge_outputs(sys.argv[1:]).replace("\n", ""))
     except (OSError, subprocess.CalledProcessError, ET.ParseError) as error:
         print(f"Unable to merge storage-drive XML: {error}", file=sys.stderr)
         raise SystemExit(1)

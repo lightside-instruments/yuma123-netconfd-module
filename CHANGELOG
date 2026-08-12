@@ -1,3 +1,10 @@
+yuma123-netconfd-module-ietf-hardware-state (1.6) trixie; urgency=medium
+
+  * Fixed striping of new lines in hardware-state-get-merge
+  * Added logic to use the latest <last-change> timestamp in hardware-state-get-merge
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 13 Aug 2026 01:30:00 +0200
+
 yuma123-netconfd-module-ietf-hardware-state (1.5) trixie; urgency=medium
 
   * Added hardware-state-get-merge that can call and merge output of one or more producers passed as arguments on the command line
