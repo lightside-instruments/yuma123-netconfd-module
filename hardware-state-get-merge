@@ -1,0 +1,60 @@
+#!/usr/bin/python3
+
+"""Run both storage-drive producers and merge their XML output."""
+
+import subprocess
+import sys
+from xml.etree import ElementTree as ET
+
+
+HW_NS = "urn:ietf:params:xml:ns:yang:ietf-hardware-state"
+IANAHW_NS = "urn:ietf:params:xml:ns:yang:iana-hardware"
+SDE_NS = "urn:lsi:params:xml:ns:yang:storage-drive-ext"
+
+ET.register_namespace("", HW_NS)
+ET.register_namespace("sde", SDE_NS)
+
+
+def run_producer(path):
+    """Run one XML producer and return its parsed document root."""
+    output = subprocess.run(
+        [str(path)],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).stdout
+    return ET.fromstring(output)
+
+
+def merge_outputs(producers):
+    roots = [run_producer(producer) for producer in producers]
+
+    merged = ET.Element(f"{{{HW_NS}}}hardware")
+    # The class leaf contains an identityref using this prefix. ElementTree
+    # cannot infer namespace declarations used only inside text values.
+    merged.set("xmlns:ianahw", IANAHW_NS)
+
+    first_last_change = roots[0].find(f"{{{HW_NS}}}last-change")
+    if first_last_change is not None:
+        merged.append(first_last_change)
+
+    for root in roots:
+        for component in root.findall(f"{{{HW_NS}}}component"):
+            merged.append(component)
+
+    return ET.tostring(merged, encoding="unicode")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print(
+            f"Usage: {sys.argv[0]} PRODUCER [PRODUCER ...]",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+
+    try:
+        print(merge_outputs(sys.argv[1:]))
+    except (OSError, subprocess.CalledProcessError, ET.ParseError) as error:
+        print(f"Unable to merge storage-drive XML: {error}", file=sys.stderr)
+        raise SystemExit(1)

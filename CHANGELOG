@@ -1,3 +1,9 @@
+yuma123-netconfd-module-ietf-hardware-state (1.5) trixie; urgency=medium
+
+  * Added hardware-state-get-merge that can call and merge output of one or more producers passed as arguments on the command line
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Thu, 13 Aug 2026 00:51:20 +0200
+
 yuma123-netconfd-module-ietf-hardware-state (1.4) trixie; urgency=medium
 
   * Added implementation script for storage-device class components on linux
