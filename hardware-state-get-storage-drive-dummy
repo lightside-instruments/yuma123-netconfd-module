@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+
+import json
+from datetime import datetime, timezone
+
+head_str = '''
+<hardware xmlns="urn:ietf:params:xml:ns:yang:ietf-hardware-state"
+                xmlns:ianahw="urn:ietf:params:xml:ns:yang:iana-hardware">
+  <last-change>%s</last-change>
+'''
+
+template_str = '''
+  <component>
+    <name>%s</name>
+    <class>ianahw:storage-drive</class>
+    <storage-drive xmlns="urn:lsi:params:xml:ns:yang:storage-drive-ext">
+      <mount-point>%s</mount-point>
+      <size>%u</size>
+      <utilized>%u</utilized>
+      <available>%u</available>
+    </storage-drive>
+  </component>
+'''
+
+tail_str = '''
+</hardware>
+'''
+
+#json_data_str="{'data': {'time': 1785099863, 'battery': 97, 'co2': 778.0, 'humidity': 42.0, 'pm1': 3.0, 'pm25': 3.0, 'pressure': 994.0, 'radonShortTermAvg': 20.0, 'relayDeviceType': 'hub', 'rssi': 0, 'temp': 24.4, 'voc': 393.0}}"
+#data = json.loads(json_data_str.replace("'", '"'))
+
+#value_voc=int(1*float((data['data']['voc'])))
+
+#epoch_time=int(data['data']['time'])
+epoch_time=1785099863
+dt_object = datetime.fromtimestamp(epoch_time, tz=timezone.utc)
+timestamp_str = dt_object.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+head_str=head_str%(timestamp_str)
+str=template_str%("/dev/sda1","/home",1000000000,600000000,400000000)
+str=head_str+str+tail_str
+print(str.replace("\n", ""))

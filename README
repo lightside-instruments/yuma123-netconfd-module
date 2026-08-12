@@ -17,6 +17,9 @@ Installed netconfd and yangcli
  /etc/init.d/ssh restart
  netconfd --module=ietf-hardware-state  --no-startup --superuser=$USER
 
+# Alternatively if you need the lsi-storage-drive-ext augmentation
+ netconfd --module=lsi-storage-drive-ext --module=ietf-hardware-state --no-startup --superuser=$USER
+
 Other terminal:
  yangcli --server=localhost --user=$USER
 

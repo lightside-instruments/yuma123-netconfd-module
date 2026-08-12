@@ -1,0 +1,89 @@
+#!/usr/bin/python3
+
+"""Emit hardware-state XML for mounted partitions using string templates."""
+
+import os
+from datetime import datetime, timezone
+from xml.sax.saxutils import escape
+
+
+HEAD_TEMPLATE = """\
+<hardware xmlns="urn:ietf:params:xml:ns:yang:ietf-hardware-state"
+          xmlns:ianahw="urn:ietf:params:xml:ns:yang:iana-hardware">
+  <last-change>{timestamp}</last-change>
+"""
+
+COMPONENT_TEMPLATE = """\
+  <component>
+    <name>{device}</name>
+    <class>ianahw:storage-drive</class>
+    <storage-drive xmlns="urn:lsi:params:xml:ns:yang:storage-drive-ext">
+      <mount-point>{mount_point}</mount-point>
+      <size>{size}</size>
+      <utilized>{utilized}</utilized>
+      <available>{available}</available>
+    </storage-drive>
+  </component>
+"""
+
+TAIL_TEMPLATE = """\
+</hardware>
+"""
+
+
+def decode_mount_field(value):
+    """Decode the octal escapes used by /proc/self/mounts."""
+    for encoded, decoded in (("\\040", " "), ("\\011", "\t"),
+                             ("\\012", "\n"), ("\\134", "\\")):
+        value = value.replace(encoded, decoded)
+    return value
+
+
+def mounted_partitions():
+    """Yield each mounted /dev-backed partition once."""
+    seen_devices = set()
+
+    with open("/proc/self/mounts", encoding="utf-8") as mounts:
+        for line in mounts:
+            fields = line.split()
+            if len(fields) < 2:
+                continue
+
+            device = decode_mount_field(fields[0])
+            mount_point = decode_mount_field(fields[1])
+            if not device.startswith("/dev/") or device in seen_devices:
+                continue
+
+            try:
+                stats = os.statvfs(mount_point)
+            except OSError:
+                continue
+
+            seen_devices.add(device)
+            block_size = stats.f_frsize or stats.f_bsize
+            size = stats.f_blocks * block_size
+            available = stats.f_bavail * block_size
+            utilized = (stats.f_blocks - stats.f_bfree) * block_size
+
+            yield device, mount_point, size, utilized, available
+
+
+def build_xml():
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    parts = [HEAD_TEMPLATE.format(timestamp=timestamp)]
+
+    for device, mount_point, size, utilized, available in mounted_partitions():
+        parts.append(COMPONENT_TEMPLATE.format(
+            device=escape(device.removeprefix("/dev/")),
+            mount_point=escape(mount_point),
+            size=size,
+            utilized=utilized,
+            available=available,
+        ))
+
+    parts.append(TAIL_TEMPLATE)
+    return "".join(parts)
+
+
+if __name__ == "__main__":
+    print(build_xml(), end="")
