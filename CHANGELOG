@@ -1,3 +1,9 @@
+yuma123-netconfd-module-lsi-display (1.2) trixie; urgency=medium
+
+  * Improved documentation and examples. 1920x1080 now the default resolution also used in examples
+
+ -- Vladimir Vassilev <vladimir@lightside-instruments.com>  Mon, 17 Aug 2026 22:35:53 +0200
+
 yuma123-netconfd-module-lsi-display (1.1) jammy; urgency=medium
 
   * Added preview example reading data from lsi-camera device

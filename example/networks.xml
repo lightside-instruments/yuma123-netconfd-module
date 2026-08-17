@@ -2,16 +2,17 @@
 <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
   <networks xmlns="urn:ietf:params:xml:ns:yang:ietf-network">
     <network>
-      <network-id>local</network-id>
+      <network-id>10.13.37.27</network-id>
       <node>
         <node-id>display</node-id>
+        <description>local pc</description>
         <netconf-connect-params xmlns="urn:tntapi:netconf-node">
-          <user>pi</user>
-          <server>localhost</server>
-          <password>raspberry</password>
+          <user>netconf-superuser</user>
+          <server>10.13.37.27</server>
+	<password>netconf</password>
           <ncport>830</ncport>
         </netconf-connect-params>
       </node>
-    </network>
+   </network>
   </networks>
 </config>

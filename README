@@ -8,6 +8,7 @@ Installed netconfd and yangcli
  apt-get install netconfd yangcli
 
 # Installation
+ apt install libx11-dev libjpeg-dev libyuma-dev
  autoreconf -i -f
  ./configure CFLAGS="-g -O0"  CXXFLAGS="-g -O0" --prefix=/usr
  make
@@ -33,3 +34,15 @@ Other terminal:
  
  yangcli pi@localhost>
 
+
+# Starting from rc.local with xinit - kiosk mode
+...
+xinit /usr/sbin/netconfd --module=lsi-display &
+...
+
+# Display 1920x1080 test pattern
+cd example
+python3 display-test-pattern.py --networks=networks.xml
+
+# or display a 1920x1080 JPG image
+python3 display-image.py --networks=networks.xml --image=/tmp/image.jpg
